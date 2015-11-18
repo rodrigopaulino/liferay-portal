@@ -15,6 +15,7 @@
 package com.liferay.portal.search.facet.faceted.searcher.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.portal.kernel.exception.UserReminderQueryException;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Document;
@@ -33,6 +34,8 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.test.util.AssertUtils;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -58,6 +61,24 @@ public class FacetedSearcherTest extends BaseFacetedSearcherTestCase {
 		new AggregateTestRule(
 			new LiferayIntegrationTestRule(),
 			SynchronousDestinationTestRule.INSTANCE);
+
+	@Test
+	public void testAssetTagNamesQuotedSearch() throws Exception {
+		Group group = userSearchFixture.addGroup();
+
+		User user = userSearchFixture.addUser(
+			group, "Tag Name", "Nametag", "NA-META-G", "Names of Tags");
+		
+		String tags = "Tag Name,Nametag,NA-META-G,Names of Tags";
+
+		assertSearch("tag", toMap(user, tags));
+		assertSearch("name",  toMap(user, tags));
+		assertSearch("nameTAG",  toMap(user, tags));
+		assertSearch("tags names",  toMap(user, tags));
+		assertSearch("of",  toMap(user, tags));
+		assertSearch("Names of tags",  toMap(user, tags));
+		assertSearch("\"names of TAGS\"",  toMap(user, tags));
+	}
 
 	@Test
 	public void testSearchByKeywords() throws Exception {
@@ -108,9 +129,17 @@ public class FacetedSearcherTest extends BaseFacetedSearcherTestCase {
 		Map<String, String> map = new HashMap<>(list.size());
 
 		for (Document document : list) {
-			map.put(
-				document.get("screenName"),
-				document.get(Field.ASSET_TAG_NAMES));
+			String entryClassName = document.get(Field.ENTRY_CLASS_NAME);
+			
+			if (StringUtil.equalsIgnoreCase(
+					entryClassName, User.class.getName())) {
+				String values = StringUtil.merge(
+						document.getValues(Field.ASSET_TAG_NAMES));
+				
+				map.put(
+					document.get("screenName"),
+					values);
+			}
 		}
 
 		return map;

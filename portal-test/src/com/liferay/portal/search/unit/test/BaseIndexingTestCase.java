@@ -113,6 +113,12 @@ public abstract class BaseIndexingTestCase {
 		Query query = new TermQueryImpl(
 			Field.ENTRY_CLASS_NAME, _entryClassName);
 
+		return search(searchContext, query);
+	}
+
+	protected Hits search(SearchContext searchContext, Query query)
+		throws Exception {
+
 		return _indexSearcher.search(searchContext, query);
 	}
 
