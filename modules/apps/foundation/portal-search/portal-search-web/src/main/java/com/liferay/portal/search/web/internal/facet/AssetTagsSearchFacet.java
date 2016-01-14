@@ -16,8 +16,7 @@ package com.liferay.portal.search.web.internal.facet;
 
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.search.Field;
-import com.liferay.portal.kernel.search.facet.MultiValueFacet;
+import com.liferay.portal.kernel.search.facet.AssetTagNamesFacet;
 import com.liferay.portal.kernel.search.facet.config.FacetConfiguration;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.search.web.facet.BaseJSPSearchFacet;
@@ -72,12 +71,12 @@ public class AssetTagsSearchFacet extends BaseJSPSearchFacet {
 
 	@Override
 	public String getFacetClassName() {
-		return MultiValueFacet.class.getName();
+		return AssetTagNamesFacet.class.getName();
 	}
 
 	@Override
 	public String getFieldName() {
-		return Field.ASSET_TAG_NAMES;
+		return AssetTagNamesFacet.FIELD;
 	}
 
 	@Override
