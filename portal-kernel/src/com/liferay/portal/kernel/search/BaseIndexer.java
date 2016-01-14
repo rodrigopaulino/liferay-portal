@@ -48,6 +48,8 @@ import com.liferay.portal.kernel.model.TrashedModel;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.model.WorkflowedModel;
 import com.liferay.portal.kernel.search.facet.AssetEntriesFacet;
+import com.liferay.portal.kernel.search.facet.AssetTagNamesFacet;
+import com.liferay.portal.kernel.search.facet.AssetTagNamesFacetFactory;
 import com.liferay.portal.kernel.search.facet.Facet;
 import com.liferay.portal.kernel.search.facet.MultiValueFacet;
 import com.liferay.portal.kernel.search.facet.ScopeFacet;
@@ -962,13 +964,16 @@ public abstract class BaseIndexer<T> implements Indexer<T> {
 			BooleanFilter queryBooleanFilter, SearchContext searchContext)
 		throws Exception {
 
-		MultiValueFacet multiValueFacet = new MultiValueFacet(searchContext);
+		AssetTagNamesFacetFactory assetTagNamesFacetFactory =
+			new AssetTagNamesFacetFactory();
 
-		multiValueFacet.setFieldName(Field.ASSET_TAG_NAMES);
-		multiValueFacet.setStatic(true);
-		multiValueFacet.setValues(searchContext.getAssetTagNames());
+		AssetTagNamesFacet assetTagNamesFacet =
+			assetTagNamesFacetFactory.newInstance(searchContext);
 
-		searchContext.addFacet(multiValueFacet);
+		assetTagNamesFacet.setStatic(true);
+		assetTagNamesFacet.setValues(searchContext.getAssetTagNames());
+
+		searchContext.addFacet(assetTagNamesFacet);
 	}
 
 	protected Filter addSearchClassTypeIds(
