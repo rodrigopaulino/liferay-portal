@@ -16,10 +16,9 @@ package com.liferay.portal.search.facet.faceted.searcher.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.SearchContext;
+import com.liferay.portal.kernel.search.facet.AssetTagNamesFacetFactory;
 import com.liferay.portal.kernel.search.facet.Facet;
-import com.liferay.portal.kernel.search.facet.MultiValueFacet;
 import com.liferay.portal.kernel.search.facet.collector.FacetCollector;
 import com.liferay.portal.kernel.search.facet.collector.TermCollector;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcher;
@@ -62,12 +61,14 @@ public class AssetTagNamesFacetTest extends BaseFacetedSearcherTestCase {
 
 		final SearchContext searchContext = getSearchContext(tag);
 
-		MultiValueFacet multiValueFacet = new MultiValueFacet(searchContext);
+		AssetTagNamesFacetFactory assetTagNamesFacetFactory =
+				new AssetTagNamesFacetFactory();
 
-		multiValueFacet.setFieldName(Field.ASSET_TAG_NAMES);
-		multiValueFacet.setStatic(false);
+		Facet facet = assetTagNamesFacetFactory.newInstance(searchContext);
 
-		searchContext.addFacet(multiValueFacet);
+		final String fieldName = facet.getFieldName();
+
+		searchContext.addFacet(facet);
 
 		IdempotentRetryAssert.retryAssert(
 			10, TimeUnit.SECONDS,
@@ -81,7 +82,7 @@ public class AssetTagNamesFacetTest extends BaseFacetedSearcherTestCase {
 
 					Map<String, Facet> facets = searchContext.getFacets();
 
-					Facet facet = facets.get(Field.ASSET_TAG_NAMES);
+					Facet facet = facets.get(fieldName);
 
 					FacetCollector facetCollector = facet.getFacetCollector();
 
