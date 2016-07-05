@@ -39,6 +39,7 @@ import com.liferay.portal.kernel.search.filter.Filter;
 import com.liferay.portal.kernel.search.filter.TermsFilter;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.search.generic.MatchAllQuery;
+import com.liferay.portal.kernel.search.query.AssetTagNamesQueryContributor;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
@@ -66,6 +67,15 @@ public class FacetedSearcherImpl
 		_groupLocalService = groupLocalService;
 		_indexerRegistry = indexerRegistry;
 		_indexSearcherHelper = indexSearcherHelper;
+	}
+
+	protected void addQueryAssetTagNames(
+		String keywords, BooleanQuery searchQuery) {
+
+		AssetTagNamesQueryContributor assetTagNamesQueryContributor =
+			new AssetTagNamesQueryContributor();
+
+		assetTagNamesQueryContributor.contribute(keywords, searchQuery);
 	}
 
 	protected void addSearchExpandoKeywords(
@@ -113,7 +123,7 @@ public class FacetedSearcherImpl
 			addSearchLocalizedTerm(
 				searchQuery, searchContext, Field.ASSET_CATEGORY_TITLES, false);
 
-			searchQuery.addExactTerm(Field.ASSET_TAG_NAMES, keywords);
+			addQueryAssetTagNames(keywords, searchQuery);
 
 			int groupId = GetterUtil.getInteger(
 				searchContext.getAttribute(Field.GROUP_ID));
