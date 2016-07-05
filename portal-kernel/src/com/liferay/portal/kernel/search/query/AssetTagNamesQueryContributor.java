@@ -17,6 +17,7 @@ package com.liferay.portal.kernel.search.query;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.BooleanQuery;
 import com.liferay.portal.kernel.search.Field;
+import com.liferay.portal.kernel.search.ParseException;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.generic.MatchQuery;
 
@@ -43,7 +44,11 @@ public class AssetTagNamesQueryContributor {
 	}
 
 	private void _add(Query query, BooleanQuery booleanQuery) {
-		booleanQuery.add(query, BooleanClauseOccur.SHOULD);
+		try {
+			booleanQuery.add(query, BooleanClauseOccur.SHOULD);
+		} catch (ParseException pe) {
+			throw new RuntimeException(pe);
+		}
 	}
 
 }
