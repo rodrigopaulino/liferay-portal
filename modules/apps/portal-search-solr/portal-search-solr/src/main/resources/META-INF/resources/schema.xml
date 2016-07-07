@@ -10,18 +10,10 @@
 				<filter class="solr.TrimFilterFactory" />
 			</analyzer>
 		</fieldType>
-		<fieldType class="solr.TextField" name="assetTagNameField" positionIncrementGap="100">
-			<analyzer type="index">
-				<tokenizer class="solr.KeywordTokenizerFactory" />
+		<fieldType class="solr.TextField" name="assetTagNames_text" positionIncrementGap="100">
+			<analyzer>
+				<tokenizer class="solr.StandardTokenizerFactory" />
 				<filter class="solr.LowerCaseFilterFactory" />
-			</analyzer>
-			<analyzer type="query">
-				<tokenizer class="solr.WhitespaceTokenizerFactory" />
-				<filter class="solr.LowerCaseFilterFactory" />
-				<filter class="solr.RemoveDuplicatesTokenFilterFactory" />
-				<filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />
-				<filter class="solr.SynonymFilterFactory" expand="true" ignoreCase="true" synonyms="synonyms.txt" />
-				<filter catenateAll="0" catenateNumbers="0" catenateWords="0" class="solr.WordDelimiterFilterFactory" generateNumberParts="1" generateWordParts="1" />
 			</analyzer>
 		</fieldType>
 		<fieldType class="solr.BoolField" name="boolean" omitNorms="true" sortMissingLast="true" />
@@ -479,6 +471,7 @@
 		<fieldType class="solr.PointType" dimension="2" name="point" subFieldSuffix="_d" />
 	</types>
 	<fields>
+		<copyField dest="assetTagNames.raw" source="assetTagNames" />
 		<field indexed="true" multiValued="false" name="_version_" stored="true" type="long" />
 		<field indexed="true" multiValued="true" name="ancestorOrganizationIds" stored="true" type="string" />
 		<field indexed="true" name="articleId" stored="true" type="string_keyword_lowercase" />
@@ -487,7 +480,8 @@
 		<field indexed="true" name="assetCategoryTitle" stored="true" termPositions="true" termVectors="true" type="text" />
 		<field docValues="true" indexed="true" name="assetTagId" stored="true" type="string" />
 		<field indexed="true" multiValued="true" name="assetTagIds" stored="true" type="string" />
-		<field indexed="true" multiValued="true" name="assetTagNames" stored="true" termPositions="true" termVectors="true" type="assetTagNameField" />
+		<field indexed="true" multiValued="true" name="assetTagNames" stored="true" termPositions="true" termVectors="true" type="assetTagNames_text" />
+		<field indexed="true" multiValued="true" name="assetTagNames.raw" stored="false" type="string" />
 		<field docValues="true" indexed="true" name="assetVocabularyId" stored="true" type="string" />
 		<field indexed="true" multiValued="true" name="assetVocabularyIds" stored="true" type="string" />
 		<field indexed="true" name="classTypeId" stored="true" type="string" />
