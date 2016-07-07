@@ -16,6 +16,7 @@ package com.liferay.portal.search.solr.internal.query;
 
 import com.liferay.portal.kernel.search.generic.MatchQuery;
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.solr.query.MatchQueryTranslator;
 
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
@@ -35,30 +36,7 @@ public class MatchQueryTranslatorImpl implements MatchQueryTranslator {
 
 	@Override
 	public org.apache.lucene.search.Query translate(MatchQuery matchQuery) {
-		MatchQuery.Type matchQueryType = matchQuery.getType();
-
-		String value = matchQuery.getValue();
-
-		if (value.startsWith(StringPool.QUOTE) &&
-			value.endsWith(StringPool.QUOTE)) {
-
-			matchQueryType = MatchQuery.Type.PHRASE;
-
-			value = value.substring(1, value.length() - 1);
-
-			if (value.endsWith(StringPool.STAR)) {
-				matchQueryType = MatchQuery.Type.PHRASE_PREFIX;
-
-				value = value.substring(0, value.length() - 1);
-			}
-		}
-
-		if (matchQueryType == null) {
-			matchQueryType = MatchQuery.Type.BOOLEAN;
-		}
-
-		org.apache.lucene.search.Query query = createQuery(
-			matchQueryType, matchQuery.getField(), value);
+		org.apache.lucene.search.Query query = translateMatchQuery(matchQuery);
 
 		if ((query instanceof PhraseQuery) && (matchQuery.getSlop() != null)) {
 			PhraseQuery phraseQuery = (PhraseQuery)query;
@@ -115,6 +93,35 @@ public class MatchQueryTranslatorImpl implements MatchQueryTranslator {
 		catch (ParseException pe) {
 			throw new IllegalArgumentException(pe);
 		}
+	}
+
+	protected org.apache.lucene.search.Query translateMatchQuery(
+		MatchQuery matchQuery) {
+
+		MatchQuery.Type matchQueryType = matchQuery.getType();
+
+		String value = matchQuery.getValue();
+
+		if (value.startsWith(StringPool.QUOTE) &&
+			value.endsWith(StringPool.QUOTE)) {
+
+			value = StringUtil.unquote(value);
+
+			if (value.endsWith(StringPool.STAR)) {
+				value = value.substring(0, value.length() - 1);
+
+				matchQueryType = MatchQuery.Type.PHRASE_PREFIX;
+			}
+			else {
+				matchQueryType = MatchQuery.Type.PHRASE;
+			}
+		}
+
+		if (matchQueryType == null) {
+			matchQueryType = MatchQuery.Type.BOOLEAN;
+		}
+
+		return createQuery(matchQueryType, matchQuery.getField(), value);
 	}
 
 }
