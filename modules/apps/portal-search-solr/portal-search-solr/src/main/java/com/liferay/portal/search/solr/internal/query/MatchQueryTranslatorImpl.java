@@ -15,10 +15,12 @@
 package com.liferay.portal.search.solr.internal.query;
 
 import com.liferay.portal.kernel.search.generic.MatchQuery;
+import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.solr.query.MatchQueryTranslator;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -56,7 +58,7 @@ public class MatchQueryTranslatorImpl implements MatchQueryTranslator {
 
 		PhraseQuery phraseQuery = new PhraseQuery();
 
-		phraseQuery.add(new Term(field, value));
+		phraseQuery.add(_createUnquotedTerm(field, value));
 
 		return phraseQuery;
 	}
@@ -64,7 +66,16 @@ public class MatchQueryTranslatorImpl implements MatchQueryTranslator {
 	protected org.apache.lucene.search.Query createPrefixQuery(
 		String field, String value) {
 
-		return new PrefixQuery(new Term(field, value));
+		char[] chars = new char[] {
+			CharPool.CLOSE_PARENTHESIS, CharPool.OPEN_PARENTHESIS,
+			CharPool.SPACE
+		};
+
+		if (StringUtils.containsAny(value, chars)) {
+			return createPhraseQuery(field, value + CharPool.STAR);
+		}
+
+		return new PrefixQuery(_createUnquotedTerm(field, value));
 	}
 
 	protected org.apache.lucene.search.Query createQuery(
@@ -84,6 +95,16 @@ public class MatchQueryTranslatorImpl implements MatchQueryTranslator {
 			"Invalid match query type: " + matchQueryType);
 	}
 
+	protected String getValue(MatchQuery matchQuery) {
+		String value = matchQuery.getValue();
+
+		if (value.charAt(0) == CharPool.STAR) {
+			value = value.substring(1);
+		}
+
+		return value;
+	}
+
 	protected org.apache.lucene.search.Query parse(String field, String value) {
 		QueryParser queryParser = new QueryParser(field, new KeywordAnalyzer());
 
@@ -100,7 +121,7 @@ public class MatchQueryTranslatorImpl implements MatchQueryTranslator {
 
 		MatchQuery.Type matchQueryType = matchQuery.getType();
 
-		String value = matchQuery.getValue();
+		String value = getValue(matchQuery);
 
 		if (value.startsWith(StringPool.QUOTE) &&
 			value.endsWith(StringPool.QUOTE)) {
@@ -122,6 +143,10 @@ public class MatchQueryTranslatorImpl implements MatchQueryTranslator {
 		}
 
 		return createQuery(matchQueryType, matchQuery.getField(), value);
+	}
+
+	private static Term _createUnquotedTerm(String field, String value) {
+		return new Term(field, StringUtil.unquote(value));
 	}
 
 }
