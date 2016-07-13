@@ -20,8 +20,10 @@ import org.osgi.service.component.annotations.ReferenceCardinality;
 import org.osgi.service.component.annotations.ReferencePolicy;
 import org.osgi.service.component.annotations.ReferencePolicyOption;
 
+import com.liferay.portal.kernel.search.query.QueryContributor;
 import com.liferay.portal.search.analysis.FieldQueryContributorRegistrator;
-import com.liferay.portal.search.analysis.QueryContributor;
+import com.liferay.portal.search.internal.query.AssetTagNamesQueryContributor;
+import com.liferay.portal.search.internal.query.TitleQueryContributor;
 
 /**
  * @author Rodrigo Paulino
@@ -51,7 +53,7 @@ public class FieldQueryContributorRegistratorImpl
 		policyOption = ReferencePolicyOption.GREEDY
 	)
 	protected void setFullTextSearchWithoutProximityContributor(
-		FullTextSearchWithoutProximityContributor
+		TitleQueryContributor
 		fullTextSearchWithoutProximityContributor) {
 		_fullTextSearchWithoutProximityContributor =
 			fullTextSearchWithoutProximityContributor;
@@ -63,25 +65,25 @@ public class FieldQueryContributorRegistratorImpl
 		policyOption = ReferencePolicyOption.GREEDY
 	)
 	protected void setPhrasePrefixQuerySearchContributor(
-		PhrasePrefixSearchQueryContributor phrasePrefixQuerySearchContributor) {
+		AssetTagNamesQueryContributor phrasePrefixQuerySearchContributor) {
 		_phrasePrefixSearchQueryContributor =
 			phrasePrefixQuerySearchContributor;
 	}
 
 	protected void unsetFullTextSearchWithoutProximityContributor(
-		FullTextSearchWithoutProximityContributor
+		TitleQueryContributor
 		fullTextSearchWithoutProximityContributor) {
 		_fullTextSearchWithoutProximityContributor = null;
 	}
 
 	protected void unsetPhrasePrefixQuerySearchContributor(
-		PhrasePrefixSearchQueryContributor phrasePrefixQuerySearchContributor) {
+		AssetTagNamesQueryContributor phrasePrefixQuerySearchContributor) {
 		_phrasePrefixSearchQueryContributor = null;
 	}
 
-	private FullTextSearchWithoutProximityContributor
+	private TitleQueryContributor
 		_fullTextSearchWithoutProximityContributor;
-	private PhrasePrefixSearchQueryContributor
+	private AssetTagNamesQueryContributor
 		_phrasePrefixSearchQueryContributor;
 
 }

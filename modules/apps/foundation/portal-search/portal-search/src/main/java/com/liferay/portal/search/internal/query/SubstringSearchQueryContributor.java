@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.internal.analysis;
+package com.liferay.portal.search.internal.query;
 
 import java.util.List;
 
@@ -25,8 +25,10 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
+import com.liferay.portal.kernel.search.generic.MatchQuery;
+import com.liferay.portal.kernel.search.query.QueryContributor;
+import com.liferay.portal.kernel.search.query.QueryContributorUtil;
 import com.liferay.portal.search.analysis.KeywordTokenizer;
-import com.liferay.portal.search.analysis.QueryContributor;
 
 /**
  * @author Rodrigo Paulino
@@ -38,15 +40,22 @@ import com.liferay.portal.search.analysis.QueryContributor;
 public class SubstringSearchQueryContributor implements QueryContributor{
 
 	@Override
-	public Query contribute(String field, String value) {
-		if (_keywordTokenizer != null &&
-				_keywordTokenizer.requiresTokenization(value)) {
+	public Query contribute(String field, String value, boolean splitKeywords) {
+		if (!splitKeywords && (_keywordTokenizer != null)) {
+			splitKeywords = _keywordTokenizer.requiresTokenization(value);
+		}
+
+		if (splitKeywords && (_keywordTokenizer != null)) {
 			List<String> tokens = _keywordTokenizer.tokenize(value);
+
+			if (tokens.size() == 1) {
+				return contribute(field, tokens.get(0), false);
+			}
 
 			BooleanQueryImpl booleanQuery = new BooleanQueryImpl();
 
 			for (String token : tokens) {
-				Query tokenQuery = createQuery(field, token);
+				Query tokenQuery = createTokenQuery(field, token);
 
 				booleanQuery.add(tokenQuery, BooleanClauseOccur.SHOULD);
 			}
@@ -54,12 +63,12 @@ public class SubstringSearchQueryContributor implements QueryContributor{
 			return booleanQuery;
 		}
 
-		return createQuery(field, value);
+		return createTokenQuery(field, value);
 	}
 
-	protected Query createQuery(String field, String value) {
+	protected Query createTokenQuery(String field, String value) {
 		if (QueryContributorUtil.isPhrase(value)) {
-			return QueryContributorUtil.createPhraseQuery(field, value);
+			return new MatchQuery(field, value);
 		}
 
 		return QueryContributorUtil.createSubstringQuery(field, value);

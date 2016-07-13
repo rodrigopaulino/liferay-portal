@@ -12,10 +12,8 @@
  * details.
  */
 
-package com.liferay.portal.search.internal.analysis;
+package com.liferay.portal.search.internal.query;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -31,9 +29,11 @@ import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.search.generic.MatchQuery;
+import com.liferay.portal.kernel.search.query.QueryContributor;
+import com.liferay.portal.kernel.search.query.QueryContributorUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.analysis.KeywordTokenizer;
-import com.liferay.portal.search.analysis.QueryContributor;
 
 /**
  * @author Rodrigo Paulino
@@ -41,18 +41,68 @@ import com.liferay.portal.search.analysis.QueryContributor;
 @Component(
 	immediate = true,
 	property = {"full.text.exact.match.boost=2.0"},
-	service = FullTextSearchWithoutProximityContributor.class
+	service = TitleQueryContributor.class
 )
-public class FullTextSearchWithoutProximityContributor
+public class TitleQueryContributor
 	implements QueryContributor{
 
 	@Override
-	public Query contribute(String field, String value) {
-		if (QueryContributorUtil.isPhrase(value)) {
-			return QueryContributorUtil.createPhraseQuery(field, value);
+	public Query contribute(String field, String value, boolean splitKeywords) {
+		BooleanQueryImpl booleanQueryImpl = new BooleanQueryImpl();
+
+		List<String> tokens = null;
+
+		if (_keywordTokenizer != null) {
+			tokens = _keywordTokenizer.tokenize(value);
+
+			List<String> phrases = QueryContributorUtil.getEmbeddedPhrases(
+					tokens);
+
+			if (phrases.isEmpty()) {
+				createTokenQuery(field, value, booleanQueryImpl);
+			}
+			else {
+				createPhraseQuery(field, booleanQueryImpl, tokens, phrases);
+			}
 		}
 
-		return createQueryForFullTextScoring(field, value);
+
+		return booleanQueryImpl;
+	}
+
+	protected void createPhraseQuery(String field,
+			BooleanQueryImpl booleanQueryImpl, List<String> tokens,
+			List<String> phrases) {
+		String value;
+		for (String phrase : phrases) {
+			booleanQueryImpl.add(
+				new MatchQuery(field, phrase), BooleanClauseOccur.MUST);
+		}
+
+		tokens.removeAll(phrases);
+
+		if (!tokens.isEmpty()) {
+			value = StringUtil.merge(tokens, " ");
+
+			booleanQueryImpl.add(
+				new MatchQuery(field, value),
+				BooleanClauseOccur.SHOULD);
+		}
+	}
+
+	protected void createTokenQuery(String field, String value,
+			BooleanQueryImpl booleanQueryImpl) {
+		booleanQueryImpl.add(
+			new MatchQuery(field, value), BooleanClauseOccur.SHOULD);
+
+		booleanQueryImpl.add(
+			QueryContributorUtil.createPhraseExactMatchQuery(
+			field, value, _fullTextExactMatchBoost),
+			BooleanClauseOccur.SHOULD);
+
+		booleanQueryImpl.add(
+			QueryContributorUtil.createPrefixQuery(field, value),
+			BooleanClauseOccur.SHOULD);
 	}
 
 	@Activate
@@ -61,50 +111,6 @@ public class FullTextSearchWithoutProximityContributor
 		_fullTextExactMatchBoost = GetterUtil.getFloat(
 			properties.get("full.text.exact.match.boost"),
 			_fullTextExactMatchBoost);
-	}
-
-	protected Query createQueryForFullTextScoring(String field, String value) {
-		BooleanQueryImpl booleanQueryImpl = new BooleanQueryImpl();
-
-		booleanQueryImpl.add(
-			new MatchQuery(field, value), BooleanClauseOccur.MUST);
-
-		booleanQueryImpl.add(
-			QueryContributorUtil.createPhraseExactMatchQuery(
-			field, value, _fullTextExactMatchBoost), BooleanClauseOccur.SHOULD);
-
-		booleanQueryImpl.add(
-			QueryContributorUtil.createPrefixQuery(field, value),
-			BooleanClauseOccur.SHOULD);
-
-		List<String> phrases = getEmbeddedPhrases(value);
-
-		for (String phrase : phrases) {
-			Query query = QueryContributorUtil.createPhraseQuery(
-				field, phrase);
-
-			booleanQueryImpl.add(query, BooleanClauseOccur.MUST);
-		}
-
-		return booleanQueryImpl;
-	}
-
-	protected List<String> getEmbeddedPhrases(String value) {
-		if (_keywordTokenizer == null) {
-			return Collections.emptyList();
-		}
-
-		List<String> tokens = _keywordTokenizer.tokenize(value);
-
-		List<String> phrases = new ArrayList<>(tokens.size());
-
-		for (String token : tokens) {
-			if (QueryContributorUtil.isPhrase(token)) {
-				phrases.add(token);
-			}
-		}
-
-		return phrases;
 	}
 
 	@Reference(

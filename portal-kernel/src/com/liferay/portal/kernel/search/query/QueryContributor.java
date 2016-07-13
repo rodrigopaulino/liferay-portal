@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.analysis;
+package com.liferay.portal.kernel.search.query;
 
 import com.liferay.portal.kernel.search.Query;
 
@@ -21,6 +21,6 @@ import com.liferay.portal.kernel.search.Query;
  */
 public interface QueryContributor {
 
-	public Query contribute(String field, String keywords);
+	public Query contribute(String field, String value, boolean splitKeywords);
 
 }
