@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.internal.analysis;
+package com.liferay.portal.search.internal.query;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -20,19 +20,20 @@ import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.search.generic.MatchQuery;
-import com.liferay.portal.search.analysis.QueryContributor;
+import com.liferay.portal.kernel.search.query.QueryContributor;
+import com.liferay.portal.kernel.search.query.QueryContributorUtil;
 
 /**
  * @author André de Oliveira
  */
 @Component(
 	immediate = true,
-	service = PhrasePrefixSearchQueryContributor.class
+	service = AssetTagNamesQueryContributor.class
 )
-public class PhrasePrefixSearchQueryContributor implements QueryContributor{
+public class AssetTagNamesQueryContributor implements QueryContributor{
 
 	@Override
-	public Query contribute(String field, String value) {
+	public Query contribute(String field, String value, boolean splitKeywords) {
 		BooleanQueryImpl booleanQueryImpl = new BooleanQueryImpl();
 
 		booleanQueryImpl.add(

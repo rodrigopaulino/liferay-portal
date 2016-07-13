@@ -12,7 +12,10 @@
  * details.
  */
 
-package com.liferay.portal.search.internal.analysis;
+package com.liferay.portal.kernel.search.query;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.generic.MatchQuery;
@@ -29,42 +32,27 @@ public class QueryContributorUtil {
 
 	public static Query createFullTextProximityQuery(
 		String field, String value, Integer slop) {
-	
+
 		MatchQuery matchQuery = new MatchQuery(field, value);
-	
+
 		matchQuery.setType(MatchQuery.Type.PHRASE);
-	
+
 		if (slop != null) {
 			matchQuery.setSlop(slop);
 		}
-	
+
 		return matchQuery;
 	}
 
 	public static Query createPhraseExactMatchQuery(
 		String field, String value, Float boost) {
-	
+
 		MatchQuery matchQuery = new MatchQuery(field, value);
-	
+
 		matchQuery.setType(MatchQuery.Type.PHRASE);
-	
+
 		if (boost != null) {
 			matchQuery.setBoost(boost);
-		}
-	
-		return matchQuery;
-	}
-
-	public static Query createPhraseQuery(String field, String value) {
-		value = value.substring(1, value.length() - 1);
-
-		MatchQuery matchQuery = new MatchQuery(field, value);
-
-		if (value.endsWith(StringPool.STAR)) {
-			matchQuery.setType(MatchQuery.Type.PHRASE_PREFIX);
-		}
-		else {
-			matchQuery.setType(MatchQuery.Type.PHRASE);
 		}
 
 		return matchQuery;
@@ -91,6 +79,18 @@ public class QueryContributorUtil {
 		}
 
 		return new WildcardQueryImpl(new QueryTermImpl(field, value));
+	}
+
+	public static List<String> getEmbeddedPhrases(List<String> tokens) {
+		List<String> phrases = new ArrayList<>(tokens.size());
+
+		for (String token : tokens) {
+			if (isPhrase(token)) {
+				phrases.add(token);
+			}
+		}
+
+		return phrases;
 	}
 
 	public static boolean isPhrase(String value) {
