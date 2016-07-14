@@ -14,8 +14,6 @@
 
 package com.liferay.portal.search.analysis;
 
-import com.liferay.portal.kernel.search.query.QueryContributor;
-
 /**
  * @author Rodrigo Paulino
  */

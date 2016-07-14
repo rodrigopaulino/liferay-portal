@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.kernel.search.query;
+package com.liferay.portal.search.analysis;
 
 import java.util.ArrayList;
 import java.util.List;

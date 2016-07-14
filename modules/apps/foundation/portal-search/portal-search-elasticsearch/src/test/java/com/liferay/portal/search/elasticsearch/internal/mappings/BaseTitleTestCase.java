@@ -12,13 +12,13 @@
  * details.
  */
 
-package com.liferay.portal.search.internal.analysis;
+package com.liferay.portal.search.elasticsearch.internal.mappings;
 
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.Assert;
-import org.junit.Assume;
+import org.junit.Test;
 
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
@@ -27,110 +27,33 @@ import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.test.IdempotentRetryAssert;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
-import com.liferay.portal.search.internal.query.TitleQueryContributor;
+import com.liferay.portal.search.elasticsearch.internal.ElasticsearchIndexingFixture;
+import com.liferay.portal.search.elasticsearch.internal.connection.LiferayIndexCreationHelperFactory;
+import com.liferay.portal.search.internal.analysis.TitleQueryContributor;
 import com.liferay.portal.search.unit.test.BaseIndexingTestCase;
+import com.liferay.portal.search.unit.test.IndexingFixture;
 
 /**
  * @author Rodrigo Paulino
  */
-public abstract class BaseTitleTestCase extends BaseIndexingTestCase {
+public class BaseTitleTestCase extends BaseIndexingTestCase {
 
-	protected void addDocument(final String title) throws Exception {
-		addDocument(
-			new DocumentCreationHelper() {
-
-				@Override
-				public void populate(Document document) {
-					document.addText(Field.TITLE, title);
-				}
-
-			});
-	}
-
-	protected void assertSearch(final String keywords, final int count)
-		throws Exception {
-
-		final SearchContext searchContext = createSearchContext();
-
-		final Query query = createQuery(keywords);
-
-		IdempotentRetryAssert.retryAssert(
-			3, TimeUnit.SECONDS,
-			new Callable<Void>() {
-
-				@Override
-				public Void call() throws Exception {
-					assertSearch(keywords, count, searchContext, query);
-
-					return null;
-				}
-
-			});
-	}
-
-	protected void assertSearch(
-			String keywords, int count, SearchContext searchContext,
-			Query query)
-		throws Exception {
-
-		Hits hits = search(searchContext, query);
-
-		Assert.assertEquals(keywords, count, hits.getLength());
-	}
-
-	protected Query createQuery(String keywords) {
-		TitleQueryContributor titleQueryContributor =
-			new TitleQueryContributor();
-
-		return titleQueryContributor.contribute(keywords, Field.TITLE, false);
-	}
-
-	protected boolean isPhrasePrefixesWithMultipleTermsSupported() {
-		return true;
-	}
-
-	protected void testBasicWordMatches() throws Exception {
-		addDocument("Nametag");
+	@Test
+	public void testBasicWordMatches() throws Exception {
+		addDocument("name tag end");
 		addDocument("NA-META-G");
 		addDocument("Tag Name");
 		addDocument("TAG1");
-		addDocument(RandomTestUtil.randomString());
 
-		assertSearch("g", 1);
-		assertSearch("meta", 1);
-		assertSearch("\"meta\"", 1);
+		assertSearch("end", 1);
 		assertSearch("name", 2);
-		assertSearch("NaMe*", 2);
-		assertSearch("nameTAG", 1);
-		assertSearch("tag1", 1);
-		assertSearch("\"tag1\"", 1);
-
-		assertSearch("ame", 0);
-		assertSearch("METAG", 0);
-		assertSearch("METAG*", 0);
-
-		assertSearch("*METAG", 0);
-		assertSearch("tag2", 0);
-		assertSearch("1", 0);
-
-		assertSearch("META G", 1);
-		assertSearch("META-G", 1);
-		assertSearch("name tag", 1);
-		assertSearch("name-tag", 1);
-		assertSearch("NA-META-G", 1);
-		assertSearch("nA mEtA g", 1);
-		assertSearch("\"na, meta, g\"", 1);
-		assertSearch("tag name", 1);
-		assertSearch("\"Tag (Name)\"", 1);
-		assertSearch("tag 1", 1);
-		assertSearch("tag(142857)", 1);
-
-		assertSearch("\"NA G\"", 0);
-		assertSearch("\"Name Tag\"", 0);
-		assertSearch("\"tag 1\"", 0);
+		assertSearch("tag", 3);
+		assertSearch("na-meta-g", 1);
+		assertSearch("\"NAME\"", 2);
 	}
 
-	protected void testNumbers() throws Exception {
+	@Test
+	public void testNumbers() throws Exception {
 		addDocument("Nametag5");
 		addDocument("2Tagname");
 		addDocument("LETTERS ONLY");
@@ -153,9 +76,8 @@ public abstract class BaseTitleTestCase extends BaseIndexingTestCase {
 		assertSearch("Tagname9", 0);
 	}
 
-	protected void testPhrasePrefixesWithMultipleTerms() throws Exception {
-		Assume.assumeTrue(isPhrasePrefixesWithMultipleTermsSupported());
-
+	@Test
+	public void testPhrasePrefixesWithMultipleTerms() throws Exception {
 		addDocument("Name Tags");
 		addDocument("Names Tab");
 		addDocument("Tag Names");
@@ -203,10 +125,23 @@ public abstract class BaseTitleTestCase extends BaseIndexingTestCase {
 		assertSearch("\"zz tags*\"", 0);
 	}
 
-	protected void testPhrases() throws Exception {
+	@Test
+	public void testPhrases() throws Exception {
 		addDocument("Names of Tags");
 		addDocument("More names of tags here");
-		addDocument(RandomTestUtil.randomString());
+
+		assertSearch("\"Tags here\"", 1);
+		assertSearch("\"Tags\" here", 2);
+		assertSearch("\"NAmes\" \"TAGS\"", 2);
+		assertSearch("\"names\" of \"tAgs\"", 2);
+		assertSearch("\"names\" MORE \"tags\"", 2);
+		assertSearch("\"name\" of \"tags\"", 0);
+		assertSearch("\"more\" other \"here\"", 1);
+		assertSearch("\"   more   \"     other    \"   here   \"", 0);
+		assertSearch("\"more\"     other    \"here\"", 1);
+
+		addDocument("Names of Tags");
+		addDocument("More names of tags here");
 
 		assertSearch("\"names of tags\"", 2);
 		assertSearch("\"TAGS\"", 2);
@@ -216,7 +151,8 @@ public abstract class BaseTitleTestCase extends BaseIndexingTestCase {
 		assertSearch("\"HERE\"", 1);
 	}
 
-	protected void testPrefixes() throws Exception {
+	@Test
+	public void testPrefixes() throws Exception {
 		addDocument("Nametag");
 		addDocument("NA-META-G");
 		addDocument("Tag Name");
@@ -244,7 +180,8 @@ public abstract class BaseTitleTestCase extends BaseIndexingTestCase {
 		assertSearch("tag", 2);
 	}
 
-	protected void testPrefixesWithMultipleTerms() throws Exception {
+	@Test
+	public void testPrefixesWithMultipleTerms() throws Exception {
 		addDocument("Name Tags");
 		addDocument("Names Tab");
 		addDocument("Tag Names");
@@ -288,7 +225,8 @@ public abstract class BaseTitleTestCase extends BaseIndexingTestCase {
 		assertSearch("zz tags", 2);
 	}
 
-	protected void testStopwords() throws Exception {
+	@Test
+	public void testStopwords() throws Exception {
 		addDocument("Names of Tags");
 		addDocument("More names of tags");
 		addDocument(RandomTestUtil.randomString());
@@ -296,6 +234,64 @@ public abstract class BaseTitleTestCase extends BaseIndexingTestCase {
 		assertSearch("of", 2);
 		assertSearch("Names of tags", 2);
 		assertSearch("tags names", 2);
+	}
+
+	protected Query createQuery(String keywords) {
+		TitleQueryContributor titleQueryContributor =
+			new TitleQueryContributor();
+
+		return titleQueryContributor.contribute(Field.TITLE, keywords, false);
+	}
+
+	@Override
+	protected IndexingFixture createIndexingFixture() throws Exception {
+		return new ElasticsearchIndexingFixture(
+			AssetTagNamesTest.class.getSimpleName(),
+			BaseIndexingTestCase.COMPANY_ID,
+			new LiferayIndexCreationHelperFactory());
+	}
+
+	protected void addDocument(final String title) throws Exception {
+		addDocument(
+			new DocumentCreationHelper() {
+
+				@Override
+				public void populate(Document document) {
+					document.addText(Field.TITLE, title);
+				}
+
+			});
+	}
+
+	protected void assertSearch(final String keywords, final int count)
+		throws Exception {
+
+		final SearchContext searchContext = createSearchContext();
+
+		final Query query = createQuery(keywords);
+
+		IdempotentRetryAssert.retryAssert(
+			3, TimeUnit.SECONDS,
+			new Callable<Void>() {
+
+				@Override
+				public Void call() throws Exception {
+					assertSearch(keywords, count, searchContext, query);
+
+					return null;
+				}
+
+			});
+	}
+
+	protected void assertSearch(
+			String keywords, int count, SearchContext searchContext,
+			Query query)
+		throws Exception {
+
+		Hits hits = search(searchContext, query);
+
+		Assert.assertEquals(keywords, count, hits.getLength());
 	}
 
 }
