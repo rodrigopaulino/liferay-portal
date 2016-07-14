@@ -25,10 +25,12 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.query.FieldQueryFactory;
-import com.liferay.portal.kernel.search.query.QueryContributor;
 import com.liferay.portal.kernel.search.query.QueryPreProcessConfiguration;
 import com.liferay.portal.search.analysis.FieldQueryContributorRegistrator;
+import com.liferay.portal.search.analysis.QueryContributor;
 import com.liferay.portal.search.internal.analysis.FieldQueryContributorRegistratorImpl;
+import com.liferay.portal.search.internal.analysis.FullTextSearchQueryContributor;
+import com.liferay.portal.search.internal.analysis.SubstringSearchQueryContributor;
 
 /**
  * @author Michael C. Han

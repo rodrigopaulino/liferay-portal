@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.portal.search.internal.query;
+package com.liferay.portal.search.internal.analysis;
 
 import java.util.List;
 
@@ -26,9 +26,9 @@ import com.liferay.portal.kernel.search.BooleanClauseOccur;
 import com.liferay.portal.kernel.search.Query;
 import com.liferay.portal.kernel.search.generic.BooleanQueryImpl;
 import com.liferay.portal.kernel.search.generic.MatchQuery;
-import com.liferay.portal.kernel.search.query.QueryContributor;
-import com.liferay.portal.kernel.search.query.QueryContributorUtil;
 import com.liferay.portal.search.analysis.KeywordTokenizer;
+import com.liferay.portal.search.analysis.QueryContributor;
+import com.liferay.portal.search.analysis.QueryContributorUtil;
 
 /**
  * @author Rodrigo Paulino
