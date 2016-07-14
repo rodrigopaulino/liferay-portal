@@ -53,8 +53,8 @@ public class FullTextSearchQueryContributor implements QueryContributor{
 
 		List<String> tokens = null;
 
-		if (_keywordTokenizer != null) {
-			tokens = _keywordTokenizer.tokenize(value);
+		if (keywordTokenizer != null) {
+			tokens = keywordTokenizer.tokenize(value);
 
 			List<String> phrases = QueryContributorUtil.getEmbeddedPhrases(
 					tokens);
@@ -121,16 +121,9 @@ public class FullTextSearchQueryContributor implements QueryContributor{
 		policy = ReferencePolicy.DYNAMIC,
 		policyOption = ReferencePolicyOption.GREEDY
 	)
-	protected void setKeywordTokenizer(KeywordTokenizer keywordTokenizer) {
-		_keywordTokenizer = keywordTokenizer;
-	}
-
-	protected void unsetKeywordTokenizer(KeywordTokenizer keywordTokenizer) {
-		_keywordTokenizer = null;
-	}
+	protected KeywordTokenizer keywordTokenizer;
 
 	private volatile float _fullTextExactMatchBoost = 2.0f;
 	private volatile int _fullTextProximitySlop = 50;
-	private KeywordTokenizer _keywordTokenizer;
 
 }

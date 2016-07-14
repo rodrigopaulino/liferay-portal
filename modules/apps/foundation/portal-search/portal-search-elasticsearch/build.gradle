@@ -42,4 +42,6 @@ dependencies {
 	provided group: "org.yaml", name: "snakeyaml", version: "1.15"
 
 	testCompile group: "com.liferay.portal", name: "com.liferay.portal.test", version: "default"
+	testCompile project(":apps:foundation:portal-search:portal-search-test-unit-util")
+	testCompile project(":apps:foundation:portal-search:portal-search")
 }
