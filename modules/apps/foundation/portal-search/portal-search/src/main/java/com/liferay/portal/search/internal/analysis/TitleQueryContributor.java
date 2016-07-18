@@ -115,20 +115,12 @@ public class TitleQueryContributor
 			_fullTextExactMatchBoost);
 	}
 
+	private volatile float _fullTextExactMatchBoost = 2.0f;
 	@Reference(
 		cardinality = ReferenceCardinality.OPTIONAL,
 		policy = ReferencePolicy.DYNAMIC,
 		policyOption = ReferencePolicyOption.GREEDY
 	)
-	protected void setKeywordTokenizer(KeywordTokenizer keywordTokenizer) {
-		_keywordTokenizer = keywordTokenizer;
-	}
-
-	protected void unsetKeywordTokenizer(KeywordTokenizer keywordTokenizer) {
-		_keywordTokenizer = null;
-	}
-
-	private volatile float _fullTextExactMatchBoost = 2.0f;
 	private KeywordTokenizer _keywordTokenizer;
 
 }

@@ -79,14 +79,6 @@ public class SubstringSearchQueryContributor implements QueryContributor{
 		policy = ReferencePolicy.DYNAMIC,
 		policyOption = ReferencePolicyOption.GREEDY
 	)
-	protected void setKeywordTokenizer(KeywordTokenizer keywordTokenizer) {
-		_keywordTokenizer = keywordTokenizer;
-	}
-
-	protected void unsetKeywordTokenizer(KeywordTokenizer keywordTokenizer) {
-		_keywordTokenizer = null;
-	}
-
 	private KeywordTokenizer _keywordTokenizer;
 
 }

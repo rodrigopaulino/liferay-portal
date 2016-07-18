@@ -50,36 +50,13 @@ public class FieldQueryContributorRegistratorImpl
 		policy = ReferencePolicy.DYNAMIC,
 		policyOption = ReferencePolicyOption.GREEDY
 	)
-	protected void setFullTextSearchWithoutProximityContributor(
-		TitleQueryContributor titleQueryContributor) {
-
-		_titleQueryContributor = titleQueryContributor;
-	}
+	private TitleQueryContributor _titleQueryContributor;
 
 	@Reference(
 		cardinality = ReferenceCardinality.OPTIONAL,
 		policy = ReferencePolicy.DYNAMIC,
 		policyOption = ReferencePolicyOption.GREEDY
 	)
-	protected void setPhrasePrefixQuerySearchContributor(
-		AssetTagNamesQueryContributor assetTagNamesQueryContributor) {
-
-		_assetTagNamesQueryContributor = assetTagNamesQueryContributor;
-	}
-
-	protected void unsetFullTextSearchWithoutProximityContributor(
-		TitleQueryContributor titleQueryContributor) {
-
-		_titleQueryContributor = null;
-	}
-
-	protected void unsetPhrasePrefixQuerySearchContributor(
-		AssetTagNamesQueryContributor assetTagNamesQueryContributor) {
-
-		_assetTagNamesQueryContributor = null;
-	}
-
-	private TitleQueryContributor _titleQueryContributor;
 	private AssetTagNamesQueryContributor _assetTagNamesQueryContributor;
 
 }

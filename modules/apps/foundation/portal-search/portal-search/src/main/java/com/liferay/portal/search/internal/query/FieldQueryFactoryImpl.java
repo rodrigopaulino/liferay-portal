@@ -98,59 +98,23 @@ public class FieldQueryFactoryImpl implements FieldQueryFactory {
 				fieldQueryContributorRegistrator);
 	}
 
-	@Reference(
-		cardinality = ReferenceCardinality.OPTIONAL,
-		policy = ReferencePolicy.DYNAMIC,
-		policyOption = ReferencePolicyOption.GREEDY
-	)
-	protected void setFieldQueryContributorRegistratorImpl(
-		FieldQueryContributorRegistratorImpl
-		fieldQueryContributorRegistratorImpl) {
-		_fieldQueryContributorRegistratorImpl =
-			fieldQueryContributorRegistratorImpl;
-	}
-
-	@Reference(
-		cardinality = ReferenceCardinality.OPTIONAL,
-		policy = ReferencePolicy.DYNAMIC,
-		policyOption = ReferencePolicyOption.GREEDY
-	)
-	protected void setFullTextSearchQueryContributor(
-			FullTextSearchQueryContributor fullTextSearchQueryContributor) {
-		_fullTextSearchQueryContributor = fullTextSearchQueryContributor;
-	}
-
-	@Reference(
-		cardinality = ReferenceCardinality.OPTIONAL,
-		policy = ReferencePolicy.DYNAMIC,
-		policyOption = ReferencePolicyOption.GREEDY
-	)
-	protected void setSubstringSearchQueryContributor(
-		SubstringSearchQueryContributor substringSearchQueryContributor) {
-		_substringSearchQueryContributor = substringSearchQueryContributor;
-	}
-
-	protected void unsetFieldQueryContributorRegistratorImpl(
-		FieldQueryContributorRegistratorImpl
-		fieldQueryContributorRegistratorImpl) {
-		_fieldQueryContributorRegistratorImpl = null;
-	}
-
-	protected void unsetFullTextSearchQueryContributor(
-			FullTextSearchQueryContributor fullTextSearchQueryContributor) {
-		_fullTextSearchQueryContributor = null;
-	}
-
-	protected void unsetSubstringSearchQueryContributor(
-		SubstringSearchQueryContributor substringSearchQueryContributor) {
-		_substringSearchQueryContributor = null;
-	}
-
 	private HashSet<FieldQueryContributorRegistrator>
 		_fieldQueryContributorRegistratorSet =
 		new HashSet<FieldQueryContributorRegistrator>();
+
+	@Reference(
+		cardinality = ReferenceCardinality.OPTIONAL,
+		policy = ReferencePolicy.DYNAMIC,
+		policyOption = ReferencePolicyOption.GREEDY
+	)
 	private FieldQueryContributorRegistratorImpl
 		_fieldQueryContributorRegistratorImpl;
+
+	@Reference(
+		cardinality = ReferenceCardinality.OPTIONAL,
+		policy = ReferencePolicy.DYNAMIC,
+		policyOption = ReferencePolicyOption.GREEDY
+	)
 	private FullTextSearchQueryContributor _fullTextSearchQueryContributor;
 
 	@Reference(
@@ -159,6 +123,12 @@ public class FieldQueryFactoryImpl implements FieldQueryFactory {
 		policyOption = ReferencePolicyOption.GREEDY
 	)
 	private volatile QueryPreProcessConfiguration _queryPreProcessConfiguration;
+
+	@Reference(
+		cardinality = ReferenceCardinality.OPTIONAL,
+		policy = ReferencePolicy.DYNAMIC,
+		policyOption = ReferencePolicyOption.GREEDY
+	)
 	private SubstringSearchQueryContributor _substringSearchQueryContributor;
 
 }
