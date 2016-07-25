@@ -25,8 +25,8 @@
 <portlet:defineObjects />
 
 <%
-String destinationPref = "destination";
-String destination = portletPreferences.getValue(destinationPref, StringPool.BLANK);
+String titlePref = "title";
+String title = portletPreferences.getValue(titlePref, StringPool.BLANK);
 %>
 
 <liferay-portlet:actionURL portletConfiguration="<%= true %>" var="configurationActionURL" />
@@ -35,7 +35,7 @@ String destination = portletPreferences.getValue(destinationPref, StringPool.BLA
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
 
 	<aui:fieldset id="controls" label="search-bar-classic-properties">
-		<aui:input label="destination-page" name="preferences--destination--" value="<%= destination %>" />
+		<aui:input label="title-page" name="preferences--title--" value="<%= title %>" />
 
 		<aui:button-row>
 			<aui:button type="submit" />

@@ -14,28 +14,25 @@
  */
 --%>
 
+
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
+
+<%@page import="com.liferay.portal.kernel.search.Field"%>
+<%@page import="com.liferay.portal.kernel.search.Document"%>
+<%@ page import="com.liferay.portal.search.web.search.results.list.portlet.SearchResultsListDisplayContext" %>
 
 <portlet:defineObjects />
 
 <%
-com.liferay.portal.search.web.search.results.list.portlet.SearchResultsListDisplayContext dc =
-	new com.liferay.portal.search.web.search.results.list.portlet.SearchResultsListDisplayContext(request);
+SearchResultsListDisplayContext dc = new SearchResultsListDisplayContext(request);
+
+for (Document document : dc.getDocumentList()) {
 %>
-
-<%-- --%>
-
-<p>
-User
-</p>
-
-<p>
-Wiki Page
-</p>
-
-<p>
-Blog Entry
-</p>
+  <option><%= document.get(Field.TITLE) %></option>
+<%
+}
+%>
 
 <p style="font-size:0.5em">
 Search Results List (q=<%= dc.getQ() %>)

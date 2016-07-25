@@ -11,28 +11,39 @@
  * FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
  * details.
  */
-
 package com.liferay.portal.search.web.search.results.list.portlet;
 
-import com.liferay.portal.search.web.search.params.SearchParameters;
-import com.liferay.portal.search.web.search.params.SearchParametersImpl;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.liferay.portal.kernel.search.Document;
+import com.liferay.portal.search.web.search.params.SearchParameters;
+import com.liferay.portal.search.web.search.params.SearchParametersImpl;
+import com.liferay.portal.search.web.search.results.map.portlet.SearchResultsMapGeolocationUtil;
+
 /**
- * @author André de Oliveira
+ * @author Eudaldo Alonso
  */
 public class SearchResultsListDisplayContext {
 
-	public SearchResultsListDisplayContext(HttpServletRequest request) {
+	public SearchResultsListDisplayContext(HttpServletRequest request)
+		throws Exception {
+
 		_parameters = new SearchParametersImpl(
-			request, new SearchResultsListConfigurationImpl());
+				request, new SearchResultsListConfigurationImpl());
+		_documentList = SearchResultsMapGeolocationUtil.getDocumentList();
+	}
+
+	public List<Document> getDocumentList() {
+		return _documentList;
 	}
 
 	public String getQ() {
 		return _parameters.getQParameter();
 	}
 
-	private final SearchParameters _parameters;
+	private SearchParameters _parameters;
+	private List<Document> _documentList;
 
 }
