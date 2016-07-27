@@ -14,10 +14,13 @@
 
 package com.liferay.portal.search.web.search.results.map.portlet;
 
-import com.liferay.portal.search.web.search.params.SearchParameters;
-import com.liferay.portal.search.web.search.params.SearchParametersImpl;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
+
+import com.liferay.portal.kernel.search.Document;
+import com.liferay.portal.search.web.search.params.SearchParameters;
+import com.liferay.portal.search.web.search.params.SearchParametersImpl;
 
 /**
  * @author André de Oliveira
@@ -27,6 +30,11 @@ public class SearchResultsMapDisplayContext {
 	public SearchResultsMapDisplayContext(HttpServletRequest request) {
 		_parameters = new SearchParametersImpl(
 			request, new SearchResultsMapConfigurationImpl());
+		_documentList = SearchResultsMapGeolocationUtil.getDocumentList();
+	}
+
+	public List<Document> getDocumentList() {
+		return _documentList;
 	}
 
 	public String getQ() {
@@ -34,5 +42,6 @@ public class SearchResultsMapDisplayContext {
 	}
 
 	private final SearchParameters _parameters;
+	private List<Document> _documentList;
 
 }

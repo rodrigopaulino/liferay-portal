@@ -60,8 +60,7 @@ public class SearchResultsMapGeolocationUtil {
 		return locations.toString();
 	}
 
-	public static String getSampleLocationsAsJSON(HttpServletRequest request) {
-		List<Document> documents = getDocumentList();
+	public static String getSampleLocationsAsJSON(List<Document> documents) {
 		JSONArray locations = JSONFactoryUtil.createJSONArray();
 
 		for (Document document : documents) {

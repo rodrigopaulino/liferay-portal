@@ -14,6 +14,17 @@
 
 package com.liferay.portal.search.web.util;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.portlet.PortletMode;
+import javax.portlet.PortletURL;
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
+import javax.portlet.WindowState;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
+
 import com.liferay.asset.kernel.AssetRendererFactoryRegistryUtil;
 import com.liferay.asset.kernel.model.AssetEntry;
 import com.liferay.asset.kernel.model.AssetRenderer;
@@ -34,6 +45,7 @@ import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.PredicateFilter;
 import com.liferay.portal.kernel.util.Tuple;
 import com.liferay.portal.kernel.util.Validator;
@@ -41,16 +53,8 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.xml.Document;
 import com.liferay.portal.kernel.xml.Element;
 import com.liferay.portal.kernel.xml.SAXReaderUtil;
+import com.liferay.portlet.RenderRequestImpl;
 import com.liferay.portlet.asset.util.AssetUtil;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.portlet.PortletMode;
-import javax.portlet.PortletURL;
-import javax.portlet.RenderRequest;
-import javax.portlet.RenderResponse;
-import javax.portlet.WindowState;
 
 /**
  * @author Eudaldo Alonso
@@ -219,6 +223,27 @@ public class SearchUtil {
 
 			return "";
 		}
+	}
+
+	public static HttpServletRequest getOriginalServletRequest(
+		RenderRequest renderRequest) {
+
+		RenderRequestImpl renderRequestImpl =
+			((RenderRequestImpl) renderRequest);
+
+		HttpServletRequest httpServletRequest =
+			renderRequestImpl.getHttpServletRequest();
+
+		httpServletRequest =
+			PortalUtil.getOriginalServletRequest(httpServletRequest);
+
+		HttpServletRequestWrapper httpServletRequestWrapper =
+			(HttpServletRequestWrapper) httpServletRequest;
+
+		httpServletRequest =
+			(HttpServletRequest) httpServletRequestWrapper.getRequest();
+
+		return httpServletRequest;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(SearchUtil.class);

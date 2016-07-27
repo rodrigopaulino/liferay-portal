@@ -14,16 +14,19 @@
 
 package com.liferay.portal.search.web.search.results.list.portlet;
 
-import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-
 import java.io.IOException;
 
 import javax.portlet.Portlet;
 import javax.portlet.PortletException;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
+import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Component;
+
+import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
+import com.liferay.portal.search.web.search.results.map.portlet.SearchResultsMapGeolocationUtil;
+import com.liferay.portal.search.web.util.SearchUtil;
 
 /**
  * @author André de Oliveira
@@ -64,6 +67,14 @@ public class SearchResultsListPortlet extends MVCPortlet {
 	public void render(
 			RenderRequest renderRequest, RenderResponse renderResponse)
 		throws IOException, PortletException {
+
+		HttpServletRequest request =
+			SearchUtil.getOriginalServletRequest(renderRequest);
+
+		if (request.getAttribute("DOCUMENT_LIST") == null) {
+			request.setAttribute("DOCUMENT_LIST",
+				SearchResultsMapGeolocationUtil.getDocumentList());
+		}
 
 		super.render(renderRequest, renderResponse);
 	}

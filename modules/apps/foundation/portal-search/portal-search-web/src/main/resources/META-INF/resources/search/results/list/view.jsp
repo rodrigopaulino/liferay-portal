@@ -18,6 +18,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
+<%@page import="java.util.List"%>
 <%@page import="com.liferay.portal.kernel.search.Field"%>
 <%@page import="com.liferay.portal.kernel.search.Document"%>
 <%@ page import="com.liferay.portal.search.web.search.results.list.portlet.SearchResultsListDisplayContext" %>
@@ -27,7 +28,9 @@
 <%
 SearchResultsListDisplayContext dc = new SearchResultsListDisplayContext(request);
 
-for (Document document : dc.getDocumentList()) {
+List<Document> documentList = (List) request.getAttribute("DOCUMENT_LIST");
+
+for (Document document : documentList) {
 %>
   <option><%= document.get(Field.TITLE) %></option>
 <%

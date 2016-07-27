@@ -14,6 +14,8 @@
  */
 --%>
 
+<%@page import="com.liferay.portal.kernel.search.Document"%>
+<%@page import="java.util.List"%>
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
 <portlet:defineObjects />
@@ -34,7 +36,9 @@ com.liferay.portal.search.web.search.results.map.portlet.SearchResultsMapDisplay
 	type="text/javascript"> </script>
 
 <%
-String locations = com.liferay.portal.search.web.search.results.map.portlet.SearchResultsMapGeolocationUtil.getSampleLocationsAsJSON(request);
+List<Document> documentList = (List) request.getAttribute("DOCUMENT_LIST");
+
+String locations = com.liferay.portal.search.web.search.results.map.portlet.SearchResultsMapGeolocationUtil.getSampleLocationsAsJSON(documentList);
 %>
 
 <script>
