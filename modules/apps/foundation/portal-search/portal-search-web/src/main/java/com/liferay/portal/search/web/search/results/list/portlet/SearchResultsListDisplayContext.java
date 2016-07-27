@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.search.web.search.params.SearchParameters;
 import com.liferay.portal.search.web.search.params.SearchParametersImpl;
-import com.liferay.portal.search.web.search.results.map.portlet.SearchResultsMapGeolocationUtil;
+import com.liferay.portal.search.web.util.SearchUtil;
 
 /**
  * @author Eudaldo Alonso
@@ -32,7 +32,7 @@ public class SearchResultsListDisplayContext {
 
 		_parameters = new SearchParametersImpl(
 				request, new SearchResultsListConfigurationImpl());
-		_documentList = SearchResultsMapGeolocationUtil.getDocumentList();
+		_documentList = SearchUtil.getDocumentList();
 	}
 
 	public List<Document> getDocumentList() {

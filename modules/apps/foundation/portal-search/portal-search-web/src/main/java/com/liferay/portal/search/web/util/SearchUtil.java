@@ -36,6 +36,8 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
+import com.liferay.portal.kernel.search.DocumentImpl;
+import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.OpenSearch;
 import com.liferay.portal.kernel.search.OpenSearchRegistryUtil;
 import com.liferay.portal.kernel.search.OpenSearchUtil;
@@ -244,6 +246,78 @@ public class SearchUtil {
 			(HttpServletRequest) httpServletRequestWrapper.getRequest();
 
 		return httpServletRequest;
+	}
+
+	public static List<com.liferay.portal.kernel.search.Document>
+		getDocumentList() {
+
+		List<com.liferay.portal.kernel.search.Document> list =
+			new ArrayList<>();
+
+		Field title = new Field(Field.TITLE);
+		Field content = new Field(Field.CONTENT);
+
+		title.setValue("Pothole Repair (Internal)");
+		content.setValue(
+			"Pothole Repair (Internal) " +
+			"{ latitude: 42.2844, longitude: -71.0663 }" +
+			" 65 Bailey St Dorchester MA 02124 | " +
+			"Case Closed Internal Case Performed by Highway Maintenance crew.");
+
+		com.liferay.portal.kernel.search.Document document = new DocumentImpl();
+
+		document.addGeoLocation(42.2844, -71.0663);
+		document.add(title);
+		document.add(content);
+
+		list.add(document);
+
+		content = new Field(Field.CONTENT);
+		content.setValue(
+			"Pothole Repair (Internal) " +
+			"{ latitude: 42.2753, longitude: -71.0631 }" +
+			" 116 Richmond St  Dorchester  MA  02124 | " +
+			"Case Closed Internal Case Performed by Highway Maintenance crew.");
+
+		document = new DocumentImpl();
+
+		document.addGeoLocation(42.2753, -71.0631);
+		document.add(title);
+		document.add(content);
+
+		list.add(document);
+
+		content = new Field(Field.CONTENT);
+		content.setValue(
+			"Pothole Repair (Internal) " +
+			"{ latitude: 42.2872, longitude: -71.0634 }" +
+			" 12 Dracut St  Dorchester  MA  02124 | " +
+			"Case Closed Internal Case Performed by Highway Maintenance crew.");
+
+		document = new DocumentImpl();
+
+		document.addGeoLocation(42.2872, -71.0634);
+		document.add(title);
+		document.add(content);
+
+		list.add(document);
+
+		content = new Field(Field.CONTENT);
+		content.setValue(
+			"Pothole Repair (Internal) " +
+			"{ latitude: 42.2869, longitude: -71.0632 }" +
+			" 13 Dracut St  Dorchester  MA  02124 | " +
+			"Case Closed Internal Case Performed by Highway Maintenance crew.");
+
+		document = new DocumentImpl();
+
+		document.addGeoLocation(42.2869, -71.0632);
+		document.add(title);
+		document.add(content);
+
+		list.add(document);
+
+		return list;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(SearchUtil.class);

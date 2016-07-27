@@ -13,15 +13,21 @@
  * details.
  */
 --%>
-
-
+<%@page import="com.liferay.portal.kernel.util.HtmlUtil"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
+<%@ taglib uri="http://liferay.com/tld/ui" prefix="liferay-ui" %>
+<%@ taglib uri="http://liferay.com/tld/frontend" prefix="liferay-frontend" %>
+<%@ taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 
 <%@page import="java.util.List"%>
 <%@page import="com.liferay.portal.kernel.search.Field"%>
 <%@page import="com.liferay.portal.kernel.search.Document"%>
 <%@ page import="com.liferay.portal.search.web.search.results.list.portlet.SearchResultsListDisplayContext" %>
+
+<liferay-frontend:defineObjects />
+
+<liferay-theme:defineObjects />
 
 <portlet:defineObjects />
 
@@ -29,13 +35,39 @@
 SearchResultsListDisplayContext dc = new SearchResultsListDisplayContext(request);
 
 List<Document> documentList = (List) request.getAttribute("DOCUMENT_LIST");
+%>
 
-for (Document document : documentList) {
-%>
-  <option><%= document.get(Field.TITLE) %></option>
+<div class="result"> 
+	<div class=" lfr-search-container-wrapper main-content-body"> 
+		<div class="yui3-widget component searchcontainer">
+			<div class="searchcontainer-content"> 
+				<ul class="display-style-descriptive tabular-list-group"> 
 <%
-}
+				for (Document document : documentList) {
 %>
+					<li class="list-group-item " data-qa-id="row"> 
+						<div class=" list-group-item-field"> 
+							<div class="user-icon-color-4 user-icon-lg user-icon user-icon-default"> 
+								<span>TT</span> 
+							</div> 
+						</div> 
+						<div class="list-group-item-content"> 
+							<h5> 
+								<a href=""> 
+									<%= document.get(Field.TITLE) %>
+								</a> 
+							</h5> 
+							<h6 class="text-default"> Journal Article </h6> 
+						</div> 
+					</li> 
+<%
+				}
+%>
+				</ul> 
+			</div>
+		</div> 
+	</div> 
+</div>	
 
 <p style="font-size:0.5em">
 Search Results List (q=<%= dc.getQ() %>)

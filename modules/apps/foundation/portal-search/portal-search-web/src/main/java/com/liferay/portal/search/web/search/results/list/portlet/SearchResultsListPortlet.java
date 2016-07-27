@@ -25,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import org.osgi.service.component.annotations.Component;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
-import com.liferay.portal.search.web.search.results.map.portlet.SearchResultsMapGeolocationUtil;
 import com.liferay.portal.search.web.util.SearchUtil;
 
 /**
@@ -72,8 +71,7 @@ public class SearchResultsListPortlet extends MVCPortlet {
 			SearchUtil.getOriginalServletRequest(renderRequest);
 
 		if (request.getAttribute("DOCUMENT_LIST") == null) {
-			request.setAttribute("DOCUMENT_LIST",
-				SearchResultsMapGeolocationUtil.getDocumentList());
+			request.setAttribute("DOCUMENT_LIST", SearchUtil.getDocumentList());
 		}
 
 		super.render(renderRequest, renderResponse);
