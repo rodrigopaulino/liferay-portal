@@ -13,14 +13,10 @@
  */
 package com.liferay.portal.search.web.search.results.list.portlet;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
-import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.search.web.search.params.SearchParameters;
 import com.liferay.portal.search.web.search.params.SearchParametersImpl;
-import com.liferay.portal.search.web.util.SearchUtil;
 
 /**
  * @author Eudaldo Alonso
@@ -32,11 +28,6 @@ public class SearchResultsListDisplayContext {
 
 		_parameters = new SearchParametersImpl(
 				request, new SearchResultsListConfigurationImpl());
-		_documentList = SearchUtil.getDocumentList();
-	}
-
-	public List<Document> getDocumentList() {
-		return _documentList;
 	}
 
 	public String getQ() {
@@ -44,6 +35,5 @@ public class SearchResultsListDisplayContext {
 	}
 
 	private SearchParameters _parameters;
-	private List<Document> _documentList;
 
 }
