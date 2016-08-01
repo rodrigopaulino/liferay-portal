@@ -25,6 +25,8 @@ public class SearchFacetPortletKeys {
 	public static final String DISPLAY_NAME = "Search Facet";
 
 	public static final String FACET_TITLE = "title";
+	
+	public static final String FACET = "facet";
 
 	public static final String PORTLET_NAME =
 		"com_liferay_portal_search_web_search_facets_portlet_" +

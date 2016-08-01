@@ -15,15 +15,16 @@
 package com.liferay.portal.search.web.search.facet.portlet;
 
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.portlet.PortletPreferences;
 import javax.servlet.http.HttpServletRequest;
 
-import com.liferay.portal.kernel.search.facet.collector.DefaultTermCollector;
-import com.liferay.portal.kernel.search.facet.collector.TermCollector;
+import com.liferay.portal.kernel.util.ListUtil;
+import com.liferay.portal.kernel.util.PredicateFilter;
+import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.search.web.facet.SearchFacet;
+import com.liferay.portal.search.web.facet.util.SearchFacetTracker;
 import com.liferay.portal.search.web.search.params.SearchParameters;
-import com.liferay.portal.search.web.search.params.SearchParametersConfiguration;
 import com.liferay.portal.search.web.search.params.SearchParametersImpl;
 
 /**
@@ -35,38 +36,64 @@ public class SearchFacetDisplayContext {
 		HttpServletRequest request, PortletPreferences portletPreferences)
 		throws Exception {
 
+		_portletPreferences = portletPreferences;
+
 		SearchFacetConfigurationImpl searchFacetConfigurationImpl =
-				new SearchFacetConfigurationImpl(portletPreferences);
+				new SearchFacetConfigurationImpl(_portletPreferences);
+
 		_parameters = new SearchParametersImpl(
 			request, searchFacetConfigurationImpl);
-		_parametersConfiguration = searchFacetConfigurationImpl;
-		populateTermCollectors();
+	}
+
+	public String getSearchConfiguration() {
+		if (_searchConfiguration != null) {
+			return _searchConfiguration;
+		}
+
+		_searchConfiguration = _portletPreferences.getValue(
+			"searchConfiguration", StringPool.BLANK);
+
+		return _searchConfiguration;
 	}
 
 	public String getQ() {
 		return _parameters.getQParameter();
 	}
 
-	public String getQParameterName() {
-		return _parametersConfiguration.getQParameterName();
+	public SearchFacet getSearchFacet() {
+		List<SearchFacet> searchFacets = ListUtil.filter(
+			SearchFacetTracker.getSearchFacets(),
+			new PredicateFilter<SearchFacet>() {
+
+				@Override
+				public boolean filter(SearchFacet searchFacet) {
+					return isDisplayFacet(searchFacet.getClassName());
+				}
+
+			});
+
+		if (searchFacets.isEmpty())
+			return null;
+
+		_searchFacet = searchFacets.get(0);
+
+		return _searchFacet;
 	}
 
-	protected void populateTermCollectors() {
-		TermCollector termCollector = new DefaultTermCollector("Boston", 4);
+	public boolean isDisplayFacet(String className) {
+		String facet =
+			_portletPreferences.getValue(SearchFacetPortletKeys.FACET, null);
 
-		_termCollectors.add(termCollector);
-	}
-
-	public List<TermCollector> getTermCollectors() {
-		return _termCollectors;
-	}
-
-	public void setTermCollectors(List<TermCollector> _termCollectors) {
-		this._termCollectors = _termCollectors;
+		if (facet == null) {
+			return false;
+		} else {
+			return facet.equals(className);
+		}
 	}
 
 	private SearchParameters _parameters;
-	private List<TermCollector> _termCollectors = new CopyOnWriteArrayList<>();
-	private final SearchParametersConfiguration _parametersConfiguration;
+	private String _searchConfiguration;
+	private final PortletPreferences _portletPreferences;
+	private SearchFacet _searchFacet;
 
 }
