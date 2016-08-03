@@ -62,7 +62,10 @@ public class RemoteElasticsearchConnectionTest {
 
 		properties.put("transportAddresses", "127.0.0.1:9999");
 
-		_remoteElasticsearchConnection.modified(properties);
+		_remoteElasticsearchConnection.loadElasticsearchConfiguration(
+			properties);
+
+		_remoteElasticsearchConnection.reconnect();
 
 		Assert.assertTrue(_remoteElasticsearchConnection.isConnected());
 
@@ -75,7 +78,10 @@ public class RemoteElasticsearchConnectionTest {
 
 		HashMap<String, Object> properties = new HashMap<>();
 
-		_remoteElasticsearchConnection.modified(properties);
+		_remoteElasticsearchConnection.loadElasticsearchConfiguration(
+			properties);
+
+		_remoteElasticsearchConnection.reconnect();
 
 		Assert.assertFalse(_remoteElasticsearchConnection.isConnected());
 	}

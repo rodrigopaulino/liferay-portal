@@ -109,6 +109,15 @@ public abstract class BaseElasticsearchConnection
 		return false;
 	}
 
+	@Override
+	public void reconnect() {
+		if (isConnected()) {
+			close();
+
+			connect();
+		}
+	}
+
 	public void setIndexFactory(IndexFactory indexFactory) {
 		_indexFactory = indexFactory;
 	}

@@ -142,25 +142,41 @@ public class ElasticsearchConnectionManager {
 		_operationMode = operationMode;
 	}
 
-	@Modified
-	protected synchronized void modified(Map<String, Object> properties) {
+	protected void loadElasticsearchConfiguration(
+		Map<String, Object> properties) {
+
 		_elasticsearchConfiguration = ConfigurableUtil.createConfigurable(
 			ElasticsearchConfiguration.class, properties);
+
+		OperationMode operationMode =
+			_elasticsearchConfiguration.operationMode();
+
+		if (_elasticsearchConnections.containsKey(operationMode)) {
+			ElasticsearchConnection elasticsearchConnection =
+				_elasticsearchConnections.get(operationMode);
+
+			elasticsearchConnection.loadElasticsearchConfiguration(properties);
+		}
+	}
+
+	@Modified
+	protected synchronized void modified(Map<String, Object> properties) {
+		loadElasticsearchConfiguration(properties);
 
 		modify(_elasticsearchConfiguration.operationMode());
 	}
 
 	protected synchronized void modify(OperationMode operationMode) {
-		if (Objects.equals(operationMode, _operationMode)) {
-			return;
-		}
-
 		validate(operationMode);
 
 		ElasticsearchConnection newElasticsearchConnection =
 			_elasticsearchConnections.get(operationMode);
 
-		newElasticsearchConnection.connect();
+		if (Objects.equals(operationMode, _operationMode)) {
+			newElasticsearchConnection.reconnect();
+
+			return;
+		}
 
 		if (_operationMode != null) {
 			ElasticsearchConnection oldElasticsearchConnection =
@@ -173,6 +189,8 @@ public class ElasticsearchConnectionManager {
 				_log.error("Unable to close " + oldElasticsearchConnection, e);
 			}
 		}
+
+		newElasticsearchConnection.connect();
 
 		_operationMode = operationMode;
 

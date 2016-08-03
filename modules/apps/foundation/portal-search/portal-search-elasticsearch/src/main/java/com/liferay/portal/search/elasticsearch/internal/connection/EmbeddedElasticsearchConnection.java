@@ -85,6 +85,12 @@ public class EmbeddedElasticsearchConnection
 	}
 
 	@Override
+	public void loadElasticsearchConfiguration(Map<String, Object> properties) {
+		elasticsearchConfiguration = ConfigurableUtil.createConfigurable(
+			ElasticsearchConfiguration.class, properties);
+	}
+
+	@Override
 	@Reference(unbind = "-")
 	public void setIndexFactory(IndexFactory indexFactory) {
 		super.setIndexFactory(indexFactory);
@@ -93,8 +99,7 @@ public class EmbeddedElasticsearchConnection
 	@Activate
 	@Modified
 	protected void activate(Map<String, Object> properties) {
-		elasticsearchConfiguration = ConfigurableUtil.createConfigurable(
-			ElasticsearchConfiguration.class, properties);
+		loadElasticsearchConfiguration(properties);
 	}
 
 	@Override

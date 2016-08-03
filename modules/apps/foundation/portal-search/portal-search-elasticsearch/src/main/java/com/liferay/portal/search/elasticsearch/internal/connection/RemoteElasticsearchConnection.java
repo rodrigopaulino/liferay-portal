@@ -67,6 +67,17 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 	}
 
 	@Override
+	public void loadElasticsearchConfiguration(Map<String, Object> properties) {
+		elasticsearchConfiguration = ConfigurableUtil.createConfigurable(
+			ElasticsearchConfiguration.class, properties);
+
+		String[] transportAddresses =
+			elasticsearchConfiguration.transportAddresses();
+
+		setTransportAddresses(SetUtil.fromArray(transportAddresses));
+	}
+
+	@Override
 	@Reference(unbind = "-")
 	public void setIndexFactory(IndexFactory indexFactory) {
 		super.setIndexFactory(indexFactory);
@@ -77,8 +88,9 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 	}
 
 	@Activate
+	@Modified
 	protected void activate(Map<String, Object> properties) {
-		replaceElasticsearchConfiguration(properties);
+		loadElasticsearchConfiguration(properties);
 	}
 
 	@Override
@@ -187,34 +199,11 @@ public class RemoteElasticsearchConnection extends BaseElasticsearchConnection {
 			"path.work", SystemProperties.get(SystemProperties.TMP_DIR));
 	}
 
-	@Modified
-	protected synchronized void modified(Map<String, Object> properties) {
-		replaceElasticsearchConfiguration(properties);
-
-		if (isConnected()) {
-			close();
-
-			connect();
-		}
-	}
-
 	@Override
 	protected void removeSettingsContributor(
 		SettingsContributor settingsContributor) {
 
 		super.removeSettingsContributor(settingsContributor);
-	}
-
-	protected void replaceElasticsearchConfiguration(
-		Map<String, Object> properties) {
-
-		elasticsearchConfiguration = ConfigurableUtil.createConfigurable(
-			ElasticsearchConfiguration.class, properties);
-
-		String[] transportAddresses =
-			elasticsearchConfiguration.transportAddresses();
-
-		setTransportAddresses(SetUtil.fromArray(transportAddresses));
 	}
 
 	@Reference

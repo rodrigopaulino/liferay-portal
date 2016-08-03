@@ -14,6 +14,8 @@
 
 package com.liferay.portal.search.elasticsearch.connection;
 
+import java.util.Map;
+
 import org.elasticsearch.action.admin.cluster.health.ClusterHealthResponse;
 import org.elasticsearch.client.Client;
 
@@ -31,5 +33,9 @@ public interface ElasticsearchConnection {
 	public ClusterHealthResponse getClusterHealthResponse(long timeout);
 
 	public OperationMode getOperationMode();
+
+	public void loadElasticsearchConfiguration(Map<String, Object> properties);
+
+	public void reconnect();
 
 }
