@@ -17,7 +17,14 @@ package com.liferay.portal.kernel.search;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.backgroundtask.BackgroundTask;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.ProxyFactory;
+import com.liferay.registry.Registry;
+import com.liferay.registry.RegistryUtil;
+import com.liferay.registry.ServiceReference;
+import com.liferay.registry.ServiceTracker;
+import com.liferay.registry.ServiceTrackerCustomizer;
 
 import java.io.Serializable;
 
@@ -239,7 +246,7 @@ public class IndexWriterHelperUtil {
 			Collection<Document> documents, boolean commitImmediately)
 		throws SearchException {
 
-		_indexWriterHelper.updateDocuments(
+		_getIndexWriterHelper().updateDocuments(
 			searchEngineId, companyId, documents, commitImmediately);
 	}
 
@@ -247,9 +254,69 @@ public class IndexWriterHelperUtil {
 		_indexWriterHelper.updatePermissionFields(name, primKey);
 	}
 
+	private static IndexWriterHelper _getIndexWriterHelper() {
+		try {
+			while (!_initialized && (_serviceTracker.getService() == null)) {
+				if (_log.isDebugEnabled()) {
+					_log.debug("Waiting for a IndexWriterHelper");
+				}
+
+				Thread.sleep(500);
+			}
+		}
+		catch (InterruptedException ie) {
+			throw new IllegalStateException(
+				"Unable to initialize IndexWriterHelper", ie);
+		}
+
+		return _indexWriterHelper;
+	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		IndexWriterHelperUtil.class);
+
 	private static volatile IndexWriterHelper _indexWriterHelper =
 		ProxyFactory.newServiceTrackedInstance(
 			IndexWriterHelper.class, IndexWriterHelperUtil.class,
 			"_indexWriterHelper");
+	private static volatile boolean _initialized;
+	private static final ServiceTracker<IndexWriterHelper,
+		IndexWriterHelper> _serviceTracker;
+
+	static {
+		Registry registry = RegistryUtil.getRegistry();
+
+		_serviceTracker = registry.trackServices(IndexWriterHelper.class,
+			new IndexWriterHelperServiceTrackerCustomizer());
+
+		_serviceTracker.open();
+	}
+
+	private static class IndexWriterHelperServiceTrackerCustomizer
+		implements ServiceTrackerCustomizer<IndexWriterHelper,
+		IndexWriterHelper> {
+
+		@Override
+		public IndexWriterHelper addingService(
+			ServiceReference<IndexWriterHelper> serviceReference) {
+
+			_initialized = true;
+
+			return null;
+		}
+
+		@Override
+		public void modifiedService(
+			ServiceReference<IndexWriterHelper> serviceReference,
+			IndexWriterHelper messageBus) {
+		}
+
+		@Override
+		public void removedService(
+			ServiceReference<IndexWriterHelper> serviceReference,
+			IndexWriterHelper service) {
+		}
+
+	}
 
 }
