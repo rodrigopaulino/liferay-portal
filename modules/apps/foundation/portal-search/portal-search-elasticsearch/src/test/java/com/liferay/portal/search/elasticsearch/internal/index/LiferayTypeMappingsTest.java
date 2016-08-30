@@ -72,8 +72,8 @@ public class LiferayTypeMappingsTest {
 		assertFieldType(fieldDDM1, "string");
 		assertFieldType(fieldDDM2, "string");
 		assertFieldType(fieldDDM3, "string");
-		assertFieldType(fieldDDM4, "string");
-		assertFieldType(fieldDDM5, "string");
+		assertFieldType(fieldDDM4, "long");
+		assertFieldType(fieldDDM5, "boolean");
 		assertFieldType(fieldDDM6, "string");
 	}
 
