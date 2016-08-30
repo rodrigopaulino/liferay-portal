@@ -36,7 +36,7 @@
 				}
 			},
 			{
-				"template_ddm_keyword": {
+				"template_ddm_keyword_string": {
 					"mapping": {
 						"index": "not_analyzed",
 						"store": "true",
@@ -44,6 +44,17 @@
 					},
 					"match": "ddm__keyword__*",
 					"match_mapping_type": "*"
+				}
+			},
+			{
+				"template_ddm_keyword_date": {
+					"mapping": {
+						"index": "not_analyzed",
+						"store": "true",
+						"type": "string"
+					},
+					"match": "ddm__keyword__*",
+					"match_mapping_type": "date"
 				}
 			},
 			{
