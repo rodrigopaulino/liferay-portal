@@ -43,7 +43,7 @@
 						"type": "string"
 					},
 					"match": "ddm__keyword__*",
-					"match_mapping_type": "string"
+					"match_mapping_type": "*"
 				}
 			},
 			{

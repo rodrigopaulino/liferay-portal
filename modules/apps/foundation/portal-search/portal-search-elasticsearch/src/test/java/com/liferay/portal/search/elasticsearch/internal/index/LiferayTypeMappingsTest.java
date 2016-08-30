@@ -20,6 +20,8 @@ import com.liferay.portal.search.elasticsearch.internal.connection.Elasticsearch
 import com.liferay.portal.search.elasticsearch.internal.connection.ElasticsearchFixture.IndexName;
 import com.liferay.portal.search.elasticsearch.internal.connection.LiferayIndexCreationHelper;
 
+import java.util.Date;
+
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.client.Client;
 
@@ -50,14 +52,36 @@ public class LiferayTypeMappingsTest {
 	}
 
 	@Test
+	public void testMatchMappingTypeDynamicTemplates() throws Exception {
+		IndexRequestBuilder indexRequestBuilder = getIndexRequestBuilder();
+
+		String fieldDDM1 = "ddm__keyword__" + RandomTestUtil.randomString();
+		String fieldDDM2 = "ddm__keyword__" + RandomTestUtil.randomString();
+		String fieldDDM3 = "ddm__keyword__" + RandomTestUtil.randomString();
+		String fieldDDM4 = "ddm__keyword__" + RandomTestUtil.randomString();
+		String fieldDDM5 = "ddm__keyword__" + RandomTestUtil.randomString();
+		String fieldDDM6 = "ddm__keyword__" + RandomTestUtil.randomString();
+
+		indexRequestBuilder.setSource(
+			fieldDDM1, "", fieldDDM2, RandomTestUtil.randomString(), fieldDDM3,
+			"2011-07-01T01:32:33", fieldDDM4, Long.valueOf("321231312321"),
+			fieldDDM5, true, fieldDDM6, new Date());
+
+		indexRequestBuilder.get();
+
+		assertFieldType(fieldDDM1, "string");
+		assertFieldType(fieldDDM2, "string");
+		assertFieldType(fieldDDM3, "string");
+		assertFieldType(fieldDDM4, "string");
+		assertFieldType(fieldDDM5, "string");
+		assertFieldType(fieldDDM6, "string");
+	}
+
+	@Test
 	public void testPortugueseDynamicTemplatesMatchAnalyzers()
 		throws Exception {
 
-		Client client = _elasticsearchFixture.getClient();
-
-		IndexRequestBuilder indexRequestBuilder = client.prepareIndex(
-			_index.getName(),
-			LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE);
+		IndexRequestBuilder indexRequestBuilder = getIndexRequestBuilder();
 
 		String field_pt = RandomTestUtil.randomString() + "_pt";
 		String field_pt_BR = RandomTestUtil.randomString() + "_pt_BR";
@@ -86,11 +110,26 @@ public class LiferayTypeMappingsTest {
 			_index.getName(), _elasticsearchFixture.getIndicesAdminClient());
 	}
 
+	protected void assertFieldType(String field, String type) throws Exception {
+		FieldMappingAssert.assertFieldType(
+			type, field, LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE,
+			_index.getName(), _elasticsearchFixture.getIndicesAdminClient());
+	}
+
 	protected Index createIndex() {
 		return _elasticsearchFixture.createIndex(
 			new IndexName(testName.getMethodName()),
 			new LiferayIndexCreationHelper(
 				_elasticsearchFixture.getIndicesAdminClient()));
+	}
+
+	protected IndexRequestBuilder getIndexRequestBuilder() {
+		Client client = _elasticsearchFixture.getClient();
+
+		IndexRequestBuilder indexRequestBuilder = client.prepareIndex(
+			_index.getName(),
+			LiferayTypeMappingsConstants.LIFERAY_DOCUMENT_TYPE);
+		return indexRequestBuilder;
 	}
 
 	private ElasticsearchFixture _elasticsearchFixture;

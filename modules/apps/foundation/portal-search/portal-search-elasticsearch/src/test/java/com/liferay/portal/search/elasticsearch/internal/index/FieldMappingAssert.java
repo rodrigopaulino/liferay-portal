@@ -14,8 +14,6 @@
 
 package com.liferay.portal.search.elasticsearch.internal.index;
 
-import com.liferay.portal.kernel.test.IdempotentRetryAssert;
-
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -24,8 +22,9 @@ import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsReques
 import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsResponse;
 import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsResponse.FieldMappingMetaData;
 import org.elasticsearch.client.IndicesAdminClient;
-
 import org.junit.Assert;
+
+import com.liferay.portal.kernel.test.IdempotentRetryAssert;
 
 /**
  * @author Artur Aquino
@@ -48,7 +47,31 @@ public class FieldMappingAssert {
 						field, type, index, indicesAdminClient);
 
 					Assert.assertEquals(
-						analyzer, getAnalyzer(fieldMappingMetaData, field));
+						analyzer, getFieldMetaData(
+							fieldMappingMetaData, field, "analyzer"));
+
+					return null;
+				}
+
+			});
+	}
+
+	public static void assertFieldType(
+			final String fieldType, final String field, final String type,
+			final String index, final IndicesAdminClient indicesAdminClient)
+		throws Exception {
+
+		IdempotentRetryAssert.retryAssert(10, TimeUnit.SECONDS,
+			new Callable<Void>() {
+
+				@Override
+				public Void call() throws Exception {
+					FieldMappingMetaData fieldMappingMetaData = getFieldMapping(
+						field, type, index, indicesAdminClient);
+
+					Assert.assertEquals(
+						fieldType, getFieldMetaData(
+							fieldMappingMetaData, field, "type"));
 
 					return null;
 				}
@@ -57,14 +80,14 @@ public class FieldMappingAssert {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static String getAnalyzer(
-		FieldMappingMetaData fieldMappingMetaData, String field) {
+	public static String getFieldMetaData(
+		FieldMappingMetaData fieldMappingMetaData, String field, String key) {
 
 		Map<String, Object> mappings = fieldMappingMetaData.sourceAsMap();
 
 		Map<String, Object> mapping = (Map<String, Object>)mappings.get(field);
 
-		return (String)mapping.get("analyzer");
+		return (String) mapping.get(key);
 	}
 
 	public static FieldMappingMetaData getFieldMapping(
