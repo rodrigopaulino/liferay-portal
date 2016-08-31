@@ -49,9 +49,8 @@
 			{
 				"template_ddm_keyword_date": {
 					"mapping": {
-						"index": "not_analyzed",
-						"store": "true",
-						"type": "string"
+						"format": "strict_date_optional_time || epoch_millis || 'NULL'",
+						"type": "date"
 					},
 					"match": "ddm__keyword__*",
 					"match_mapping_type": "date"

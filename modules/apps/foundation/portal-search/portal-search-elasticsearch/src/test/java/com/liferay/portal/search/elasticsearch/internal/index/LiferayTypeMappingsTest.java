@@ -71,10 +71,22 @@ public class LiferayTypeMappingsTest {
 
 		assertFieldType(fieldDDM1, "string");
 		assertFieldType(fieldDDM2, "string");
-		assertFieldType(fieldDDM3, "string");
+		assertFieldType(fieldDDM3, "date");
 		assertFieldType(fieldDDM4, "long");
 		assertFieldType(fieldDDM5, "boolean");
-		assertFieldType(fieldDDM6, "string");
+		assertFieldType(fieldDDM6, "date");
+
+		indexRequestBuilder = getIndexRequestBuilder();
+
+		indexRequestBuilder.setSource(
+			fieldDDM3, "NULL", fieldDDM4, "", fieldDDM5, "", fieldDDM6, null);
+
+		indexRequestBuilder.get();
+
+		assertFieldType(fieldDDM3, "date");
+		assertFieldType(fieldDDM4, "long");
+		assertFieldType(fieldDDM5, "boolean");
+		assertFieldType(fieldDDM6, "date");
 	}
 
 	@Test

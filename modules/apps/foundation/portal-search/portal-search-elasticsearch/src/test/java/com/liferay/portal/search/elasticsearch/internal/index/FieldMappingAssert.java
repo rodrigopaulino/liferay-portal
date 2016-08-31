@@ -14,6 +14,8 @@
 
 package com.liferay.portal.search.elasticsearch.internal.index;
 
+import com.liferay.portal.kernel.test.IdempotentRetryAssert;
+
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -22,9 +24,8 @@ import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsReques
 import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsResponse;
 import org.elasticsearch.action.admin.indices.mapping.get.GetFieldMappingsResponse.FieldMappingMetaData;
 import org.elasticsearch.client.IndicesAdminClient;
-import org.junit.Assert;
 
-import com.liferay.portal.kernel.test.IdempotentRetryAssert;
+import org.junit.Assert;
 
 /**
  * @author Artur Aquino
@@ -79,17 +80,6 @@ public class FieldMappingAssert {
 			});
 	}
 
-	@SuppressWarnings("unchecked")
-	public static String getFieldMetaData(
-		FieldMappingMetaData fieldMappingMetaData, String field, String key) {
-
-		Map<String, Object> mappings = fieldMappingMetaData.sourceAsMap();
-
-		Map<String, Object> mapping = (Map<String, Object>)mappings.get(field);
-
-		return (String) mapping.get(key);
-	}
-
 	public static FieldMappingMetaData getFieldMapping(
 		String field, String type, String index,
 		IndicesAdminClient indicesAdminClient) {
@@ -104,6 +94,17 @@ public class FieldMappingAssert {
 			getFieldMappingsRequestBuilder.get();
 
 		return getFieldMappingsResponse.fieldMappings(index, type, field);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static String getFieldMetaData(
+		FieldMappingMetaData fieldMappingMetaData, String field, String key) {
+
+		Map<String, Object> mappings = fieldMappingMetaData.sourceAsMap();
+
+		Map<String, Object> mapping = (Map<String, Object>)mappings.get(field);
+
+		return (String)mapping.get(key);
 	}
 
 }
