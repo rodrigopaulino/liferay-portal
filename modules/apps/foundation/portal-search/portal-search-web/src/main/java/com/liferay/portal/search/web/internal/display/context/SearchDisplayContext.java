@@ -201,7 +201,7 @@ public class SearchDisplayContext {
 		return _enabledSearchFacets;
 	}
 
-	public Hits getHits() throws Exception {
+	public Hits getHits() {
 		return _hits;
 	}
 
@@ -288,7 +288,7 @@ public class SearchDisplayContext {
 		return _querySuggestionsMax;
 	}
 
-	public String[] getQueryTerms() throws Exception {
+	public String[] getQueryTerms() {
 		Hits hits = getHits();
 
 		return hits.getQueryTerms();
@@ -305,11 +305,11 @@ public class SearchDisplayContext {
 		return _searchConfiguration;
 	}
 
-	public SearchContainer<Document> getSearchContainer() throws Exception {
+	public SearchContainer<Document> getSearchContainer() {
 		return _searchContainer;
 	}
 
-	public SearchContext getSearchContext() throws Exception {
+	public SearchContext getSearchContext() {
 		return _searchContext;
 	}
 
