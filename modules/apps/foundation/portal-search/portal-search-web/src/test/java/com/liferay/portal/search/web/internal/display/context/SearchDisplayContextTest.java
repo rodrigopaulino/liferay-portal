@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.search.Hits;
+import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcher;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcherManager;
@@ -34,11 +35,12 @@ import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.constants.SearchPortletParameterNames;
+import com.liferay.portal.search.web.internal.portlet.SearchPortletKeywordsSupplier;
 import com.liferay.portlet.portletconfiguration.util.ConfigurationRenderRequest;
 
-import javax.portlet.MimeResponse;
+import java.util.Collections;
+
 import javax.portlet.PortletPreferences;
-import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
@@ -72,21 +74,14 @@ public class SearchDisplayContextTest {
 
 	@Test
 	public void testConfigurationKeywordsEmptySkipsSearch() throws Exception {
-		SearchDisplayContext searchDisplayContext = createSearchDisplayContext(
+		assertSearchSkipped(
 			null,
 			new ConfigurationRenderRequest(renderRequest, portletPreferences));
-
-		Assert.assertNull(searchDisplayContext.getHits());
-		Assert.assertNull(searchDisplayContext.getKeywords());
-		Assert.assertNull(searchDisplayContext.getSearchContainer());
-		Assert.assertNull(searchDisplayContext.getSearchContext());
-
-		Mockito.verifyZeroInteractions(facetedSearcher);
 	}
 
 	@Test
-	public void testSearchKeywordsBlank() throws Exception {
-		assertSearchKeywords(StringPool.BLANK, StringPool.BLANK);
+	public void testSearchKeywordsBlankSkipsSearch() throws Exception {
+		assertSearchSkipped(StringPool.BLANK, renderRequest);
 	}
 
 	@Test
@@ -95,8 +90,8 @@ public class SearchDisplayContextTest {
 	}
 
 	@Test
-	public void testSearchKeywordsSpaces() throws Exception {
-		assertSearchKeywords(StringPool.DOUBLE_SPACE, StringPool.BLANK);
+	public void testSearchKeywordsSpacesSkipsSearch() throws Exception {
+		assertSearchSkipped(StringPool.DOUBLE_SPACE, renderRequest);
 	}
 
 	protected void assertSearchKeywords(
@@ -117,6 +112,21 @@ public class SearchDisplayContextTest {
 
 		Assert.assertEquals(
 			searchDisplayContextKeywords, searchContext.getKeywords());
+	}
+
+	protected void assertSearchSkipped(
+			String keywords, RenderRequest renderRequest)
+		throws Exception {
+
+		SearchDisplayContext searchDisplayContext = createSearchDisplayContext(
+			keywords, renderRequest);
+
+		Assert.assertNull(searchDisplayContext.getHits());
+		Assert.assertNull(searchDisplayContext.getKeywords());
+		Assert.assertNull(searchDisplayContext.getSearchContainer());
+		Assert.assertNull(searchDisplayContext.getSearchContext());
+
+		Mockito.verifyZeroInteractions(facetedSearcher);
 	}
 
 	protected JSONArray createJSONArray() {
@@ -196,8 +206,11 @@ public class SearchDisplayContextTest {
 			renderRequest, Mockito.mock(RenderResponse.class),
 			portletPreferences, createPortal(themeDisplay, renderRequest),
 			Mockito.mock(Html.class), Mockito.mock(Language.class),
-			facetedSearcherManager, Mockito.mock(IndexSearchPropsValues.class),
-			portletURLFactory);
+			facetedSearcherManager,
+			new SearchPortletKeywordsSupplier(renderRequest), () -> 0, null,
+			null, null, () -> Collections.emptyList(), null, null,
+			() -> new QueryConfig(), null, () -> themeDisplay,
+			portletURLFactory, () -> httpServletRequest);
 	}
 
 	protected ThemeDisplay createThemeDisplay() throws Exception {
@@ -236,8 +249,7 @@ public class SearchDisplayContextTest {
 			Mockito.mock(PortletURL.class)
 		).when(
 			portletURLFactory
-		).getPortletURL(
-			Mockito.<PortletRequest>any(), Mockito.<MimeResponse>any());
+		).getPortletURL();
 	}
 
 	protected void setUpRenderRequest() throws Exception {
