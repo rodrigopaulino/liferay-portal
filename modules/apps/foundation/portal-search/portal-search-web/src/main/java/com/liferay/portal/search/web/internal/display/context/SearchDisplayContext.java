@@ -16,10 +16,10 @@ package com.liferay.portal.search.web.internal.display.context;
 
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.language.Language;
-import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Hits;
+import com.liferay.portal.kernel.search.HitsImpl;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.SearchContext;
 import com.liferay.portal.kernel.search.SearchContextFactory;
@@ -32,20 +32,15 @@ import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Html;
-import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.HttpUtil;
-import com.liferay.portal.kernel.util.ListUtil;
-import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
-import com.liferay.portal.kernel.util.PortalUtil;
-import com.liferay.portal.kernel.util.PredicateFilter;
-import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
-import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.search.web.constants.SearchPortletParameterNames;
 import com.liferay.portal.search.web.facet.SearchFacet;
 import com.liferay.portal.search.web.facet.util.SearchFacetTracker;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.portlet.PortletException;
@@ -61,38 +56,41 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class SearchDisplayContext {
 
-	/**
-	 * @deprecated As of 1.1.0, replaced by {@link SearchDisplayContextFactoryUtil#create(
-	 * RenderRequest, RenderResponse, PortletPreferences)}
-	 */
-	@Deprecated
-	public SearchDisplayContext(
-			RenderRequest renderRequest, RenderResponse renderResponse,
-			PortletPreferences portletPreferences)
-		throws Exception {
-
-		this(
-			renderRequest, renderResponse, portletPreferences,
-			PortalUtil.getPortal(), HtmlUtil.getHtml(),
-			LanguageUtil.getLanguage(), null, new IndexSearchPropsValuesImpl(),
-			new PortletURLFactoryImpl());
-	}
-
 	public SearchDisplayContext(
 			RenderRequest renderRequest, RenderResponse renderResponse,
 			PortletPreferences portletPreferences, Portal portal, Html html,
 			Language language, FacetedSearcherManager facetedSearcherManager,
-			IndexSearchPropsValues indexSearchPropsValues,
-			PortletURLFactory portletURLFactory)
+			KeywordsSupplier keywordsSupplier,
+			SearchScopeGroupIdSupplier searchScopeGroupIdSupplier,
+			SearchScopeSupplier searchScopeSupplier,
+			SearchScopePreferenceSupplier searchScopePreferenceSupplier,
+			SearchScopePreferenceStringSupplier searchScopePreferenceStringSupplier,
+			SearchFacetsSupplier searchFacetsSupplier,
+			FacetsConfigurationSupplier facetsConfigurationSupplier,
+			FacetsDisplayPreferences facetsDisplayPreferences,
+			QueryConfigSupplier queryConfigSupplier,
+			QueryConfigPreferences queryConfigPreferences,
+			ThemeDisplaySupplier themeDisplaySupplier,
+			PortletURLFactory portletURLFactory,
+			SearchDisplayContextHttpServletRequestSupplier requestSupplier)
 		throws Exception {
 
-		_renderRequest = renderRequest;
-		_renderResponse = renderResponse;
 		_portletPreferences = portletPreferences;
-		_indexSearchPropsValues = indexSearchPropsValues;
+		_keywordsSupplier = keywordsSupplier;
+		_searchScopeSupplier = searchScopeSupplier;
+		_searchScopeGroupIdSupplier = searchScopeGroupIdSupplier;
+		_searchScopePreferenceSupplier = searchScopePreferenceSupplier;
+		_searchScopePreferenceStringSupplier =
+			searchScopePreferenceStringSupplier;
+		_searchFacetsSupplier = searchFacetsSupplier;
+		_facetsConfigurationSupplier = facetsConfigurationSupplier;
+		_facetsDisplayPreferences = facetsDisplayPreferences;
+		_queryConfigSupplier = queryConfigSupplier;
+		_queryConfigPreferences = queryConfigPreferences;
+		_themeDisplaySupplier = themeDisplaySupplier;
 		_portletURLFactory = portletURLFactory;
 
-		String keywords = getKeywords();
+		String keywords = StringUtil.trim(keywordsSupplier.getKeywords());
 
 		if (keywords == null) {
 			_hits = null;
@@ -102,18 +100,17 @@ public class SearchDisplayContext {
 			return;
 		}
 
-		HttpServletRequest request = portal.getHttpServletRequest(
-			_renderRequest);
+		HttpServletRequest request = requestSupplier.get();
 
-		ThemeDisplay themeDisplay = (ThemeDisplay)_renderRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
+		ThemeDisplay themeDisplay = themeDisplaySupplier.getThemeDisplay();
 
 		String emptyResultMessage = language.format(
 			request, "no-results-were-found-that-matched-the-keywords-x",
 			"<strong>" + html.escape(keywords) + "</strong>", false);
 
 		SearchContainer<Document> searchContainer = new SearchContainer<>(
-			_renderRequest, getPortletURL(), null, emptyResultMessage);
+			renderRequest, portletURLFactory.getPortletURL(), null,
+			emptyResultMessage);
 
 		FacetedSearcher facetedSearcher =
 			facetedSearcherManager.createFacetedSearcher();
@@ -122,20 +119,33 @@ public class SearchDisplayContext {
 
 		searchContext.setAttribute("paginationType", "more");
 		searchContext.setEnd(searchContainer.getEnd());
+		searchContext.setKeywords(keywords);
 		searchContext.setQueryConfig(getQueryConfig());
 		searchContext.setStart(searchContainer.getStart());
+
+		searchContext.setAttribute(
+			SearchPortletParameterNames.GROUP_ID,
+			String.valueOf(getSearchScopeGroupId()));
 
 		addAssetEntriesFacet(searchContext);
 
 		addScopeFacet(searchContext);
 
-		addEnabledSearchFacets(themeDisplay.getCompanyId(), searchContext);
+		addEnabledSearchFacets(
+			searchFacetsSupplier, themeDisplay.getCompanyId(), searchContext);
 
-		Hits hits = facetedSearcher.search(searchContext);
+		Hits hits;
 
-		searchContainer.setTotal(hits.getLength());
-		searchContainer.setResults(hits.toList());
-		searchContainer.setSearch(true);
+		if (keywords.isEmpty()) {
+			hits = new HitsImpl();
+		}
+		else {
+			hits = facetedSearcher.search(searchContext);
+
+			searchContainer.setTotal(hits.getLength());
+			searchContainer.setResults(hits.toList());
+			searchContainer.setSearch(true);
+		}
 
 		_hits = hits;
 		_searchContext = searchContext;
@@ -161,44 +171,11 @@ public class SearchDisplayContext {
 	}
 
 	public int getCollatedSpellCheckResultDisplayThreshold() {
-		if (_collatedSpellCheckResultDisplayThreshold != null) {
-			return _collatedSpellCheckResultDisplayThreshold;
-		}
-
-		int collatedSpellCheckResultScoresThreshold =
-			_indexSearchPropsValues.
-				getCollatedSpellCheckResultScoresThreshold();
-
-		_collatedSpellCheckResultDisplayThreshold = GetterUtil.getInteger(
-			_portletPreferences.getValue(
-				"collatedSpellCheckResultDisplayThreshold", null),
-			collatedSpellCheckResultScoresThreshold);
-
-		if (_collatedSpellCheckResultDisplayThreshold < 0) {
-			_collatedSpellCheckResultDisplayThreshold =
-				collatedSpellCheckResultScoresThreshold;
-		}
-
-		return _collatedSpellCheckResultDisplayThreshold;
+		return _queryConfigPreferences.getCollatedSpellCheckResultDisplayThreshold();
 	}
 
 	public List<SearchFacet> getEnabledSearchFacets() {
-		if (_enabledSearchFacets != null) {
-			return _enabledSearchFacets;
-		}
-
-		_enabledSearchFacets = ListUtil.filter(
-			SearchFacetTracker.getSearchFacets(),
-			new PredicateFilter<SearchFacet>() {
-
-				@Override
-				public boolean filter(SearchFacet searchFacet) {
-					return isDisplayFacet(searchFacet.getClassName());
-				}
-
-			});
-
-		return _enabledSearchFacets;
+		return new ArrayList<>(_searchFacetsSupplier.getSearchFacets());
 	}
 
 	public Hits getHits() {
@@ -206,86 +183,27 @@ public class SearchDisplayContext {
 	}
 
 	public String getKeywords() {
-		return ParamUtil.getString(
-			_renderRequest, SearchPortletParameterNames.KEYWORDS, null);
+		return _keywordsSupplier.getKeywords();
 	}
 
 	public PortletURL getPortletURL() throws PortletException {
-		return _portletURLFactory.getPortletURL(
-			_renderRequest, _renderResponse);
+		return _portletURLFactory.getPortletURL();
 	}
 
 	public QueryConfig getQueryConfig() {
-		if (_queryConfig != null) {
-			return _queryConfig;
-		}
-
-		_queryConfig = new QueryConfig();
-
-		_queryConfig.setCollatedSpellCheckResultEnabled(
-			isCollatedSpellCheckResultEnabled());
-		_queryConfig.setCollatedSpellCheckResultScoresThreshold(
-			getCollatedSpellCheckResultDisplayThreshold());
-		_queryConfig.setQueryIndexingEnabled(isQueryIndexingEnabled());
-		_queryConfig.setQueryIndexingThreshold(getQueryIndexingThreshold());
-		_queryConfig.setQuerySuggestionEnabled(isQuerySuggestionsEnabled());
-		_queryConfig.setQuerySuggestionScoresThreshold(
-			getQuerySuggestionsDisplayThreshold());
-		_queryConfig.setQuerySuggestionsMax(getQuerySuggestionsMax());
-
-		return _queryConfig;
+		return _queryConfigSupplier.getQueryConfig();
 	}
 
 	public int getQueryIndexingThreshold() {
-		if (_queryIndexingThreshold != null) {
-			return _queryIndexingThreshold;
-		}
-
-		_queryIndexingThreshold = GetterUtil.getInteger(
-			_portletPreferences.getValue("queryIndexingThreshold", null),
-			_indexSearchPropsValues.getQueryIndexingThreshold());
-
-		if (_queryIndexingThreshold < 0) {
-			_queryIndexingThreshold =
-				_indexSearchPropsValues.getQueryIndexingThreshold();
-		}
-
-		return _queryIndexingThreshold;
+		return _queryConfigPreferences.getQueryIndexingThreshold();
 	}
 
 	public int getQuerySuggestionsDisplayThreshold() {
-		if (_querySuggestionsDisplayThreshold != null) {
-			return _querySuggestionsDisplayThreshold;
-		}
-
-		_querySuggestionsDisplayThreshold = GetterUtil.getInteger(
-			_portletPreferences.getValue(
-				"querySuggestionsDisplayThreshold", null),
-			_indexSearchPropsValues.getQuerySuggestionScoresThreshold());
-
-		if (_querySuggestionsDisplayThreshold < 0) {
-			_querySuggestionsDisplayThreshold =
-				_indexSearchPropsValues.getQuerySuggestionScoresThreshold();
-		}
-
-		return _querySuggestionsDisplayThreshold;
+		return _queryConfigPreferences.getQuerySuggestionsDisplayThreshold();
 	}
 
 	public int getQuerySuggestionsMax() {
-		if (_querySuggestionsMax != null) {
-			return _querySuggestionsMax;
-		}
-
-		_querySuggestionsMax = GetterUtil.getInteger(
-			_portletPreferences.getValue("querySuggestionsMax", null),
-			_indexSearchPropsValues.getQuerySuggestionMax());
-
-		if (_querySuggestionsMax <= 0) {
-			_querySuggestionsMax =
-				_indexSearchPropsValues.getQuerySuggestionMax();
-		}
-
-		return _querySuggestionsMax;
+		return _queryConfigPreferences.getQuerySuggestionsMax();
 	}
 
 	public String[] getQueryTerms() {
@@ -295,14 +213,7 @@ public class SearchDisplayContext {
 	}
 
 	public String getSearchConfiguration() {
-		if (_searchConfiguration != null) {
-			return _searchConfiguration;
-		}
-
-		_searchConfiguration = _portletPreferences.getValue(
-			"searchConfiguration", StringPool.BLANK);
-
-		return _searchConfiguration;
+		return _facetsConfigurationSupplier.getFacetsConfiguration();
 	}
 
 	public SearchContainer<Document> getSearchContainer() {
@@ -314,15 +225,7 @@ public class SearchDisplayContext {
 	}
 
 	public long getSearchScopeGroupId() {
-		SearchScope searchScope = getSearchScope();
-
-		if (searchScope == SearchScope.EVERYTHING) {
-			return 0;
-		}
-
-		ThemeDisplay themeDisplay = getThemeDisplay();
-
-		return themeDisplay.getScopeGroupId();
+		return _searchScopeGroupIdSupplier.getSearchScopeGroupId();
 	}
 
 	public String getSearchScopeParameterString() {
@@ -332,32 +235,15 @@ public class SearchDisplayContext {
 	}
 
 	public String getSearchScopePreferenceString() {
-		if (_searchScopePreferenceString != null) {
-			return _searchScopePreferenceString;
-		}
-
-		_searchScopePreferenceString = _portletPreferences.getValue(
-			"searchScope", StringPool.BLANK);
-
-		return _searchScopePreferenceString;
+		return _searchScopePreferenceStringSupplier.getSearchScopePreferenceString();
 	}
 
 	public boolean isCollatedSpellCheckResultEnabled() {
-		if (_collatedSpellCheckResultEnabled != null) {
-			return _collatedSpellCheckResultEnabled;
-		}
-
-		_collatedSpellCheckResultEnabled = GetterUtil.getBoolean(
-			_portletPreferences.getValue(
-				"collatedSpellCheckResultEnabled", null),
-			_indexSearchPropsValues.isCollatedSpellCheckResultEnabled());
-
-		return _collatedSpellCheckResultEnabled;
+		return _queryConfigPreferences.isCollatedSpellCheckResultEnabled();
 	}
 
-	public boolean isDisplayFacet(String className) {
-		return GetterUtil.getBoolean(
-			_portletPreferences.getValue(className, null), true);
+	public boolean isDisplayFacet(SearchFacet searchFacet) {
+		return _facetsDisplayPreferences.isDisplay(searchFacet);
 	}
 
 	public boolean isDisplayMainQuery() {
@@ -429,27 +315,11 @@ public class SearchDisplayContext {
 	}
 
 	public boolean isQueryIndexingEnabled() {
-		if (_queryIndexingEnabled != null) {
-			return _queryIndexingEnabled;
-		}
-
-		_queryIndexingEnabled = GetterUtil.getBoolean(
-			_portletPreferences.getValue("queryIndexingEnabled", null),
-			_indexSearchPropsValues.isQueryIndexingEnabled());
-
-		return _queryIndexingEnabled;
+		return _queryConfigPreferences.isQueryIndexingEnabled();
 	}
 
 	public boolean isQuerySuggestionsEnabled() {
-		if (_querySuggestionsEnabled != null) {
-			return _querySuggestionsEnabled;
-		}
-
-		_querySuggestionsEnabled = GetterUtil.getBoolean(
-			_portletPreferences.getValue("querySuggestionsEnabled", null),
-			_indexSearchPropsValues.isQuerySuggestionEnabled());
-
-		return _querySuggestionsEnabled;
+		return _queryConfigPreferences.isQuerySuggestionsEnabled();
 	}
 
 	public boolean isSearchScopePreferenceEverythingAvailable() {
@@ -479,7 +349,7 @@ public class SearchDisplayContext {
 
 	public boolean isShowMenu() {
 		for (SearchFacet searchFacet : SearchFacetTracker.getSearchFacets()) {
-			if (isDisplayFacet(searchFacet.getClassName())) {
+			if (_facetsDisplayPreferences.isDisplay(searchFacet)) {
 				return true;
 			}
 		}
@@ -507,12 +377,17 @@ public class SearchDisplayContext {
 	}
 
 	protected void addEnabledSearchFacets(
-			long companyId, SearchContext searchContext)
+			SearchFacetsSupplier searchFacetsSupplier, long companyId,
+			SearchContext searchContext)
 		throws Exception {
 
-		for (SearchFacet searchFacet : getEnabledSearchFacets()) {
+		for (SearchFacet searchFacet :
+				_searchFacetsSupplier.getSearchFacets()) {
+
 			searchFacet.init(
-				companyId, getSearchConfiguration(), searchContext);
+				companyId,
+				_facetsConfigurationSupplier.getFacetsConfiguration(),
+				searchContext);
 
 			Facet facet = searchFacet.getFacet();
 
@@ -533,60 +408,39 @@ public class SearchDisplayContext {
 	}
 
 	protected SearchScope getSearchScope() {
-		String scopeString = ParamUtil.getString(
-			_renderRequest, SearchPortletParameterNames.SCOPE);
-
-		if (Validator.isNotNull(scopeString)) {
-			return SearchScope.getSearchScope(scopeString);
-		}
-
-		SearchScopePreference searchScopePreference =
-			getSearchScopePreference();
-
-		SearchScope searchScope = searchScopePreference.getSearchScope();
-
-		if (searchScope == null) {
-			throw new IllegalArgumentException(
-				"Scope parameter is empty and no default is set in " +
-					"preferences");
-		}
-
-		return searchScope;
+		return _searchScopeSupplier.getSearchScope();
 	}
 
 	protected SearchScopePreference getSearchScopePreference() {
-		return SearchScopePreference.getSearchScopePreference(
-			getSearchScopePreferenceString());
+		return _searchScopePreferenceSupplier.getSearchScopePreference();
 	}
 
 	protected ThemeDisplay getThemeDisplay() {
-		return (ThemeDisplay)_renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+		return _themeDisplaySupplier.getThemeDisplay();
 	}
 
-	private Integer _collatedSpellCheckResultDisplayThreshold;
-	private Boolean _collatedSpellCheckResultEnabled;
 	private Boolean _displayMainQuery;
 	private Boolean _displayOpenSearchResults;
 	private Boolean _displayResultsInDocumentForm;
 	private Boolean _dlLinkToViewURL;
-	private List<SearchFacet> _enabledSearchFacets;
+	private final FacetsConfigurationSupplier _facetsConfigurationSupplier;
+	private final FacetsDisplayPreferences _facetsDisplayPreferences;
 	private final Hits _hits;
 	private Boolean _includeSystemPortlets;
-	private final IndexSearchPropsValues _indexSearchPropsValues;
+	private final KeywordsSupplier _keywordsSupplier;
 	private final PortletPreferences _portletPreferences;
 	private final PortletURLFactory _portletURLFactory;
-	private QueryConfig _queryConfig;
-	private Boolean _queryIndexingEnabled;
-	private Integer _queryIndexingThreshold;
-	private Integer _querySuggestionsDisplayThreshold;
-	private Boolean _querySuggestionsEnabled;
-	private Integer _querySuggestionsMax;
-	private final RenderRequest _renderRequest;
-	private final RenderResponse _renderResponse;
-	private String _searchConfiguration;
+	private final QueryConfigPreferences _queryConfigPreferences;
+	private final QueryConfigSupplier _queryConfigSupplier;
 	private final SearchContainer<Document> _searchContainer;
 	private final SearchContext _searchContext;
-	private String _searchScopePreferenceString;
+	private final SearchFacetsSupplier _searchFacetsSupplier;
+	private final SearchScopeGroupIdSupplier _searchScopeGroupIdSupplier;
+	private final SearchScopePreferenceStringSupplier
+		_searchScopePreferenceStringSupplier;
+	private final SearchScopePreferenceSupplier _searchScopePreferenceSupplier;
+	private final SearchScopeSupplier _searchScopeSupplier;
+	private final ThemeDisplaySupplier _themeDisplaySupplier;
 	private Boolean _viewInContext;
 
 }
