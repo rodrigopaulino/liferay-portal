@@ -26,23 +26,34 @@ if (Validator.isNotNull(redirect)) {
 long groupId = ParamUtil.getLong(request, SearchPortletParameterNames.GROUP_ID);
 
 String format = ParamUtil.getString(request, SearchPortletParameterNames.FORMAT);
+
+com.liferay.portal.search.web.internal.search.bar.classic.portlet.SearchBarClassicDisplayContext context =
+	new com.liferay.portal.search.web.internal.search.bar.classic.portlet.SearchBarClassicDisplayContext(request, portletPreferences);
 %>
 
-<liferay-portlet:renderURL varImpl="searchURL">
-	<portlet:param name="mvcPath" value="/components/bar/view.jsp" />
-</liferay-portlet:renderURL>
+<portlet:actionURL name="redirectSearchBar" var="portletURL">
+	<portlet:param name="mvcActionCommandName" value="redirectSearchBar" />
+</portlet:actionURL>
 
-<aui:form action="<%= searchURL %>" method="get" name="fm" onSubmit="event.preventDefault();">
-	<liferay-portlet:renderURLParams varImpl="searchURL" />
+<aui:form action="<%= portletURL %>" method="post" name="fm">
 	<aui:input name="<%= SearchContainer.DEFAULT_CUR_PARAM %>" type="hidden" value="<%= ParamUtil.getInteger(request, SearchContainer.DEFAULT_CUR_PARAM, SearchContainer.DEFAULT_CUR) %>" />
 	<aui:input name="format" type="hidden" value="<%= format %>" />
 
 	<aui:fieldset id="searchContainer">
 		<div class="input-group">
-			<aui:input autoFocus="<%= windowState.equals(WindowState.MAXIMIZED) %>" label="" name="keywords" placeholder="Search..." title="search" value="<%= HtmlUtil.escape(searchDisplayContext.getKeywords()) %>" />
+			<aui:input
+				autoFocus="<%= windowState.equals(WindowState.MAXIMIZED) %>"
+				cssClass="search-input"
+				label=""
+				name="<%= context.getQParameterName() %>"
+				placeholder="Search..."
+				title="search"
+				type="text"
+				value="<%= context.getQ() %>"
+			/>
 
 			<span class="input-group-btn">
-				<aui:button onClick='<%= renderResponse.getNamespace() + "search();" %>' value="search" />
+				<aui:button cssClass="btn-default" primary="<%= false %>" type="submit" value="search" />
 			</span>
 		</div>
 	</aui:fieldset>
