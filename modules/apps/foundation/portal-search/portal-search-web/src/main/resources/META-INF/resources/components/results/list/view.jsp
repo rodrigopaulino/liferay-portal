@@ -23,6 +23,8 @@
 <%@ page import="com.liferay.journal.model.JournalArticle" %>
 <%@ page import="com.liferay.message.boards.kernel.model.MBMessage" %>
 
+<%@ page import="java.text.SimpleDateFormat" %>
+
 <%
 SearchResultsListDisplayContext dc = new SearchResultsListDisplayContext(request);
 
@@ -179,9 +181,24 @@ PortletURL portletURL = renderResponse.createRenderURL();
 					<liferay-ui:icon image='<%= "../language/" + LocaleUtil.toLanguageId(summaryLocale) %>' message='<%= LanguageUtil.format(request, "this-result-comes-from-the-x-version-of-this-content", summaryLocale.getDisplayLanguage(locale), false) %>' />
 				</c:if>
 
-				By <strong><%= document.get(Field.USER_NAME) %></strong>
+				<c:if test="<%= (document.get(Field.USER_NAME) != null) %>">
+					<liferay-ui:message key="written-by" /> <strong><%= document.get(Field.USER_NAME) %></strong>
+				</c:if>
 
-				On <%= document.get(Field.CREATE_DATE) %>
+				<c:if test="<%= (document.get(Field.CREATE_DATE) != null) %>">
+					<%
+						SimpleDateFormat simpleDateFormatInput = new SimpleDateFormat("yyyyMMddHHmmss");
+						SimpleDateFormat simpleDateFormatOutput = new SimpleDateFormat("MMM dd yyyy, h:mm a");
+
+						String createDateString = document.get(Field.CREATE_DATE);
+
+						Date formattedDate = simpleDateFormatInput.parse(createDateString);
+
+						String formattedDateString = simpleDateFormatOutput.format(formattedDate);
+					%>
+
+					<liferay-ui:message key="on-date" /> <%= formattedDateString %>
+				</c:if>
 			</h6>
 
 			<c:if test="<%= Validator.isNotNull(summary.getContent()) %>">
