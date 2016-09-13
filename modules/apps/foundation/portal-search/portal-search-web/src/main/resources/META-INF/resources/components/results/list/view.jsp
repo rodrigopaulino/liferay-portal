@@ -19,6 +19,10 @@
 <%@ page import="com.liferay.portal.search.web.internal.results.data.SearchResultsData" %>
 <%@ page import="com.liferay.portal.search.web.internal.search.results.list.portlet.SearchResultsListDisplayContext" %>
 
+<%@ page import="com.liferay.blogs.kernel.model.BlogsEntry" %>
+<%@ page import="com.liferay.journal.model.JournalArticle" %>
+<%@ page import="com.liferay.message.boards.kernel.model.MBMessage" %>
+
 <%
 SearchResultsListDisplayContext dc = new SearchResultsListDisplayContext(request);
 
@@ -134,9 +138,23 @@ PortletURL portletURL = renderResponse.createRenderURL();
 		%>
 
 		<liferay-ui:search-container-column-text>
+			<%
+			String assetIcon = "blogs";
+
+			if (className.equals(BlogsEntry.class.getName())) {
+				assetIcon = "blogs";
+			}
+			else if (className.equals(JournalArticle.class.getName())) {
+				assetIcon = "web-content";
+			}
+			else if (className.equals(MBMessage.class.getName())) {
+				assetIcon = "message-boards";
+			}
+			%>
+
 			<span class="search-asset-type-sticker sticker sticker-default sticker-lg sticker-rounded sticker-static">
 				<svg class="lexicon-icon">
-					<use xlink:href="<%= themeDisplay.getPathThemeImages() %>/lexicon/icons.svg#blogs" />
+					<use xlink:href="<%= themeDisplay.getPathThemeImages() %>/lexicon/icons.svg#<%= assetIcon %>" />
 				</svg>
 			</span>
 		</liferay-ui:search-container-column-text>
