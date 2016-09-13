@@ -25,15 +25,27 @@ SearchResultsListDisplayContext dc = new SearchResultsListDisplayContext(request
 SearchResultsData searchResultsData = dc.getSearchResultsData();
 
 List<Document> documents = searchResultsData.getDocuments();
+
+SearchContainer<Document> newSearchContainer = new SearchContainer<Document>();
+
+newSearchContainer.setResults(documents);
 %>
 
 <style>
-	.highlight {
-		background: none;
+	.taglib-asset-tags-summary a.badge, .taglib-asset-tags-summary a.badge:hover {
+		color: #65B6F0;
 	}
 
-	.text-results-amount {
-		margin-top: 30px;
+	.search-asset-type-sticker {
+		color: #869CAD;
+	}
+
+	.search-document-content {
+		font-weight: 400;
+	}
+
+	.tabular-list-group .list-group-item-content h6.search-document-tags {
+		margin-top: 13px;
 	}
 </style>
 
@@ -68,44 +80,117 @@ PortletURL portletURL = renderResponse.createRenderURL();
 	</liferay-frontend:management-bar-filters>
 </liferay-frontend:management-bar>
 
-<p class="text-default text-results-amount">X results for <strong>Test</strong></p>
+<liferay-ui:search-container
+	delta="<%= 10 %>"
+	id="search"
+	searchContainer="<%= newSearchContainer %>"
+>
+	<liferay-ui:search-container-row
+		className="com.liferay.portal.kernel.search.Document"
+		escapedModel="<%= false %>"
+		keyProperty="UID"
+		modelVar="document"
+		stringKey="<%= true %>"
+	>
+		<%
+			String className = document.get(Field.ENTRY_CLASS_NAME);
+			long classPK = GetterUtil.getLong(document.get(Field.ENTRY_CLASS_PK));
 
-<ul class="tabular-list-group">
-	<%
-	for (Document document : documents) {
-	%>
-		<li class="list-group-item " data-qa-id="row">
-			<div class=" list-group-item-field">
-				<div class="user-icon user-icon-color-6 user-icon-default user-icon-lg">
-					<span>TT</span>
-				</div>
-			</div>
+			AssetRendererFactory<?> assetRendererFactory = AssetRendererFactoryRegistryUtil.getAssetRendererFactoryByClassName(className);
 
-			<div class=" list-group-item-content">
-				<h4>
-					<a href="/">
-						<strong>
-							<%= document.get(Field.TITLE) %>
-						</strong>
-					</a>
-				</h4>
+			AssetRenderer<?> assetRenderer = null;
 
-				<h6 class="text-default">
-					<strong><%= document.get(Field.ENTRY_CLASS_NAME) %></strong>
+			if (assetRendererFactory != null) {
+				long resourcePrimKey = GetterUtil.getLong(document.get(Field.ROOT_ENTRY_CLASS_PK));
+
+				if (resourcePrimKey > 0) {
+					classPK = resourcePrimKey;
+				}
+
+				assetRenderer = assetRendererFactory.getAssetRenderer(classPK);
+			}
+
+			String viewURL = com.liferay.portal.search.web.internal.util.SearchUtil.getSearchResultViewURL(renderRequest, renderResponse, className, classPK, searchDisplayContext.isViewInContext(), currentURL);
+
+			Indexer indexer = IndexerRegistryUtil.getIndexer(className);
+
+			Summary summary = null;
+
+			if (indexer != null) {
+				String snippet = document.get(Field.SNIPPET);
+
+				summary = indexer.getSummary(document, snippet, renderRequest, renderResponse);
+			}
+			else if (assetRenderer != null) {
+				summary = new Summary(locale, assetRenderer.getTitle(locale), assetRenderer.getSearchSummary(locale));
+			}
+
+			viewURL = searchDisplayContext.checkViewURL(viewURL, currentURL);
+
+			summary.setHighlight(searchDisplayContext.isHighlightEnabled());
+			// summary.setQueryTerms(searchDisplayContext.getQueryTerms());
+
+			AssetEntry assetEntry = AssetEntryLocalServiceUtil.fetchEntry(className, classPK);
+		%>
+
+		<liferay-ui:search-container-column-text>
+			<span class="search-asset-type-sticker sticker sticker-default sticker-lg sticker-rounded sticker-static">
+				<svg class="lexicon-icon">
+					<use xlink:href="<%= themeDisplay.getPathThemeImages() %>/lexicon/icons.svg#blogs" />
+				</svg>
+			</span>
+		</liferay-ui:search-container-column-text>
+
+		<liferay-ui:search-container-column-text
+			colspan="<%= 2 %>"
+		>
+			<h4>
+				<a href="<%= viewURL %>">
+					<strong><%= summary.getHighlightedTitle() %></strong>
+				</a>
+			</h4>
+
+			<h6 class="text-default">
+				<strong><%= ResourceActionsUtil.getModelResource(themeDisplay.getLocale(), className) %></strong> &#183;
+
+				<c:if test="<%= locale != summary.getLocale() %>">
+					<%
+					Locale summaryLocale = summary.getLocale();
+					%>
+
+					<liferay-ui:icon image='<%= "../language/" + LocaleUtil.toLanguageId(summaryLocale) %>' message='<%= LanguageUtil.format(request, "this-result-comes-from-the-x-version-of-this-content", summaryLocale.getDisplayLanguage(locale), false) %>' />
+				</c:if>
+
+				By <strong><%= document.get(Field.USER_NAME) %></strong>
+
+				On <%= document.get(Field.CREATE_DATE) %>
+			</h6>
+
+			<c:if test="<%= Validator.isNotNull(summary.getContent()) %>">
+				<h6 class="search-document-content text-default">
+					<%= summary.getHighlightedContent() %>
 				</h6>
+			</c:if>
 
-				<p class="text-default">
-					<%= document.get(Field.CONTENT) %>
-				</p>
+			<c:if test="<%= (assetEntry != null) && (ArrayUtil.isNotEmpty(assetEntry.getCategoryIds()) || ArrayUtil.isNotEmpty(assetEntry.getTagNames())) %>">
+				<h6 class="search-document-tags text-default">
+					<liferay-ui:asset-tags-summary
+						className="<%= className %>"
+						classPK="<%= classPK %>"
+						paramName="<%= Field.ASSET_TAG_NAMES %>"
+						portletURL="<%= searchDisplayContext.getPortletURL() %>"
+					/>
 
-				<h6 class="text-default">
-					<span class="taglib-asset-tags-summary">
-						<span class="badge badge-default badge-sm"><%= document.get(Field.ASSET_TAG_NAMES) %></span>
-					</span>
+					<liferay-ui:asset-categories-summary
+						className="<%= className %>"
+						classPK="<%= classPK %>"
+						paramName="<%= Field.ASSET_CATEGORY_IDS %>"
+						portletURL="<%= searchDisplayContext.getPortletURL() %>"
+					/>
 				</h6>
-			</div>
-		</li>
-	<%
-	}
-	%>
-</ul>
+			</c:if>
+		</liferay-ui:search-container-column-text>
+	</liferay-ui:search-container-row>
+
+	<liferay-ui:search-iterator displayStyle="descriptive" markupView="lexicon" type="more" />
+</liferay-ui:search-container>
