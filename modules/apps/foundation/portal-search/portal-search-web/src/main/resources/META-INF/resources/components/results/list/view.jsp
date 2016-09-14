@@ -42,6 +42,10 @@ newSearchContainer.setResults(documents);
 		color: #65B6F0;
 	}
 
+	.search-total-label {
+		margin-top: 35px;
+	}
+
 	.search-asset-type-sticker {
 		color: #869CAD;
 	}
@@ -85,6 +89,18 @@ PortletURL portletURL = renderResponse.createRenderURL();
 		/>
 	</liferay-frontend:management-bar-filters>
 </liferay-frontend:management-bar>
+
+<%
+List<Document> searchResults = newSearchContainer.getResults();
+
+int searchResultsAmount = searchResults.size();
+
+String searchQuery = dc.getQ();
+%>
+
+<p class="search-total-label text-default">
+	About <%= searchResultsAmount %> results for <strong><%= searchQuery %></strong>
+</p>
 
 <liferay-ui:search-container
 	delta="<%= 10 %>"
