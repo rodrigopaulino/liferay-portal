@@ -25,6 +25,8 @@
 
 <%@ page import="java.text.SimpleDateFormat" %>
 
+<%@ page import="com.liferay.blogs.kernel.service.BlogsEntryLocalServiceUtil" %>
+
 <%
 SearchResultsListDisplayContext dc = new SearchResultsListDisplayContext(request);
 
@@ -52,6 +54,11 @@ newSearchContainer.setResults(documents);
 
 	.search-document-content {
 		font-weight: 400;
+	}
+
+	.search-result-thumbnail-img {
+		height: 44px;
+		width: 44px;
 	}
 
 	.tabular-list-group .list-group-item-content h6.search-document-tags {
@@ -158,9 +165,29 @@ String searchQuery = dc.getQ();
 		<liferay-ui:search-container-column-text>
 			<%
 			String assetIcon = "blogs";
+			boolean hasCoverImage = false;
 
 			if (className.equals(BlogsEntry.class.getName())) {
 				assetIcon = "blogs";
+
+				String entryClassPK = document.get(Field.ENTRY_CLASS_PK);
+
+				Long entryClassPKLong = Long.parseLong(entryClassPK, 10);
+
+				BlogsEntry searchResultBlogEntry = BlogsEntryLocalServiceUtil.getEntry(entryClassPKLong);
+
+				String coverImageURL = searchResultBlogEntry.getCoverImageURL();
+
+				if ((!coverImageURL.isEmpty()) && (coverImageURL != null)) {
+					hasCoverImage = true;
+				}
+			%>
+
+				<c:if test="<%= hasCoverImage %>">
+					<img alt="blog cover image" class="img-rounded search-result-thumbnail-img" src="<%= coverImageURL %>" />
+				</c:if>
+
+			<%
 			}
 			else if (className.equals(JournalArticle.class.getName())) {
 				assetIcon = "web-content";
@@ -170,11 +197,13 @@ String searchQuery = dc.getQ();
 			}
 			%>
 
-			<span class="search-asset-type-sticker sticker sticker-default sticker-lg sticker-rounded sticker-static">
-				<svg class="lexicon-icon">
-					<use xlink:href="<%= themeDisplay.getPathThemeImages() %>/lexicon/icons.svg#<%= assetIcon %>" />
-				</svg>
-			</span>
+			<c:if test="<%= !hasCoverImage %>">
+				<span class="search-asset-type-sticker sticker sticker-default sticker-lg sticker-rounded sticker-static">
+					<svg class="lexicon-icon">
+						<use xlink:href="<%= themeDisplay.getPathThemeImages() %>/lexicon/icons.svg#<%= assetIcon %>" />
+					</svg>
+				</span>
+			</c:if>
 		</liferay-ui:search-container-column-text>
 
 		<liferay-ui:search-container-column-text
