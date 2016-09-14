@@ -16,6 +16,7 @@ package com.liferay.portal.search.web.internal.search.facet.portlet;
 
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.search.web.constants.SearchAwareFacetPortlet;
 import com.liferay.portal.search.web.facet.SearchFacet;
 import com.liferay.portal.search.web.internal.request.helper.LiferayPortletHttpServletRequestSupplier;
 import com.liferay.portal.search.web.internal.request.helper.OriginalHttpServletRequestSupplier;
@@ -74,11 +75,30 @@ import org.osgi.service.component.annotations.ReferencePolicyOption;
 		"javax.portlet.security-role-ref=guest,power-user,user",
 		"javax.portlet.supports.mime-type=text/html"
 	},
-	service = Portlet.class
+	service = {Portlet.class, SearchAwareFacetPortlet.class}
 )
-public class SearchFacetPortlet extends MVCPortlet {
+public class SearchFacetPortlet
+	extends MVCPortlet implements SearchAwareFacetPortlet {
 
 	// "javax.portlet.supported-public-render-parameter=q",
+
+	@Override
+	public SearchFacet getSearchFacet(PortletPreferences portletPreferences) {
+		SearchFacetConfigurationImpl searchFacetConfigurationImpl =
+			new SearchFacetConfigurationImpl(portletPreferences);
+
+		Stream<SearchFacet> searchFacetsStream = _searchFacets.stream();
+
+		searchFacetsStream = searchFacetsStream.filter(
+			searchFacet -> Objects.equals(
+				searchFacet.getClassName(),
+				searchFacetConfigurationImpl.getSearchFacetClassName().get()));
+
+		Optional<SearchFacet> searchFacetOptional =
+			searchFacetsStream.findAny();
+
+		return searchFacetOptional.orElse(null);
+	}
 
 	@Override
 	public void render(

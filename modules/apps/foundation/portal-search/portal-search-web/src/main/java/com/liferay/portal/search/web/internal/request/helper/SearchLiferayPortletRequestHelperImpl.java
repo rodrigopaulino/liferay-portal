@@ -15,8 +15,16 @@
 package com.liferay.portal.search.web.internal.request.helper;
 
 import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.model.Layout;
+import com.liferay.portal.kernel.model.LayoutTypePortlet;
+import com.liferay.portal.kernel.model.Portlet;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcherManager;
+import com.liferay.portal.kernel.service.PortletPreferencesLocalServiceUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PortletKeys;
+import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.search.web.constants.SearchAwareFacetPortlet;
 import com.liferay.portal.search.web.facet.SearchFacet;
 import com.liferay.portal.search.web.internal.demo.DemoData;
 import com.liferay.portal.search.web.internal.display.context.KeywordsSupplier;
@@ -25,9 +33,12 @@ import com.liferay.portal.search.web.internal.display.context.SearchDisplayConte
 import com.liferay.portal.search.web.internal.results.data.SearchResultsDataSupplier;
 import com.liferay.portal.search.web.internal.results.search.SearchResultsDataSupplierImpl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.portlet.PortletPreferences;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 
@@ -68,8 +79,11 @@ public class SearchLiferayPortletRequestHelperImpl
 		policy = ReferencePolicy.DYNAMIC,
 		policyOption = ReferencePolicyOption.GREEDY
 	)
-	protected void addSearchFacet(SearchFacet searchFacet) {
-		_searchFacets.add(searchFacet);
+	protected void addSearchAwarePortlet(
+		SearchAwareFacetPortlet searchAwarePortlet) {
+
+		_searchAwareFacetPortlets.put(
+			searchAwarePortlet.getClass().getName(), searchAwarePortlet);
 	}
 
 	protected SearchHttpServletRequestHelper
@@ -91,12 +105,68 @@ public class SearchLiferayPortletRequestHelperImpl
 		return new SearchResultsDataSupplierImpl(
 			keywordsSupplier,
 			new PortletURLFactoryImpl(renderRequest, renderResponse),
-			requestSupplier, renderRequest, () -> _searchFacets,
-			facetedSearcherManager, language);
+			requestSupplier, renderRequest,
+			() -> getSearchFacets(renderRequest), facetedSearcherManager,
+			language);
 	}
 
-	protected void removeSearchFacet(SearchFacet searchFacet) {
-		_searchFacets.remove(searchFacet);
+	protected PortletPreferences getPortletPreferences(
+		ThemeDisplay themeDisplay, Portlet portlet) {
+
+		PortletPreferences portletPreferences =
+		PortletPreferencesLocalServiceUtil.fetchPreferences(
+			themeDisplay.getCompanyId(), PortletKeys.PREFS_OWNER_ID_DEFAULT,
+			PortletKeys.PREFS_OWNER_TYPE_LAYOUT, themeDisplay.getPlid(),
+			portlet.getPortletId());
+
+		return portletPreferences;
+	}
+
+	protected List<SearchFacet> getSearchFacets(RenderRequest renderRequest) {
+		List<SearchFacet> searchFacets = new CopyOnWriteArrayList<>();
+
+		ThemeDisplay themeDisplay = getThemeDisplay(renderRequest);
+
+		Layout layout = themeDisplay.getLayout();
+
+		LayoutTypePortlet layoutTypePortlet =
+			(LayoutTypePortlet)layout.getLayoutType();
+
+		List<Portlet> portletList =
+			layoutTypePortlet.getExplicitlyAddedPortlets();
+
+		for (Portlet portlet : portletList) {
+			if (_searchAwareFacetPortlets.containsKey(
+					portlet.getPortletClass())) {
+
+				SearchAwareFacetPortlet searchAwareFacetPortlet =
+					_searchAwareFacetPortlets.get(portlet.getPortletClass());
+
+				PortletPreferences portletPreferences = getPortletPreferences(
+					themeDisplay, portlet);
+
+				SearchFacet searchFacet =
+					searchAwareFacetPortlet.getSearchFacet(portletPreferences);
+
+				if (searchFacet != null &&
+					!searchFacets.contains(searchFacet)) {
+					searchFacets.add(searchFacet);
+				}
+			}
+		}
+
+		return searchFacets;
+	}
+
+	protected ThemeDisplay getThemeDisplay(RenderRequest renderRequest) {
+		return (ThemeDisplay)renderRequest.getAttribute(WebKeys.THEME_DISPLAY);
+	}
+
+	protected void removeSearchAwarePortlet(
+		SearchAwareFacetPortlet searchAwarePortlet) {
+
+		_searchAwareFacetPortlets.remove(
+			searchAwarePortlet.getClass().getName());
 	}
 
 	@Reference
@@ -108,7 +178,7 @@ public class SearchLiferayPortletRequestHelperImpl
 	@Reference
 	protected Portal portal;
 
-	private final List<SearchFacet> _searchFacets =
-		new CopyOnWriteArrayList<>();
+	private final Map<String, SearchAwareFacetPortlet>
+		_searchAwareFacetPortlets = new HashMap<>();
 
 }
