@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.web.components.results.map.portlet;
 
+import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -128,6 +129,16 @@ public class SearchResultsMapDisplayContext {
 			.map(
 				geoLocationPoint-> getMapMarker(
 					geoLocationPoint, assetTypeName, formattedDateString, summary, title, userName));
+	}
+
+	public SearchContainer<Document> getSearchResultsContainer() {
+		List<Document> documents = _searchResultsData.getDocuments();
+
+		SearchContainer<Document> searchContainer = new SearchContainer<Document>();
+
+		searchContainer.setResults(documents);
+
+		return searchContainer;
 	}
 
 	private final String _mapMarkersJSON;
