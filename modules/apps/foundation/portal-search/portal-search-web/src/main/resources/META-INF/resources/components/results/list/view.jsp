@@ -17,7 +17,7 @@
 <%@ include file="/init.jsp" %>
 
 <%@ page import="com.liferay.portal.search.web.internal.results.data.SearchResultsData" %>
-<%@ page import="com.liferay.portal.search.web.internal.search.results.list.portlet.SearchResultsListDisplayContext" %>
+<%@ page import="com.liferay.portal.search.web.components.results.list.portlet.SearchResultsListDisplayContext" %>
 
 <%@ page import="com.liferay.asset.kernel.model.AssetEntry" %>
 <%@ page import="com.liferay.blogs.kernel.model.BlogsEntry" %>
