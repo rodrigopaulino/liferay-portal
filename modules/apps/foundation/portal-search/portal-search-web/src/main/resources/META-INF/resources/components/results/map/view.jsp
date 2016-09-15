@@ -41,12 +41,30 @@ SearchContainer<Document> newSearchContainer = dc.getSearchResultsContainer();
 
 	.search-results-map-window-content.tabular-list-group .list-group-item-field, .search-results-map-window-content.tabular-list-group .list-group-item-content {
 		border-width: 0;
-		padding-top: 5px;
 		padding-bottom: 0;
+		padding-top: 5px;
 	}
 
 	.search-results-map-window-content.tabular-list-group .list-group-item-field {
 		padding-left: 0;
+	}
+
+	#content .row.search-map-list-container {
+		height: 800px;
+		margin: 0;
+	}
+
+	.search-list-container, .search-map-container {
+		height: 100%;
+		padding: 0;
+	}
+
+	.search-list-container .main-content-body {
+		margin-top: 0;
+	}
+
+	.search-list-container {
+		overflow: scroll;
 	}
 </style>
 
@@ -58,13 +76,50 @@ int searchResultsAmount = searchResults.size();
 String searchQuery = dc.getQ();
 %>
 
+<%
+PortletURL portletURL = renderResponse.createRenderURL();
+%>
+
+<liferay-frontend:management-bar
+	searchContainerId="resultsContainer"
+>
+	<liferay-frontend:management-bar-buttons>
+		<liferay-frontend:management-bar-display-buttons
+			displayViews='<%= new String[] {"icon", "descriptive"} %>'
+			portletURL="<%= portletURL %>"
+			selectedDisplayStyle="descriptive"
+		/>
+	</liferay-frontend:management-bar-buttons>
+
+	<liferay-frontend:management-bar-filters>
+		<liferay-frontend:management-bar-navigation
+			navigationKeys='<%= new String[] {"category", "asset-type"} %>'
+			navigationParam=""
+			portletURL="<%= portletURL %>"
+		/>
+
+		<liferay-frontend:management-bar-sort
+			orderByCol=""
+			orderByType=""
+			orderColumns='<%= new String[] {"title", "display-date"} %>'
+			portletURL="<%= portletURL %>"
+		/>
+	</liferay-frontend:management-bar-filters>
+</liferay-frontend:management-bar>
+
 <p class="search-total-label text-default">
 	About <%= searchResultsAmount %> results for <strong><%= searchQuery %></strong>
 </p>
 
-<div id="map-canvas" style="height:1000px; width:100%;"></div>
+<aui:row cssClass="search-map-list-container">
+	<aui:col cssClass="search-map-container" span="8">
+		<div id="map-canvas" style="height:100%; width:100%;"></div>
+	</aui:col>
 
-<%@ include file="/components/results/list/results_list.jspf" %>
+	<aui:col cssClass="search-list-container" span="4">
+		<%@ include file="/components/results/list/results_list.jspf" %>
+	</aui:col>
+</aui:row>
 
 <script
 	src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyABOXmu2BMXwxNHbhHrTcMRLnOJQYpHbWQ"
@@ -112,13 +167,13 @@ String searchQuery = dc.getQ();
 			);
 
 				bounds.extend(marker.position);
-			}
+		}
 
 			if (searchLocations.length > 0) {
 				map.fitBounds(bounds);
 				map.panToBounds(bounds);
 			}
-		}
+	}
 
 	function addMarker(data) {
 		var marker = new google.maps.Marker(
