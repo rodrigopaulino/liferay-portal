@@ -16,14 +16,19 @@
 
 <%@ taglib uri="http://java.sun.com/portlet_2_0" prefix="portlet" %>
 
-<%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %>
-<%@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %>
+<%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %><%@
+taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %><%@
+taglib uri="http://liferay.com/tld/theme" prefix="liferay-theme" %>
 
 <%@ page import="com.liferay.portal.search.web.internal.display.context.SearchDisplayContext" %><%@
 page import="com.liferay.portal.search.web.internal.display.context.SearchDisplayContextFactoryUtil" %>
 
-<%@ page import="com.liferay.portal.kernel.util.Constants" %>
-<%@ page import="com.liferay.portal.kernel.util.StringPool" %>
+<%@ page import="com.liferay.portal.kernel.util.Constants" %><%@
+page import="com.liferay.portal.kernel.util.PortalUtil" %><%@
+page import="com.liferay.portal.kernel.util.StringPool" %><%@
+page import="com.liferay.portal.kernel.util.Validator" %>
+
+<liferay-theme:defineObjects />
 
 <portlet:defineObjects />
 
@@ -31,6 +36,10 @@ page import="com.liferay.portal.search.web.internal.display.context.SearchDispla
 SearchDisplayContext searchDisplayContext = SearchDisplayContextFactoryUtil.create(renderRequest, renderResponse, portletPreferences);
 
 String destination = portletPreferences.getValue("destination", StringPool.BLANK);
+
+if (Validator.isNull(destination)) {
+	destination = layout.getFriendlyURL(themeDisplay.getLocale());
+}
 %>
 
 <liferay-portlet:actionURL portletConfiguration="<%= true %>" var="configurationActionURL" />
