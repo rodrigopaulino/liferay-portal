@@ -25,6 +25,8 @@ if (Validator.isNotNull(redirect)) {
 
 long groupId = ParamUtil.getLong(request, SearchPortletParameterNames.GROUP_ID);
 
+boolean scopeEverything = (groupId == 0);
+
 String format = ParamUtil.getString(request, SearchPortletParameterNames.FORMAT);
 
 com.liferay.portal.search.web.internal.search.bar.classic.portlet.SearchBarClassicDisplayContext context =
@@ -41,26 +43,45 @@ com.liferay.portal.search.web.internal.search.bar.classic.portlet.SearchBarClass
 
 	<aui:fieldset id="searchContainer">
 		<div class="input-group">
-			<aui:input
-				autoFocus="<%= windowState.equals(WindowState.MAXIMIZED) %>"
-				cssClass="search-input"
-				label=""
-				name="<%= context.getQParameterName() %>"
-				placeholder="Search..."
-				title="search"
-				type="text"
-				value="<%= context.getQ() %>"
-			/>
+			<aui:field-wrapper inlineField="<%= true %>">
+				<aui:input
+					autoFocus="<%= windowState.equals(WindowState.MAXIMIZED) %>"
+					cssClass="search-input"
+					label=""
+					name="<%= context.getQParameterName() %>"
+					placeholder="search-..."
+					title="search"
+					type="text"
+					value="<%= context.getQ() %>"
+				/>
+			</aui:field-wrapper>
 
-			<span class="input-group-btn">
-				<aui:button cssClass="btn-default" primary="<%= false %>" type="submit" value="search" />
-			</span>
+			<aui:field-wrapper inlineField="<%= true %>">
+				<c:choose>
+					<c:when test="<%= searchDisplayContext.isSearchScopePreferenceLetTheUserChoose() %>">
+						<aui:select cssClass="search-select" label="" name="scope" title="scope">
+							<c:if test="<%= searchDisplayContext.isSearchScopePreferenceEverythingAvailable() %>">
+								<aui:option label="everything" selected="<%= scopeEverything %>" value="everything" />
+							</c:if>
+
+							<aui:option label="this-site" selected="<%= !scopeEverything %>" value="this-site" />
+						</aui:select>
+					</c:when>
+					<c:otherwise>
+						<aui:input name="scope" type="hidden" value="<%= searchDisplayContext.getSearchScopeParameterString() %>" />
+					</c:otherwise>
+				</c:choose>
+			</aui:field-wrapper>
+
+			<aui:field-wrapper cssClass="input-group-btn" inlineField="<%= true %>">
+				<aui:button icon="icon-search" primary="<%= false %>" type="submit" value="" />
+			</aui:field-wrapper>
 		</div>
 	</aui:fieldset>
 </aui:form>
 
 <aui:script sandbox="<%= true %>">
-	$('#<portlet:namespace />keywords').on(
+	$('#<portlet:namespace /><%= context.getQParameterName() %>').on(
 		'keydown',
 		function(event) {
 			if (event.keyCode === 13) {

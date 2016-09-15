@@ -19,28 +19,42 @@
 <%@ taglib uri="http://liferay.com/tld/aui" prefix="aui" %>
 <%@ taglib uri="http://liferay.com/tld/portlet" prefix="liferay-portlet" %>
 
+<%@ page import="com.liferay.portal.search.web.internal.display.context.SearchDisplayContext" %><%@
+page import="com.liferay.portal.search.web.internal.display.context.SearchDisplayContextFactoryUtil" %>
+
 <%@ page import="com.liferay.portal.kernel.util.Constants" %>
 <%@ page import="com.liferay.portal.kernel.util.StringPool" %>
 
 <portlet:defineObjects />
 
 <%
-String destinationPref = "destination";
-String destination = portletPreferences.getValue(destinationPref, StringPool.BLANK);
+SearchDisplayContext searchDisplayContext = SearchDisplayContextFactoryUtil.create(renderRequest, renderResponse, portletPreferences);
+
+String destination = portletPreferences.getValue("destination", StringPool.BLANK);
 %>
 
 <liferay-portlet:actionURL portletConfiguration="<%= true %>" var="configurationActionURL" />
 
-<aui:form action="<%= configurationActionURL %>" method="post" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveConfiguration();" %>'>
+<aui:form action="<%= configurationActionURL %>" method="post" name="fm" onSubmit='<%= "event.preventDefault(); " + renderResponse.getNamespace() + "saveConfiguration();" %>'>
 	<aui:input name="<%= Constants.CMD %>" type="hidden" value="<%= Constants.UPDATE %>" />
 
-	<aui:fieldset id="controls" label="search-bar-classic-properties">
-		<aui:input label="destination-page" name="preferences--destination--" value="<%= destination %>" />
+	<div class="portlet-configuration-body-content">
+		<div class="container-fluid-1280">
+			<aui:fieldset>
+				<aui:input label="destination-page" name="preferences--destination--" value="<%= destination %>" />
 
-		<aui:button-row>
-			<aui:button type="submit" />
-		</aui:button-row>
-	</aui:fieldset>
+				<aui:select label="scope" name="preferences--searchScope--" value="<%= searchDisplayContext.getSearchScopePreferenceString() %>">
+					<aui:option label="this-site" value="" />
+					<aui:option label="everything" />
+					<aui:option label="let-the-user-choose" />
+				</aui:select>
+			</aui:fieldset>
+		</div>
+	</div>
+
+	<aui:button-row>
+		<aui:button type="submit" />
+	</aui:button-row>
 </aui:form>
 
 <aui:script>
