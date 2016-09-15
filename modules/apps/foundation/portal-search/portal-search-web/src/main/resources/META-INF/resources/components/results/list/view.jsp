@@ -30,13 +30,7 @@
 <%
 SearchResultsListDisplayContext dc = new SearchResultsListDisplayContext(request);
 
-SearchResultsData searchResultsData = dc.getSearchResultsData();
-
-List<Document> documents = searchResultsData.getDocuments();
-
-SearchContainer<Document> newSearchContainer = new SearchContainer<Document>();
-
-newSearchContainer.setResults(documents);
+SearchContainer<Document> newSearchContainer = dc.getSearchResultsContainer();
 %>
 
 <style>
