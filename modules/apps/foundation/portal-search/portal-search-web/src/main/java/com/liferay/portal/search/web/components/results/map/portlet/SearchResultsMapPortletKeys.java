@@ -24,7 +24,7 @@ public class SearchResultsMapPortletKeys {
 	public static final String DISPLAY_NAME = "New Search Results Map";
 
 	public static final String PORTLET_NAME =
-		"com_liferay_portal_search_web_search_results_map_portlet_" +
+		"com_liferay_portal_search_web_components_results_map_portlet_" +
 			"SearchResultsMapPortlet";
 
 	public static final String VIEW_TEMPLATE = "/components/results/map/view.jsp";

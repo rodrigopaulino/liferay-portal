@@ -19,8 +19,8 @@
 <portlet:defineObjects />
 
 <%
-com.liferay.portal.search.web.internal.search.results.map.portlet.SearchResultsMapDisplayContext dc =
-	new com.liferay.portal.search.web.internal.search.results.map.portlet.SearchResultsMapDisplayContext(request);
+com.liferay.portal.search.web.components.results.map.portlet.SearchResultsMapDisplayContext dc =
+	new com.liferay.portal.search.web.components.results.map.portlet.SearchResultsMapDisplayContext(request);
 %>
 
 <%-- --%>
