@@ -19,8 +19,8 @@
 <%@ page import="com.liferay.portal.search.web.internal.results.data.SearchResultsData" %>
 <%@ page import="com.liferay.portal.search.web.internal.search.results.list.portlet.SearchResultsListDisplayContext" %>
 
+<%@ page import="com.liferay.asset.kernel.model.AssetEntry" %>
 <%@ page import="com.liferay.blogs.kernel.model.BlogsEntry" %>
-<%@ page import="com.liferay.journal.model.JournalArticle" %>
 <%@ page import="com.liferay.message.boards.kernel.model.MBMessage" %>
 
 <%@ page import="java.text.SimpleDateFormat" %>
@@ -189,7 +189,7 @@ String searchQuery = dc.getQ();
 
 			<%
 			}
-			else if (className.equals(JournalArticle.class.getName())) {
+			else if (className.equals(AssetEntry.class.getName())) {
 				assetIcon = "web-content";
 			}
 			else if (className.equals(MBMessage.class.getName())) {
