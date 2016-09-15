@@ -20,7 +20,11 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.kernel.search.geolocation.GeoLocationPoint;
+import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.search.web.internal.display.context.ThemeDisplaySupplier;
 import com.liferay.portal.search.web.internal.request.helper.OriginalHttpServletRequestSupplier;
 import com.liferay.portal.search.web.internal.request.helper.PortalOriginalHttpServletRequestSupplier;
 import com.liferay.portal.search.web.internal.request.helper.SearchHttpServletRequestHelper;
@@ -28,8 +32,10 @@ import com.liferay.portal.search.web.internal.request.params.SearchParameters;
 import com.liferay.portal.search.web.internal.request.params.SearchParametersImpl;
 import com.liferay.portal.search.web.internal.results.data.SearchResultsData;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.text.SimpleDateFormat;
 import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -51,7 +57,10 @@ public class SearchResultsMapDisplayContext {
 		_searchResultsData = SearchHttpServletRequestHelper.getResults(
 			originalHttpServletRequestSupplier);
 
+		_request = request;
+
 		_mapMarkersJSON = buildMapMarkersJSON();
+
 	}
 
 	public String getMapMarkersJSON() {
@@ -73,31 +82,57 @@ public class SearchResultsMapDisplayContext {
 	}
 
 	protected JSONObject getMapMarker(
-		GeoLocationPoint geoLocationPoint, String title, String summary) {
+		GeoLocationPoint geoLocationPoint, String assetTypeName, String formattedDate, String summary, String title, String userName) {
 
 		JSONObject jObj = JSONFactoryUtil.createJSONObject();
 
+		jObj.put("assetTypeName", assetTypeName);
+		jObj.put("date", formattedDate);
 		jObj.put("lat", geoLocationPoint.getLatitude());
 		jObj.put("lng", geoLocationPoint.getLongitude());
-		jObj.put("title", title);
 		jObj.put("summary", summary);
+		jObj.put("title", title);
+		jObj.put("userName", userName);
 
 		return jObj;
 	}
 
 	protected Stream<JSONObject> getMapMarkers(Document document) {
+		String className = document.get(Field.ENTRY_CLASS_NAME);
 		String title = document.get(Field.TITLE);
 		String summary = document.get(Field.CONTENT);
+		String userName = document.get(Field.USER_NAME);
+
+		ThemeDisplay themeDisplay = (ThemeDisplay) _request.getAttribute(WebKeys.THEME_DISPLAY);
+
+		String assetTypeName = ResourceActionsUtil.getModelResource(themeDisplay.getLocale(), className);
+
+		SimpleDateFormat simpleDateFormatInput = new SimpleDateFormat("yyyyMMddHHmmss");
+		SimpleDateFormat simpleDateFormatOutput = new SimpleDateFormat("MMM dd yyyy, h:mm a");
+
+		Date formattedDate = null;
+
+		try {
+			String createDateString = document.get(Field.CREATE_DATE);
+
+			formattedDate = simpleDateFormatInput.parse(createDateString);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		String formattedDateString = simpleDateFormatOutput.format(formattedDate);
 
 		return document.getFields().values().stream()
 			.map(Field::getGeoLocationPoint).filter(Objects::nonNull)
 			.map(
 				geoLocationPoint-> getMapMarker(
-					geoLocationPoint, title, summary));
+					geoLocationPoint, assetTypeName, formattedDateString, summary, title, userName));
 	}
 
 	private final String _mapMarkersJSON;
 	private final SearchParameters _parameters;
+	private final HttpServletRequest _request;
 	private final SearchResultsData _searchResultsData;
 
 }
