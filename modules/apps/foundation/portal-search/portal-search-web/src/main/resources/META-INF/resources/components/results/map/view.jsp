@@ -126,9 +126,24 @@ PortletURL portletURL = renderResponse.createRenderURL();
 	var ____lng = -71.0586345;
 
 	var map;
+	var markers = [];
 	var infoWindow;
 
 	function initMap() {
+		if (!google.maps.Polygon.prototype.getBounds) {
+			google.maps.Polygon.prototype.getBounds = function() {
+				var bounds = new google.maps.LatLngBounds();
+
+				this.getPath().forEach(
+					function(element,index) {
+						bounds.extend(element);
+					}
+				);
+
+				return bounds;
+			}
+		}
+
 		infoWindow = new google.maps.InfoWindow({
 			content: 'Boston City Hall'
 		});
@@ -195,16 +210,17 @@ PortletURL portletURL = renderResponse.createRenderURL();
 			drawingManager,
 			'overlaycomplete',
 			function(event) {
-				if (event.type == 'circle') {
-					var radius = event.overlay.getRadius();
+				var bounds = event.overlay.getBounds();
 
-					console.log("Circle overlay complete", radius);
-				}
-				else if (event.type == 'polygon') {
-					console.log("Polygon overlay complete");
-				}
-				else if (event.type == 'rectangle') {
-					console.log("Rectangle overlay complete");
+				for (var i = 0; i < markers.length; i++) {
+					var isContained = bounds.contains(markers[i].getPosition());
+
+					if (isContained) {
+						markers[i].setMap(map);
+					}
+					else {
+						markers[i].setMap(null);
+					}
 				}
 			}
 		);
@@ -221,6 +237,8 @@ PortletURL portletURL = renderResponse.createRenderURL();
 				title: data.title
 			}
 		);
+
+		markers.push(marker);
 
 		createInfoWindow(marker, data);
 
@@ -260,7 +278,6 @@ PortletURL portletURL = renderResponse.createRenderURL();
 				infoWindow.open(map, marker);
 			}
 		);
-
 	}
 </script>
 
