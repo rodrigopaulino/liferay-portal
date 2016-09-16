@@ -129,6 +129,51 @@ PortletURL portletURL = renderResponse.createRenderURL();
 	var markers = [];
 	var infoWindow;
 
+	function ZoomControl(controlContainer, map) {
+		controlContainer.style.padding = '8px 10px';
+
+		var controlWrapper = document.createElement('div');
+
+		controlWrapper.classList.add('btn-group-vertical');
+
+		controlContainer.appendChild(controlWrapper);
+
+		var zoomInButton = document.createElement('button');
+
+		zoomInButton.classList.add('btn');
+		zoomInButton.classList.add('btn-default');
+		zoomInButton.innerHTML = '<svg class="lexicon-icon">' +
+			'<use xlink:href="<%= themeDisplay.getPathThemeImages() %>/lexicon/icons.svg#plus" /></svg>';
+
+		controlWrapper.appendChild(zoomInButton);
+
+		var zoomOutButton = document.createElement('button');
+
+		zoomOutButton.classList.add('btn');
+		zoomOutButton.classList.add('btn-default');
+		zoomOutButton.innerHTML = '<svg class="lexicon-icon">' +
+			'<use xlink:href="<%= themeDisplay.getPathThemeImages() %>/lexicon/icons.svg#hr" /></svg>';
+
+		controlWrapper.appendChild(zoomOutButton);
+
+		google.maps.event.addDomListener(
+			zoomInButton,
+			'click',
+			function() {
+				map.setZoom(map.getZoom() + 1);
+			}
+		);
+
+		google.maps.event.addDomListener(
+			zoomOutButton,
+			'click',
+			function() {
+				map.setZoom(map.getZoom() - 1);
+			}
+		);
+
+	}
+
 	function initMap() {
 		if (!google.maps.Polygon.prototype.getBounds) {
 			google.maps.Polygon.prototype.getBounds = function() {
@@ -151,8 +196,10 @@ PortletURL portletURL = renderResponse.createRenderURL();
 		var mapOptions = {
 			center: new google.maps.LatLng(____lat, ____lng),
 			maxZoom: 18,
+			scrollwheel: false,
 			streetViewControl: false,
-			zoom: 10
+			zoom: 10,
+			zoomControl: false,
 		};
 
 		var bounds = new google.maps.LatLngBounds();
@@ -185,7 +232,15 @@ PortletURL portletURL = renderResponse.createRenderURL();
 			map.panToBounds(bounds);
 		}
 
-		var drawingManager = new google.maps.drawing.DrawingManager(
+		// Custom Zoom Controls
+		var zoomControlContainer = document.createElement('div');
+		var zoomControl = new ZoomControl(zoomControlContainer, map);
+
+		zoomControlContainer.index = 1;
+		map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(zoomControlContainer);
+
+		// Drawing Manager
+		drawingManager = new google.maps.drawing.DrawingManager(
 			{
 				drawingControl: true,
 				drawingControlOptions: {
