@@ -32,6 +32,9 @@ SearchContainer<Document> newSearchContainer = dc.getSearchResultsContainer();
 %>
 
 <style>
+	.gm-style {
+		font-family: inherit;
+	}
 	.search-results-map-window-content {
 		box-shadow: none;
 		font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -122,12 +125,72 @@ PortletURL portletURL = renderResponse.createRenderURL();
 </aui:row>
 
 <script>
+	var circleSVG = '<svg id="SvgjsSvg1022" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" width="20" height="20"><defs id="SvgjsDefs1023"></defs><path id="SvgjsPath1024" d="M1111.35 770.888C1106.11 770.888 1101.84 775.1550000000001 1101.84 780.399C1101.84 785.644 1106.11 789.9110000000001 1111.35 789.9110000000001C1116.6 789.9110000000001 1120.86 785.644 1120.86 780.3990000000001C1120.86 775.1550000000001 1116.6 770.8880000000001 1111.35 770.8880000000001ZM1111.35 788.182C1107.06 788.182 1103.57 784.691 1103.57 780.399C1103.57 776.108 1107.06 772.617 1111.35 772.617C1115.6399999999999 772.617 1119.1299999999999 776.108 1119.1299999999999 780.399C1119.1299999999999 784.691 1115.6399999999999 788.182 1111.35 788.182Z " fill="#859cad" transform="matrix(1,0,0,1,-1101,-770)"></path></svg>';
+	var polygonSVG = '<svg id="SvgjsSvg1016" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" width="22" height="16"><defs id="SvgjsDefs1017"></defs><path id="SvgjsPath1018" d="M1108.31 787.986C1108.19 787.986 1108.07 787.965 1107.96 787.923C1107.7 787.829 1107.49 787.635 1107.38 787.386L1100.71 772.483C1100.53 772.0859999999999 1100.63 771.621 1100.96 771.3309999999999C1101.29 771.0409999999999 1101.77 770.9939999999999 1102.15 771.2079999999999L1111.8200000000002 776.6809999999998L1120.0700000000002 773.5869999999998C1120.4 773.4649999999998 1120.7700000000002 773.5159999999997 1121.0500000000002 773.7239999999997C1121.3300000000002 773.9319999999997 1121.4900000000002 774.2659999999997 1121.4600000000003 774.6109999999996L1120.8500000000004 781.6389999999997C1120.8200000000004 781.9929999999997 1120.6000000000004 782.3059999999997 1120.2700000000004 782.4589999999997L1108.7500000000005 787.8869999999997C1108.6100000000004 787.9519999999998 1108.4600000000005 787.9859999999998 1108.3100000000004 787.9859999999998ZM1103.83 774.477L1108.82 785.6279999999999L1118.86 780.8969999999999L1119.28 776.0329999999999L1112.09 778.7269999999999C1111.8 778.8339999999998 1111.48 778.8079999999999 1111.22 778.6589999999999Z " fill="#859cad" transform="matrix(1,0,0,1,-1100,-771)"></path></svg>';
+	var rectangleSVG = '<svg id="SvgjsSvg1019" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" width="17" height="17"><defs id="SvgjsDefs1020"></defs><path id="SvgjsPath1021" d="M1117 771.882L1104.58 771.882C1103.6 771.882 1102.8 772.678 1102.8 773.656L1102.8 786.079C1102.8 787.058 1103.6 787.853 1104.58 787.853L1117 787.853C1117.98 787.853 1118.77 787.058 1118.77 786.079L1118.77 773.656C1118.77 772.678 1117.98 771.882 1117 771.882ZM1104.58 786.079L1104.58 773.656L1117 773.656L1117 786.079Z " fill="#859cad" transform="matrix(1,0,0,1,-1102,-771)"></path></svg>';
+
 	var ____lat = 42.359849;
 	var ____lng = -71.0586345;
 
+	var drawingManager;
 	var map;
 	var markers = [];
 	var infoWindow;
+
+	function DrawControl(controlContainer, map) {
+		controlContainer.style.padding = '8px 10px';
+
+		var controlWrapper = document.createElement('div');
+
+		controlWrapper.classList.add('btn-group');
+		controlWrapper.classList.add('dropdown');
+
+		controlWrapper.innerHTML = '<button class="btn btn-default" id="mapDrawingButton" onClick="toggleDrawingMode(\'polygon\')" type="button">' +
+			polygonSVG +
+			'</button>' +
+			'<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">' +
+				'<span class="caret"></span>' +
+				'<span class="sr-only">Toggle Dropdown</span>' +
+			'</button>' +
+			'<ul class="dropdown-menu dropdown-menu-right" role="menu">' +
+				'<li><a href="javascript:;" onClick="event.preventDefault(); toggleDrawingMode(\'polygon\');">Shape</a></li>' +
+				'<li><a href="javascript:;" onClick="event.preventDefault(); toggleDrawingMode(\'circle\');">Circle</a></li>' +
+				'<li><a href="javascript:;" onClick="event.preventDefault(); toggleDrawingMode(\'rectangle\');">Rectangle</a></li>' +
+			'</ul>';
+
+		controlContainer.appendChild(controlWrapper);
+	}
+
+	function toggleDrawingMode(mode) {
+		var drawingButton = document.getElementById('mapDrawingButton');
+
+		var drawingMode = drawingManager.getDrawingMode();
+
+		if (drawingMode === mode) {
+			drawingManager.setDrawingMode(null);
+
+			drawingButton.style.backgroundColor = '#FFF';
+		}
+		else {
+			drawingManager.setDrawingMode(mode);
+
+			drawingButton.onclick = function() {
+				toggleDrawingMode(mode);
+			};
+
+			drawingButton.style.backgroundColor = '#EDF0F3';
+
+			if (mode === 'circle') {
+				drawingButton.innerHTML = circleSVG;
+			}
+			else if (mode === 'polygon') {
+				drawingButton.innerHTML = polygonSVG;
+			}
+			else if (mode === 'rectangle') {
+				drawingButton.innerHTML = rectangleSVG;
+			}
+		}
+	}
 
 	function ZoomControl(controlContainer, map) {
 		controlContainer.style.padding = '8px 10px';
@@ -171,7 +234,6 @@ PortletURL portletURL = renderResponse.createRenderURL();
 				map.setZoom(map.getZoom() - 1);
 			}
 		);
-
 	}
 
 	function initMap() {
@@ -232,6 +294,13 @@ PortletURL portletURL = renderResponse.createRenderURL();
 			map.panToBounds(bounds);
 		}
 
+		// Custom Drawing Controls
+		var drawControlContainer = document.createElement('div');
+		var drawControl = new DrawControl(drawControlContainer, map);
+
+		drawControlContainer.index = 1;
+		map.controls[google.maps.ControlPosition.RIGHT_TOP].push(drawControlContainer);
+
 		// Custom Zoom Controls
 		var zoomControlContainer = document.createElement('div');
 		var zoomControl = new ZoomControl(zoomControlContainer, map);
@@ -242,9 +311,8 @@ PortletURL portletURL = renderResponse.createRenderURL();
 		// Drawing Manager
 		drawingManager = new google.maps.drawing.DrawingManager(
 			{
-				drawingControl: true,
+				drawingControl: false,
 				drawingControlOptions: {
-					position: google.maps.ControlPosition.TOP_RIGHT,
 					drawingModes: ['circle', 'polygon', 'rectangle']
 				},
 				circleOptions: {
@@ -265,6 +333,12 @@ PortletURL portletURL = renderResponse.createRenderURL();
 			drawingManager,
 			'overlaycomplete',
 			function(event) {
+				drawingManager.setOptions(
+					{
+						drawingControl: false
+					}
+				);
+
 				var bounds = event.overlay.getBounds();
 
 				for (var i = 0; i < markers.length; i++) {
