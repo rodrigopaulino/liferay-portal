@@ -121,28 +121,22 @@ PortletURL portletURL = renderResponse.createRenderURL();
 	</aui:col>
 </aui:row>
 
-<script
-	src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyABOXmu2BMXwxNHbhHrTcMRLnOJQYpHbWQ"
-	type="text/javascript"></script>
-
 <script>
 	var ____lat = 42.359849;
 	var ____lng = -71.0586345;
 
 	var map;
-	var panorama;
+	var infoWindow;
 
-	var infoWindow = new google.maps.InfoWindow({
-		content: 'Boston City Hall'
-	});
+	function initMap() {
+		infoWindow = new google.maps.InfoWindow({
+			content: 'Boston City Hall'
+		});
 
-	var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-	var labelIndex = 0;
-
-	function initialize() {
 		var mapOptions = {
 			center: new google.maps.LatLng(____lat, ____lng),
 			maxZoom: 18,
+			streetViewControl: false,
 			zoom: 10
 		};
 
@@ -154,7 +148,9 @@ PortletURL portletURL = renderResponse.createRenderURL();
 
 		for (var i = 0; i < searchLocations.length; i++) {
 			var p = searchLocations[i];
+
 			var latlng = new google.maps.LatLng(p.lat, p.lng);
+
 			var marker = addMarker(
 				{
 					assetTypeName: p.assetTypeName,
@@ -166,13 +162,52 @@ PortletURL portletURL = renderResponse.createRenderURL();
 				}
 			);
 
-				bounds.extend(marker.position);
+			bounds.extend(marker.position);
 		}
 
-			if (searchLocations.length > 0) {
-				map.fitBounds(bounds);
-				map.panToBounds(bounds);
+		if (searchLocations.length > 0) {
+			map.fitBounds(bounds);
+			map.panToBounds(bounds);
+		}
+
+		var drawingManager = new google.maps.drawing.DrawingManager(
+			{
+				drawingControl: true,
+				drawingControlOptions: {
+					position: google.maps.ControlPosition.TOP_RIGHT,
+					drawingModes: ['circle', 'polygon', 'rectangle']
+				},
+				circleOptions: {
+					fillOpacity: 0.2
+				},
+				polygonOptions: {
+					fillOpacity: 0.2
+				},
+				rectangleOptions: {
+					fillOpacity: 0.2
+				}
 			}
+		);
+
+		drawingManager.setMap(map);
+
+		google.maps.event.addListener(
+			drawingManager,
+			'overlaycomplete',
+			function(event) {
+				if (event.type == 'circle') {
+					var radius = event.overlay.getRadius();
+
+					console.log("Circle overlay complete", radius);
+				}
+				else if (event.type == 'polygon') {
+					console.log("Polygon overlay complete");
+				}
+				else if (event.type == 'rectangle') {
+					console.log("Rectangle overlay complete");
+				}
+			}
+		);
 	}
 
 	function addMarker(data) {
@@ -227,6 +262,8 @@ PortletURL portletURL = renderResponse.createRenderURL();
 		);
 
 	}
-
-	initialize();
 </script>
+
+<script
+	src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyABOXmu2BMXwxNHbhHrTcMRLnOJQYpHbWQ&libraries=drawing&callback=initMap"
+	type="text/javascript"></script>
