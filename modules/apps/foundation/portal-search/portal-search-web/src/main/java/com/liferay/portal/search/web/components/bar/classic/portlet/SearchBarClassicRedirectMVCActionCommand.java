@@ -14,16 +14,24 @@
 
 package com.liferay.portal.search.web.components.bar.classic.portlet;
 
+import com.liferay.portal.kernel.model.Layout;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.CharPool;
 import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.search.web.internal.display.context.ThemeDisplaySupplier;
+import com.liferay.portal.search.web.internal.portlet.PortletRequestThemeDisplaySupplier;
 import com.liferay.portal.search.web.internal.request.params.SearchParametersConfiguration;
+
+import java.util.Optional;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
-import javax.portlet.PortletPreferences;
 
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author André de Oliveira
@@ -43,24 +51,73 @@ public class SearchBarClassicRedirectMVCActionCommand
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
-		PortletPreferences portletPreferences = actionRequest.getPreferences();
-
 		SearchBarClassicConfigurationImpl searchBarClassicConfigurationImpl =
-			new SearchBarClassicConfigurationImpl(portletPreferences);
+			new SearchBarClassicConfigurationImpl(
+				actionRequest.getPreferences());
 
-		SearchParametersConfiguration parametersConfiguration =
-			searchBarClassicConfigurationImpl;
+		String redirectURL = getRedirectURL(
+			actionRequest, searchBarClassicConfigurationImpl);
+
+		String qParameter = getQParameter(
+			actionRequest, searchBarClassicConfigurationImpl);
+
+		actionResponse.sendRedirect(
+			portal.escapeRedirect(redirectURL + '?' + qParameter));
+	}
+
+	protected String getFriendlyURL(ThemeDisplay themeDisplay) {
+		Layout layout = themeDisplay.getLayout();
+
+		return layout.getFriendlyURL(themeDisplay.getLocale());
+	}
+
+	protected String getQParameter(
+		ActionRequest actionRequest,
+		SearchParametersConfiguration parametersConfiguration) {
 
 		String qParameterName = parametersConfiguration.getQParameterName();
 
 		String q = ParamUtil.getString(actionRequest, qParameterName);
 
-		SearchBarClassicConfiguration configuration =
-			searchBarClassicConfigurationImpl;
-
-		actionResponse.sendRedirect(
-			"/web/guest/" + configuration.getDestination() + "?" +
-				qParameterName + "=" + q);
+		return qParameterName + "=" + q;
 	}
+
+	protected String getRedirectURL(
+		ActionRequest actionRequest,
+		SearchBarClassicConfiguration searchBarClassicConfiguration) {
+
+		ThemeDisplay themeDisplay = getThemeDisplay(actionRequest);
+
+		String url = themeDisplay.getURLCurrent();
+
+		String page = getFriendlyURL(themeDisplay);
+
+		String path = url.substring(0, url.indexOf(page));
+
+		Optional<String> destinationOptional =
+			searchBarClassicConfiguration.getDestination();
+
+		String destination = destinationOptional.orElse(page);
+
+		return path + '/' + unslash(destination);
+	}
+
+	protected ThemeDisplay getThemeDisplay(ActionRequest actionRequest) {
+		ThemeDisplaySupplier themeDisplaySupplier =
+			new PortletRequestThemeDisplaySupplier(actionRequest);
+
+		return themeDisplaySupplier.getThemeDisplay();
+	}
+
+	protected String unslash(String string) {
+		if (string.charAt(0) == CharPool.SLASH) {
+			return string.substring(1);
+		}
+
+		return string;
+	}
+
+	@Reference
+	protected Portal portal;
 
 }

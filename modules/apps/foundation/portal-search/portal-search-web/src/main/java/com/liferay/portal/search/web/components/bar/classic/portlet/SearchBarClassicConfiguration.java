@@ -14,11 +14,13 @@
 
 package com.liferay.portal.search.web.components.bar.classic.portlet;
 
+import java.util.Optional;
+
 /**
  * @author André de Oliveira
  */
 public interface SearchBarClassicConfiguration {
 
-	public String getDestination();
+	public Optional<String> getDestination();
 
 }

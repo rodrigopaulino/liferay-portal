@@ -15,7 +15,10 @@
 package com.liferay.portal.search.web.components.bar.classic.portlet;
 
 import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.search.web.internal.request.params.SearchParametersConfiguration;
+
+import java.util.Optional;
 
 import javax.portlet.PortletPreferences;
 
@@ -32,10 +35,17 @@ public class SearchBarClassicConfigurationImpl
 	}
 
 	@Override
-	public String getDestination() {
-		return _portletPreferences.getValue(
-			SearchBarClassicPortletKeys.PREFERENCE_DESTINATION,
-			StringPool.BLANK);
+	public Optional<String> getDestination() {
+		String value = StringUtil.trim(
+			_portletPreferences.getValue(
+				SearchBarClassicPortletKeys.PREFERENCE_DESTINATION,
+				StringPool.BLANK));
+
+		if (value.isEmpty()) {
+			return Optional.empty();
+		}
+
+		return Optional.of(value);
 	}
 
 	@Override

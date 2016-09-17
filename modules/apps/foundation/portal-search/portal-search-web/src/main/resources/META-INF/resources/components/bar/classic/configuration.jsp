@@ -36,10 +36,6 @@ page import="com.liferay.portal.kernel.util.Validator" %>
 SearchDisplayContext searchDisplayContext = SearchDisplayContextFactoryUtil.create(renderRequest, renderResponse, portletPreferences);
 
 String destination = portletPreferences.getValue("destination", StringPool.BLANK);
-
-if (Validator.isNull(destination)) {
-	destination = layout.getFriendlyURL(themeDisplay.getLocale());
-}
 %>
 
 <liferay-portlet:actionURL portletConfiguration="<%= true %>" var="configurationActionURL" />
