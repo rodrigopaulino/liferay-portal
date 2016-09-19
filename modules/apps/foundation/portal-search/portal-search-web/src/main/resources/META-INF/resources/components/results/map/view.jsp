@@ -34,7 +34,26 @@ SearchContainer<Document> newSearchContainer = dc.getSearchResultsContainer();
 <style>
 	.gm-style {
 		font-family: inherit;
+		font-size: inherit;
+		font-weight: inherit;
 	}
+
+	.map-drawing-toolbar {
+		background-color: #29343D;
+		display: none;
+		margin-bottom: 0;
+		padding: 8px 10px;
+	}
+
+	.map-drawing-toolbar .map-clear-button {
+		display: none;
+	}
+
+	.map-drawing-toolbar .toolbar-message {
+		color: #FFF;
+		padding-left: 10px;
+	}
+
 	.search-results-map-window-content {
 		box-shadow: none;
 		font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -116,7 +135,25 @@ PortletURL portletURL = renderResponse.createRenderURL();
 
 <aui:row cssClass="search-map-list-container">
 	<aui:col cssClass="search-map-container" span="8">
-		<div id="map-canvas" style="height:100%; width:100%;"></div>
+		<div class="map-drawing-toolbar toolbar" id="mapDrawingToolbar">
+			<div class="toolbar-group">
+        		<div class="toolbar-group-content">
+					<span class="toolbar-message"><strong>Draw an area</strong> where you would like to search.</span>
+				</div>
+			</div>
+
+			<div class="toolbar-group-right">
+				<div class="toolbar-group-content">
+					<button class="btn btn-default" onclick="cancelOverlayMode();">Cancel</button>
+
+					<button class="btn btn-default map-clear-button" onclick="clearOverlay();">Clear Area</button>
+
+					<button class="btn btn-primary map-search-button" onclick="searchOverlay();">Search</button>
+				</div>
+			</div>
+		</div>
+
+		<div id="mapCanvas" style="height: 100%; width: 100%;"></div>
 	</aui:col>
 
 	<aui:col cssClass="search-list-container" span="4">
@@ -133,9 +170,10 @@ PortletURL portletURL = renderResponse.createRenderURL();
 	var ____lng = -71.0586345;
 
 	var drawingManager;
+	var infoWindow;
 	var map;
 	var markers = [];
-	var infoWindow;
+	var overlay;
 
 	function DrawControl(controlContainer, map) {
 		controlContainer.style.padding = '8px 10px';
@@ -145,50 +183,130 @@ PortletURL portletURL = renderResponse.createRenderURL();
 		controlWrapper.classList.add('btn-group');
 		controlWrapper.classList.add('dropdown');
 
-		controlWrapper.innerHTML = '<button class="btn btn-default" id="mapDrawingButton" onClick="toggleDrawingMode(\'polygon\')" type="button">' +
-			polygonSVG +
-			'</button>' +
-			'<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">' +
-				'<span class="caret"></span>' +
-				'<span class="sr-only">Toggle Dropdown</span>' +
-			'</button>' +
-			'<ul class="dropdown-menu dropdown-menu-right" role="menu">' +
-				'<li><a href="javascript:;" onClick="event.preventDefault(); toggleDrawingMode(\'polygon\');">Shape</a></li>' +
-				'<li><a href="javascript:;" onClick="event.preventDefault(); toggleDrawingMode(\'circle\');">Circle</a></li>' +
-				'<li><a href="javascript:;" onClick="event.preventDefault(); toggleDrawingMode(\'rectangle\');">Rectangle</a></li>' +
-			'</ul>';
+		controlWrapper.innerHTML = '<button class="btn btn-default" id="mapDrawingButton" onclick="toggleDrawingMode(\'polygon\')" onmouseover="Liferay.Portal.ToolTip.show(this, \'Draw an area to search\')" type="button">' +
+		polygonSVG +
+		'</button>' +
+		'<button class="btn btn-default dropdown-toggle" data-toggle="dropdown" type="button">' +
+			'<span class="caret"></span>' +
+			'<span class="sr-only">Toggle Dropdown</span>' +
+		'</button>' +
+		'<ul class="dropdown-menu dropdown-menu-right" role="menu">' +
+			'<li><a href="javascript:;" onclick="event.preventDefault(); toggleDrawingMode(\'polygon\');">Shape</a></li>' +
+			'<li><a href="javascript:;" onclick="event.preventDefault(); toggleDrawingMode(\'circle\');">Circle</a></li>' +
+			'<li><a href="javascript:;" onclick="event.preventDefault(); toggleDrawingMode(\'rectangle\');">Rectangle</a></li>' +
+		'</ul>';
 
 		controlContainer.appendChild(controlWrapper);
 	}
 
 	function toggleDrawingMode(mode) {
-		var drawingButton = document.getElementById('mapDrawingButton');
+		var drawingButtonElement = document.getElementById('mapDrawingButton');
+		var drawingToolbarElement = $('#mapDrawingToolbar');
 
 		var drawingMode = drawingManager.getDrawingMode();
+
+		var mapCanvasElement = $('#mapCanvas');
+
+		var mapCanvasHeight = mapCanvasElement.outerHeight();
+		var toolbarHeight = drawingToolbarElement.outerHeight();
 
 		if (drawingMode === mode) {
 			drawingManager.setDrawingMode(null);
 
-			drawingButton.style.backgroundColor = '#FFF';
+			drawingButtonElement.style.backgroundColor = '#FFF';
+
+			drawingToolbarElement.hide();
+
+			mapCanvasElement.height(mapCanvasHeight + toolbarHeight);
 		}
 		else {
 			drawingManager.setDrawingMode(mode);
 
-			drawingButton.onclick = function() {
+			drawingButtonElement.onclick = function() {
 				toggleDrawingMode(mode);
 			};
 
-			drawingButton.style.backgroundColor = '#EDF0F3';
+			drawingButtonElement.style.backgroundColor = '#EDF0F3';
 
 			if (mode === 'circle') {
-				drawingButton.innerHTML = circleSVG;
+				drawingButtonElement.innerHTML = circleSVG;
 			}
 			else if (mode === 'polygon') {
-				drawingButton.innerHTML = polygonSVG;
+				drawingButtonElement.innerHTML = polygonSVG;
 			}
 			else if (mode === 'rectangle') {
-				drawingButton.innerHTML = rectangleSVG;
+				drawingButtonElement.innerHTML = rectangleSVG;
 			}
+
+			if (!drawingToolbarElement.is(':visible')) {
+				drawingToolbarElement.show();
+
+				mapCanvasElement.height(mapCanvasHeight - toolbarHeight);
+			}
+		}
+	}
+
+	function cancelOverlayMode() {
+		clearOverlay();
+
+		drawingManager.setDrawingMode(null);
+
+		var drawingToolbarElement = $('#mapDrawingToolbar');
+
+		drawingToolbarElement.hide();
+
+		var mapCanvasElement = $('#mapCanvas');
+
+		var mapCanvasHeight = mapCanvasElement.outerHeight();
+		var toolbarHeight = drawingToolbarElement.outerHeight();
+
+		mapCanvasElement.height(mapCanvasHeight + toolbarHeight);
+
+		$('#mapDrawingButton').css('background-color', '#FFF');
+
+		toggleSearchClearButtons(true);
+	}
+
+	function clearOverlay() {
+		if (overlay) {
+			overlay.setMap(null);
+		}
+
+		toggleSearchClearButtons(true);
+	}
+
+	function searchOverlay() {
+		if (overlay) {
+			var bounds = overlay.getBounds();
+
+			for (var i = 0; i < markers.length; i++) {
+				var contained = bounds.contains(markers[i].getPosition());
+
+				if (contained) {
+					markers[i].setMap(map);
+				}
+				else {
+					markers[i].setMap(null);
+				}
+			}
+
+			toggleSearchClearButtons(false);
+		}
+	}
+
+	function toggleSearchClearButtons(search) {
+		var clearButton = $('#mapDrawingToolbar .map-clear-button');
+		var searchButton = $('#mapDrawingToolbar .map-search-button');
+
+		if (search && !searchButton.is(':visible')) {
+			clearButton.hide();
+
+			searchButton.show();
+		}
+		else if (!search && !clearButton.is(':visible')) {
+			clearButton.show();
+
+			searchButton.hide();
 		}
 	}
 
@@ -206,7 +324,7 @@ PortletURL portletURL = renderResponse.createRenderURL();
 		zoomInButton.classList.add('btn');
 		zoomInButton.classList.add('btn-default');
 		zoomInButton.innerHTML = '<svg class="lexicon-icon">' +
-			'<use xlink:href="<%= themeDisplay.getPathThemeImages() %>/lexicon/icons.svg#plus" /></svg>';
+		'<use xlink:href="<%= themeDisplay.getPathThemeImages() %>/lexicon/icons.svg#plus" /></svg>';
 
 		controlWrapper.appendChild(zoomInButton);
 
@@ -215,7 +333,7 @@ PortletURL portletURL = renderResponse.createRenderURL();
 		zoomOutButton.classList.add('btn');
 		zoomOutButton.classList.add('btn-default');
 		zoomOutButton.innerHTML = '<svg class="lexicon-icon">' +
-			'<use xlink:href="<%= themeDisplay.getPathThemeImages() %>/lexicon/icons.svg#hr" /></svg>';
+		'<use xlink:href="<%= themeDisplay.getPathThemeImages() %>/lexicon/icons.svg#hr" /></svg>';
 
 		controlWrapper.appendChild(zoomOutButton);
 
@@ -255,6 +373,7 @@ PortletURL portletURL = renderResponse.createRenderURL();
 			content: 'Boston City Hall'
 		});
 
+		// Map Options
 		var mapOptions = {
 			center: new google.maps.LatLng(____lat, ____lng),
 			maxZoom: 18,
@@ -264,11 +383,12 @@ PortletURL portletURL = renderResponse.createRenderURL();
 			zoomControl: false,
 		};
 
+		// Markers
 		var bounds = new google.maps.LatLngBounds();
 
 		var searchLocations = <%= dc.getMapMarkersJSON() %>;
 
-		map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+		map = new google.maps.Map(document.getElementById('mapCanvas'), mapOptions);
 
 		for (var i = 0; i < searchLocations.length; i++) {
 			var p = searchLocations[i];
@@ -296,14 +416,16 @@ PortletURL portletURL = renderResponse.createRenderURL();
 
 		// Custom Drawing Controls
 		var drawControlContainer = document.createElement('div');
-		var drawControl = new DrawControl(drawControlContainer, map);
+
+		new DrawControl(drawControlContainer, map);
 
 		drawControlContainer.index = 1;
 		map.controls[google.maps.ControlPosition.RIGHT_TOP].push(drawControlContainer);
 
 		// Custom Zoom Controls
 		var zoomControlContainer = document.createElement('div');
-		var zoomControl = new ZoomControl(zoomControlContainer, map);
+
+		new ZoomControl(zoomControlContainer, map);
 
 		zoomControlContainer.index = 1;
 		map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(zoomControlContainer);
@@ -311,12 +433,12 @@ PortletURL portletURL = renderResponse.createRenderURL();
 		// Drawing Manager
 		drawingManager = new google.maps.drawing.DrawingManager(
 			{
+				circleOptions: {
+					fillOpacity: 0.2
+				},
 				drawingControl: false,
 				drawingControlOptions: {
 					drawingModes: ['circle', 'polygon', 'rectangle']
-				},
-				circleOptions: {
-					fillOpacity: 0.2
 				},
 				polygonOptions: {
 					fillOpacity: 0.2
@@ -339,18 +461,11 @@ PortletURL portletURL = renderResponse.createRenderURL();
 					}
 				);
 
-				var bounds = event.overlay.getBounds();
+				drawingManager.setDrawingMode(null);
 
-				for (var i = 0; i < markers.length; i++) {
-					var isContained = bounds.contains(markers[i].getPosition());
+				overlay = event.overlay;
 
-					if (isContained) {
-						markers[i].setMap(map);
-					}
-					else {
-						markers[i].setMap(null);
-					}
-				}
+				var searchButton = $('#mapDrawingToolbar .map-search-button');
 			}
 		);
 	}
