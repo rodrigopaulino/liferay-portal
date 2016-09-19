@@ -42,8 +42,8 @@ com.liferay.portal.search.web.internal.search.bar.classic.portlet.SearchBarClass
 	<aui:input name="format" type="hidden" value="<%= format %>" />
 
 	<aui:fieldset id="searchContainer">
-		<div class="input-group">
-			<aui:field-wrapper inlineField="<%= true %>">
+		<div class="input-group search-bar">
+			<aui:field-wrapper cssClass="search-field" inlineField="<%= true %>">
 				<aui:input
 					autoFocus="<%= windowState.equals(WindowState.MAXIMIZED) %>"
 					cssClass="search-input"
@@ -56,9 +56,9 @@ com.liferay.portal.search.web.internal.search.bar.classic.portlet.SearchBarClass
 				/>
 			</aui:field-wrapper>
 
-			<aui:field-wrapper inlineField="<%= true %>">
-				<c:choose>
-					<c:when test="<%= searchDisplayContext.isSearchScopePreferenceLetTheUserChoose() %>">
+			<c:choose>
+				<c:when test="<%= searchDisplayContext.isSearchScopePreferenceLetTheUserChoose() %>">
+					<aui:field-wrapper cssClass="search-field" inlineField="<%= true %>">
 						<aui:select cssClass="search-select" label="" name="scope" title="scope">
 							<c:if test="<%= searchDisplayContext.isSearchScopePreferenceEverythingAvailable() %>">
 								<aui:option label="everything" selected="<%= scopeEverything %>" value="everything" />
@@ -66,14 +66,14 @@ com.liferay.portal.search.web.internal.search.bar.classic.portlet.SearchBarClass
 
 							<aui:option label="this-site" selected="<%= !scopeEverything %>" value="this-site" />
 						</aui:select>
-					</c:when>
-					<c:otherwise>
-						<aui:input name="scope" type="hidden" value="<%= searchDisplayContext.getSearchScopeParameterString() %>" />
-					</c:otherwise>
-				</c:choose>
-			</aui:field-wrapper>
+					</aui:field-wrapper>
+				</c:when>
+				<c:otherwise>
+					<aui:input name="scope" type="hidden" value="<%= searchDisplayContext.getSearchScopeParameterString() %>" />
+				</c:otherwise>
+			</c:choose>
 
-			<aui:field-wrapper cssClass="input-group-btn" inlineField="<%= true %>">
+			<aui:field-wrapper cssClass="input-group-btn search-field" inlineField="<%= true %>">
 				<aui:button icon="icon-search" primary="<%= false %>" type="submit" value="" />
 			</aui:field-wrapper>
 		</div>

@@ -1,0 +1,9 @@
+@import "bourbon";
+
+.search-bar {
+	width: 100%;
+
+	.search-field {
+		display: table-cell;
+	}
+}
