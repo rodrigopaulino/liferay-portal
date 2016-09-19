@@ -74,6 +74,8 @@ SearchContainer<Document> newSearchContainer = dc.getSearchResultsContainer();
 	#content .row.search-map-list-container {
 		height: 800px;
 		margin: 0;
+		overflow: hidden;
+		position: relative;
 	}
 
 	.search-list-container, .search-map-container {
@@ -87,6 +89,42 @@ SearchContainer<Document> newSearchContainer = dc.getSearchResultsContainer();
 
 	.search-list-container {
 		overflow: scroll;
+	}
+
+	.search-list-sidebar {
+		background-color: #FFF;
+		height: 100%;
+		position: absolute;
+		right: -370px;
+		top: 0;
+		width: 370px;
+	}
+
+	.search-list-sidebar-toggle {
+		background-color: #FFF;
+		border: 1px solid rgba(133, 156, 173, 0.2);
+		border-radius: 4px 0 0 4px;
+		height: 42px;
+		margin-left: -26px;
+		margin-top: -13px;
+		padding: 7px 0;
+		position: absolute;
+		text-align: center;
+		top: 50%;
+		width: 26px;
+		z-index: 1;
+	}
+
+	.search-list-sidebar-toggle:hover {
+		color: #65B6F0;
+	}
+
+	#content .row.search-map-list-container.sidebar-open .search-map-container {
+		padding-right: 370px;
+	}
+
+	#content .row.search-map-list-container.sidebar-open .search-list-sidebar {
+		right: 0;
 	}
 </style>
 
@@ -133,8 +171,8 @@ PortletURL portletURL = renderResponse.createRenderURL();
 	About <%= searchResultsAmount %> results for <strong><%= searchQuery %></strong>
 </p>
 
-<aui:row cssClass="search-map-list-container">
-	<aui:col cssClass="search-map-container" span="8">
+<aui:row cssClass="search-map-list-container sidebar-open" id="searchMapListContainer">
+	<div class="search-map-container">
 		<div class="map-drawing-toolbar toolbar" id="mapDrawingToolbar">
 			<div class="toolbar-group">
         		<div class="toolbar-group-content">
@@ -154,11 +192,15 @@ PortletURL portletURL = renderResponse.createRenderURL();
 		</div>
 
 		<div id="mapCanvas" style="height: 100%; width: 100%;"></div>
-	</aui:col>
+	</div>
 
-	<aui:col cssClass="search-list-container" span="4">
-		<%@ include file="/components/results/list/results_list.jspf" %>
-	</aui:col>
+	<div class="search-list-sidebar">
+		<aui:a href="javascript:;"><div class="search-list-sidebar-toggle text-default" id="<portlet:namespace />searchSidebarToggle">&#8811;</div></aui:a>
+
+		<div class="search-list-container">
+			<%@ include file="/components/results/list/results_list.jspf" %>
+		</div>
+	</div>
 </aui:row>
 
 <script>
@@ -528,3 +570,35 @@ PortletURL portletURL = renderResponse.createRenderURL();
 <script
 	src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyABOXmu2BMXwxNHbhHrTcMRLnOJQYpHbWQ&libraries=drawing&callback=initMap"
 	type="text/javascript"></script>
+
+<aui:script use="aui-base">
+	$('#<portlet:namespace />searchSidebarToggle').on(
+		'click',
+		function() {
+			var mapListContainerElement = $('#<portlet:namespace />searchMapListContainer');
+
+			mapListContainerElement.toggleClass('sidebar-open');
+
+			if (mapListContainerElement.hasClass('sidebar-open')) {
+				$('#<portlet:namespace />searchSidebarToggle').html('&#8811;');
+			}
+			else {
+				$('#<portlet:namespace />searchSidebarToggle').html('&#8810;');
+			}
+
+			google.maps.event.trigger(map, "resize");
+		}
+	);
+
+	$('#<portlet:namespace />searchSidebarToggle').on(
+		'mouseover',
+		function() {
+			if ($('#<portlet:namespace />searchMapListContainer').hasClass('sidebar-open')) {
+				Liferay.Portal.ToolTip.show(this, 'Collapse Side Panel');
+			}
+			else {
+				Liferay.Portal.ToolTip.show(this, 'Expand Side Panel');
+			}
+		}
+	);
+</aui:script>
