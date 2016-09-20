@@ -73,7 +73,7 @@ PortletURL portletURL = renderResponse.createRenderURL();
 	About <%= searchResultsAmount %> results for <strong><%= searchQuery %></strong>
 </p>
 
-<div class="open search-sidenav-container sidenav-container" id="<portlet:namespace />searchSideNavContainer">
+<div class="open search-map-container sidenav-container" id="<portlet:namespace />searchSideNavContainer">
 	<div class="sidenav-menu-slider">
 		<div class="sidenav-menu">
 			<%@ include file="/components/results/list/results_list.jspf" %>
@@ -334,8 +334,10 @@ PortletURL portletURL = renderResponse.createRenderURL();
 			function() {
 				map.setMapTypeId('roadmap');
 
-				mapButton.classList.toggle('selected');
-				satelliteButton.classList.toggle('selected');
+				if (!mapButton.classList.contains('selected')) {
+					mapButton.classList.toggle('selected');
+					satelliteButton.classList.toggle('selected');
+				}
 			}
 		);
 
@@ -345,8 +347,10 @@ PortletURL portletURL = renderResponse.createRenderURL();
 			function() {
 				map.setMapTypeId('satellite');
 
-				mapButton.classList.toggle('selected');
-				satelliteButton.classList.toggle('selected');
+				if (!satelliteButton.classList.contains('selected')) {
+					mapButton.classList.toggle('selected');
+					satelliteButton.classList.toggle('selected');
+				}
 			}
 		);
 	}

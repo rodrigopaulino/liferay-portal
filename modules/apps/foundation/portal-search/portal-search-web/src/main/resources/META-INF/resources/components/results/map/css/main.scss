@@ -37,10 +37,6 @@
 	padding-left: 0;
 }
 
-.search-map-container .btn.selected {
-	background-color: #EDF0F3;
-}
-
 .search-list-sidebar-toggle {
 	background-color: #FFF;
 	border: 1px solid rgba(133, 156, 173, 0.2);
@@ -56,14 +52,20 @@
 	color: #65B6F0;
 }
 
-.search-sidenav-container .sidenav-menu-slider {
-	height: 100%;
+.search-map-container {
+	.btn.selected {
+		background-color: #EDF0F3;
+	}
 
-	.sidenav-menu {
-		overflow: scroll;
+	.sidenav-menu-slider {
+		height: 100%;
 
-		.main-content-body {
-			margin-top: 0;
+		.sidenav-menu {
+			overflow: scroll;
+
+			.main-content-body {
+				margin-top: 0;
+			}
 		}
 	}
 }
