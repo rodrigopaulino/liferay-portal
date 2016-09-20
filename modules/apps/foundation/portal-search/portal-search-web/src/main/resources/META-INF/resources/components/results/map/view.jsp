@@ -20,7 +20,6 @@
 
 <%@ page import="com.liferay.blogs.kernel.model.BlogsEntry" %>
 <%@ page import="com.liferay.blogs.kernel.service.BlogsEntryLocalServiceUtil" %>
-<%@ page import="com.liferay.journal.model.JournalArticle" %>
 <%@ page import="com.liferay.message.boards.kernel.model.MBMessage" %>
 
 <%@ page import="java.text.SimpleDateFormat" %>
