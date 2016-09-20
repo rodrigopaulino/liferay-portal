@@ -299,6 +299,61 @@ PortletURL portletURL = renderResponse.createRenderURL();
 		);
 	}
 
+	function MapTypeControl(controlContainer, map) {
+		controlContainer.style.padding = '8px 10px';
+
+		var controlWrapper = document.createElement('div');
+
+		controlWrapper.classList.add('btn-group');
+
+		controlContainer.appendChild(controlWrapper);
+
+		var mapButton = document.createElement('button');
+
+		mapButton.classList.add('btn');
+		mapButton.classList.add('btn-default');
+		mapButton.innerHTML = 'Map';
+
+		controlWrapper.appendChild(mapButton);
+
+		var satelliteButton = document.createElement('button');
+
+		satelliteButton.classList.add('btn');
+		satelliteButton.classList.add('btn-default');
+		satelliteButton.innerHTML = 'Satellite';
+
+		controlWrapper.appendChild(satelliteButton);
+
+		if (map.getMapTypeId() === 'roadmap') {
+			mapButton.classList.add('selected');
+		}
+		else if (map.getMapTypeId() === 'satellite') {
+			satelliteButton.classList.add('selected');
+		}
+
+		google.maps.event.addDomListener(
+			mapButton,
+			'click',
+			function() {
+				map.setMapTypeId('roadmap');
+
+				mapButton.classList.toggle('selected');
+				satelliteButton.classList.toggle('selected');
+			}
+		);
+
+		google.maps.event.addDomListener(
+			satelliteButton,
+			'click',
+			function() {
+				map.setMapTypeId('satellite');
+
+				mapButton.classList.toggle('selected');
+				satelliteButton.classList.toggle('selected');
+			}
+		);
+	}
+
 	function initMap() {
 		if (!google.maps.Polygon.prototype.getBounds) {
 			google.maps.Polygon.prototype.getBounds = function() {
@@ -321,6 +376,7 @@ PortletURL portletURL = renderResponse.createRenderURL();
 		// Map Options
 		var mapOptions = {
 			center: new google.maps.LatLng(____lat, ____lng),
+			mapTypeControl: false,
 			maxZoom: 18,
 			scrollwheel: false,
 			streetViewControl: false,
@@ -358,6 +414,14 @@ PortletURL portletURL = renderResponse.createRenderURL();
 			map.fitBounds(bounds);
 			map.panToBounds(bounds);
 		}
+
+		// Custom Map Type Controls
+		var mapTypeControlContainer = document.createElement('div');
+
+		new MapTypeControl(mapTypeControlContainer, map);
+
+		mapTypeControlContainer.index = 1;
+		map.controls[google.maps.ControlPosition.LEFT_TOP].push(mapTypeControlContainer);
 
 		// Custom Drawing Controls
 		var drawControlContainer = document.createElement('div');
