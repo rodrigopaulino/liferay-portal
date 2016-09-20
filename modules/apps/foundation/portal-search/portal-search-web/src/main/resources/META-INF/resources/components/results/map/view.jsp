@@ -73,11 +73,17 @@ PortletURL portletURL = renderResponse.createRenderURL();
 	About <%= searchResultsAmount %> results for <strong><%= searchQuery %></strong>
 </p>
 
-<aui:row cssClass="search-map-list-container sidebar-open" id="searchMapListContainer">
-	<div class="search-map-container">
+<div class="open search-sidenav-container sidenav-container" id="<portlet:namespace />searchSideNavContainer">
+	<div class="sidenav-menu-slider">
+		<div class="sidenav-menu">
+			<%@ include file="/components/results/list/results_list.jspf" %>
+		</div>
+	</div>
+
+	<div class="sidenav-content">
 		<div class="map-drawing-toolbar toolbar" id="mapDrawingToolbar">
 			<div class="toolbar-group">
-        		<div class="toolbar-group-content">
+				<div class="toolbar-group-content">
 					<span class="toolbar-message"><strong>Draw an area</strong> where you would like to search.</span>
 				</div>
 			</div>
@@ -93,17 +99,9 @@ PortletURL portletURL = renderResponse.createRenderURL();
 			</div>
 		</div>
 
-		<div id="mapCanvas" style="height: 100%; width: 100%;"></div>
+		<div id="mapCanvas" style="height: 800px; width: 100%;"></div>
 	</div>
-
-	<div class="search-list-sidebar">
-		<aui:a href="javascript:;"><div class="search-list-sidebar-toggle text-default" id="<portlet:namespace />searchSidebarToggle">&#8811;</div></aui:a>
-
-		<div class="search-list-container">
-			<%@ include file="/components/results/list/results_list.jspf" %>
-		</div>
-	</div>
-</aui:row>
+</div>
 
 <script>
 	var circleSVG = '<svg id="SvgjsSvg1022" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" width="20" height="20"><defs id="SvgjsDefs1023"></defs><path id="SvgjsPath1024" d="M1111.35 770.888C1106.11 770.888 1101.84 775.1550000000001 1101.84 780.399C1101.84 785.644 1106.11 789.9110000000001 1111.35 789.9110000000001C1116.6 789.9110000000001 1120.86 785.644 1120.86 780.3990000000001C1120.86 775.1550000000001 1116.6 770.8880000000001 1111.35 770.8880000000001ZM1111.35 788.182C1107.06 788.182 1103.57 784.691 1103.57 780.399C1103.57 776.108 1107.06 772.617 1111.35 772.617C1115.6399999999999 772.617 1119.1299999999999 776.108 1119.1299999999999 780.399C1119.1299999999999 784.691 1115.6399999999999 788.182 1111.35 788.182Z " fill="#859cad" transform="matrix(1,0,0,1,-1101,-770)"></path></svg>';
@@ -353,6 +351,63 @@ PortletURL portletURL = renderResponse.createRenderURL();
 		);
 	}
 
+	function SideNavControl(controlContainer, map) {
+		var controlButton = document.createElement('div');
+
+		controlButton.classList.add('search-list-sidebar-toggle');
+		controlButton.classList.add('text-default');
+		controlButton.id = '<portlet:namespace />searchSidebarToggle';
+		controlButton.innerHTML = '&#8811;';
+
+		controlContainer.appendChild(controlButton);
+
+		$(controlButton).sideNavigation(
+			{
+				container: '#<portlet:namespace />searchSideNavContainer',
+				equalHeight: false,
+				gutter: '0',
+				position: 'right',
+				width: '370px'
+			}
+		);
+
+		google.maps.event.addDomListener(
+			controlButton,
+			'mouseover',
+			function() {
+				if ($(controlButton).sideNavigation('visible')) {
+					Liferay.Portal.ToolTip.show(this, 'Collapse Side Panel');
+				}
+				else {
+					Liferay.Portal.ToolTip.show(this, 'Expand Side Panel');
+				}
+			}
+		);
+
+		var searchSidebarContainer = $('#<portlet:namespace />searchSideNavContainer');
+
+		searchSidebarContainer.on(
+			'openStart.lexicon.sidenav',
+			function() {
+				controlButton.innerHTML = '&#8811;';
+			}
+		);
+
+		searchSidebarContainer.on(
+			'closedStart.lexicon.sidenav',
+			function() {
+				controlButton.innerHTML = '&#8810;';
+			}
+		);
+
+		searchSidebarContainer.on(
+			'closed.lexicon.sidenav',
+			function() {
+				google.maps.event.trigger(map, 'resize');
+			}
+		);
+	}
+
 	function initMap() {
 		if (!google.maps.Polygon.prototype.getBounds) {
 			google.maps.Polygon.prototype.getBounds = function() {
@@ -437,6 +492,14 @@ PortletURL portletURL = renderResponse.createRenderURL();
 
 		zoomControlContainer.index = 1;
 		map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(zoomControlContainer);
+
+		// SideNav Controls
+		var sideNavControlContainer = document.createElement('div');
+
+		new SideNavControl(sideNavControlContainer, map);
+
+		sideNavControlContainer.index = 1;
+		map.controls[google.maps.ControlPosition.RIGHT_CENTER].push(sideNavControlContainer);
 
 		// Drawing Manager
 		drawingManager = new google.maps.drawing.DrawingManager(
@@ -536,35 +599,3 @@ PortletURL portletURL = renderResponse.createRenderURL();
 <script
 	src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyABOXmu2BMXwxNHbhHrTcMRLnOJQYpHbWQ&libraries=drawing&callback=initMap"
 	type="text/javascript"></script>
-
-<aui:script use="aui-base">
-	$('#<portlet:namespace />searchSidebarToggle').on(
-		'click',
-		function() {
-			var mapListContainerElement = $('#<portlet:namespace />searchMapListContainer');
-
-			mapListContainerElement.toggleClass('sidebar-open');
-
-			if (mapListContainerElement.hasClass('sidebar-open')) {
-				$('#<portlet:namespace />searchSidebarToggle').html('&#8811;');
-			}
-			else {
-				$('#<portlet:namespace />searchSidebarToggle').html('&#8810;');
-			}
-
-			google.maps.event.trigger(map, "resize");
-		}
-	);
-
-	$('#<portlet:namespace />searchSidebarToggle').on(
-		'mouseover',
-		function() {
-			if ($('#<portlet:namespace />searchMapListContainer').hasClass('sidebar-open')) {
-				Liferay.Portal.ToolTip.show(this, 'Collapse Side Panel');
-			}
-			else {
-				Liferay.Portal.ToolTip.show(this, 'Expand Side Panel');
-			}
-		}
-	);
-</aui:script>
