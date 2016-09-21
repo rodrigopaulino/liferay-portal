@@ -19,6 +19,7 @@ import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.CharPool;
+import com.liferay.portal.kernel.util.HttpUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.search.web.internal.display.context.ThemeDisplaySupplier;
@@ -46,6 +47,17 @@ import org.osgi.service.component.annotations.Reference;
 public class SearchBarClassicRedirectMVCActionCommand
 	extends BaseMVCActionCommand {
 
+	protected String addQParameter(
+		String url, ActionRequest actionRequest,
+		SearchParametersConfiguration parametersConfiguration) {
+
+		String qParameterName = parametersConfiguration.getQParameterName();
+
+		String q = ParamUtil.getString(actionRequest, qParameterName);
+
+		return HttpUtil.addParameter(url, qParameterName, q);
+	}
+
 	@Override
 	protected void doProcessAction(
 			ActionRequest actionRequest, ActionResponse actionResponse)
@@ -58,28 +70,16 @@ public class SearchBarClassicRedirectMVCActionCommand
 		String redirectURL = getRedirectURL(
 			actionRequest, searchBarClassicConfigurationImpl);
 
-		String qParameter = getQParameter(
-			actionRequest, searchBarClassicConfigurationImpl);
+		redirectURL = addQParameter(
+			redirectURL, actionRequest, searchBarClassicConfigurationImpl);
 
-		actionResponse.sendRedirect(
-			portal.escapeRedirect(redirectURL + '?' + qParameter));
+		actionResponse.sendRedirect(portal.escapeRedirect(redirectURL));
 	}
 
 	protected String getFriendlyURL(ThemeDisplay themeDisplay) {
 		Layout layout = themeDisplay.getLayout();
 
 		return layout.getFriendlyURL(themeDisplay.getLocale());
-	}
-
-	protected String getQParameter(
-		ActionRequest actionRequest,
-		SearchParametersConfiguration parametersConfiguration) {
-
-		String qParameterName = parametersConfiguration.getQParameterName();
-
-		String q = ParamUtil.getString(actionRequest, qParameterName);
-
-		return qParameterName + "=" + q;
 	}
 
 	protected String getRedirectURL(
