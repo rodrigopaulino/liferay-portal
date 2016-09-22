@@ -24,9 +24,9 @@ import com.liferay.portal.search.web.internal.request.params.SearchParameters;
 import com.liferay.portal.search.web.internal.request.params.SearchParametersImpl;
 import com.liferay.portal.search.web.internal.results.data.SearchResultsData;
 
-import javax.servlet.http.HttpServletRequest;
-
 import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author André de Oliveira
@@ -46,6 +46,10 @@ public class SearchResultsListDisplayContext {
 			originalHttpServletRequestSupplier);
 	}
 
+	public String[] getQueryTerms() {
+		return _searchResultsData.getQueryTerms();
+	}
+
 	public String getQ() {
 		return _parameters.getQParameter();
 	}
@@ -57,7 +61,7 @@ public class SearchResultsListDisplayContext {
 	public SearchContainer<Document> getSearchResultsContainer() {
 		List<Document> documents = _searchResultsData.getDocuments();
 
-		SearchContainer<Document> searchContainer = new SearchContainer<Document>();
+		SearchContainer<Document> searchContainer = new SearchContainer<>();
 
 		searchContainer.setResults(documents);
 

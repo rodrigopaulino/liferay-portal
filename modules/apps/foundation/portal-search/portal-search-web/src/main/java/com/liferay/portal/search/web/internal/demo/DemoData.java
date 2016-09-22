@@ -101,4 +101,9 @@ public class DemoData implements SearchResultsData {
 		return list;
 	}
 
+	@Override
+	public String[] getQueryTerms() {
+		return null;
+	}
+
 }

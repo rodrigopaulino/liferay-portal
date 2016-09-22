@@ -25,4 +25,6 @@ public interface SearchResultsData {
 
 	public List<Document> getDocuments();
 
+	public String[] getQueryTerms();
+
 }

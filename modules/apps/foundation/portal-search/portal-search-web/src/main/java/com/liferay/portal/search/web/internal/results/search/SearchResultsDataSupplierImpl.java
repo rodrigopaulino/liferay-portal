@@ -14,9 +14,7 @@
 
 package com.liferay.portal.search.web.internal.results.search;
 
-import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.language.Language;
-import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.QueryConfig;
 import com.liferay.portal.kernel.search.facet.faceted.searcher.FacetedSearcherManager;
 import com.liferay.portal.kernel.util.HtmlUtil;
@@ -61,10 +59,7 @@ public class SearchResultsDataSupplierImpl
 		SearchDisplayContext searchDisplayContext =
 			createSearchDisplayContext();
 
-		SearchContainer<Document> searchContainer =
-			searchDisplayContext.getSearchContainer();
-
-		return searchContainer::getResults;
+		return new SearchResultsDataImpl(searchDisplayContext);
 	}
 
 	protected SearchDisplayContext createSearchDisplayContext() {
