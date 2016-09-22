@@ -14,9 +14,9 @@
 
 package com.liferay.portal.search.web.internal.results.data;
 
-import com.liferay.portal.kernel.search.Document;
-
 import java.util.List;
+
+import com.liferay.portal.kernel.search.Document;
 
 /**
  * @author André de Oliveira
@@ -24,5 +24,7 @@ import java.util.List;
 public interface SearchResultsData {
 
 	public List<Document> getDocuments();
+
+	public String[] getQueryTerms();
 
 }

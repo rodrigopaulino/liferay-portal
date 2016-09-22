@@ -14,13 +14,13 @@
 
 package com.liferay.portal.search.web.internal.demo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
 import com.liferay.portal.search.web.internal.results.data.SearchResultsData;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author André de Oliveira
@@ -99,6 +99,11 @@ public class DemoData implements SearchResultsData {
 		list.add(document);
 
 		return list;
+	}
+
+	@Override
+	public String[] getQueryTerms() {
+		return null;
 	}
 
 }

@@ -25,7 +25,6 @@ import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
-import com.liferay.portal.search.web.internal.display.context.ThemeDisplaySupplier;
 import com.liferay.portal.search.web.internal.request.helper.OriginalHttpServletRequestSupplier;
 import com.liferay.portal.search.web.internal.request.helper.PortalOriginalHttpServletRequestSupplier;
 import com.liferay.portal.search.web.internal.request.helper.SearchHttpServletRequestHelper;
@@ -33,10 +32,11 @@ import com.liferay.portal.search.web.internal.request.params.SearchParameters;
 import com.liferay.portal.search.web.internal.request.params.SearchParametersImpl;
 import com.liferay.portal.search.web.internal.results.data.SearchResultsData;
 
+import java.text.SimpleDateFormat;
+
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.text.SimpleDateFormat;
 import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
@@ -66,6 +66,10 @@ public class SearchResultsMapDisplayContext {
 
 	public String getMapMarkersJSON() {
 		return _mapMarkersJSON;
+	}
+
+	public String[] getQueryTerms() {
+		return _searchResultsData.getQueryTerms();
 	}
 
 	public String getQ() {
@@ -134,7 +138,7 @@ public class SearchResultsMapDisplayContext {
 	public SearchContainer<Document> getSearchResultsContainer() {
 		List<Document> documents = _searchResultsData.getDocuments();
 
-		SearchContainer<Document> searchContainer = new SearchContainer<Document>();
+		SearchContainer<Document> searchContainer = new SearchContainer<>();
 
 		searchContainer.setResults(documents);
 
