@@ -14,16 +14,15 @@
 
 package com.liferay.portal.search.web.internal.results.data;
 
+import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.search.Document;
-
-import java.util.List;
 
 /**
  * @author André de Oliveira
  */
 public interface SearchResultsData {
 
-	public List<Document> getDocuments();
+	public SearchContainer<Document> getDocuments();
 
 	public String[] getQueryTerms();
 

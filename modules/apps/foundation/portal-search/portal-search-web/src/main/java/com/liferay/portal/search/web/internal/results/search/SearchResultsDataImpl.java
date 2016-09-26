@@ -19,8 +19,6 @@ import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.search.web.internal.display.context.SearchDisplayContext;
 import com.liferay.portal.search.web.internal.results.data.SearchResultsData;
 
-import java.util.List;
-
 /**
  * @author Rodrigo Paulino
  * @author André de Oliveira
@@ -37,11 +35,8 @@ public class SearchResultsDataImpl implements SearchResultsData {
 	}
 
 	@Override
-	public List<Document> getDocuments() {
-		SearchContainer<Document> searchContainer =
-			_searchDisplayContext.getSearchContainer();
-
-		return searchContainer.getResults();
+	public SearchContainer<Document> getDocuments() {
+		return _searchDisplayContext.getSearchContainer();
 	}
 
 	private final SearchDisplayContext _searchDisplayContext;

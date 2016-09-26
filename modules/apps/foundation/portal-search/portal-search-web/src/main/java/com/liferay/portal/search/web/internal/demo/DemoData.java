@@ -14,6 +14,7 @@
 
 package com.liferay.portal.search.web.internal.demo;
 
+import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.search.DocumentImpl;
 import com.liferay.portal.kernel.search.Field;
@@ -28,7 +29,7 @@ import java.util.List;
 public class DemoData implements SearchResultsData {
 
 	@Override
-	public List<Document> getDocuments() {
+	public SearchContainer<Document> getDocuments() {
 		List<Document> list = new ArrayList<>();
 
 		Field title = new Field(Field.TITLE);
@@ -98,7 +99,11 @@ public class DemoData implements SearchResultsData {
 
 		list.add(document);
 
-		return list;
+		SearchContainer<Document> searchContainer = new SearchContainer<>();
+
+		searchContainer.setResults(list);
+
+		return searchContainer;
 	}
 
 	@Override

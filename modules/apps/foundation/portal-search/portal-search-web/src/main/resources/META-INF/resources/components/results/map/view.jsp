@@ -31,9 +31,7 @@ SearchContainer<Document> newSearchContainer = dc.getSearchResultsContainer();
 %>
 
 <%
-List<Document> searchResults = newSearchContainer.getResults();
-
-int searchResultsAmount = searchResults.size();
+int searchResultsAmount = newSearchContainer.getResults().size();
 
 String searchQuery = dc.getQ();
 %>

@@ -79,7 +79,8 @@ public class SearchResultsMapDisplayContext {
 	protected String buildMapMarkersJSON() {
 		JSONArray locations = JSONFactoryUtil.createJSONArray();
 
-		List<Document> documents = _searchResultsData.getDocuments();
+		List<Document> documents =
+			_searchResultsData.getDocuments().getResults();
 
 		documents.stream().flatMap(this::getMapMarkers).forEach(locations::put);
 
@@ -136,13 +137,7 @@ public class SearchResultsMapDisplayContext {
 	}
 
 	public SearchContainer<Document> getSearchResultsContainer() {
-		List<Document> documents = _searchResultsData.getDocuments();
-
-		SearchContainer<Document> searchContainer = new SearchContainer<>();
-
-		searchContainer.setResults(documents);
-
-		return searchContainer;
+		return _searchResultsData.getDocuments();
 	}
 
 	private final String _mapMarkersJSON;

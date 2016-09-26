@@ -92,9 +92,7 @@ PortletURL portletURL = renderResponse.createRenderURL();
 </liferay-frontend:management-bar>
 
 <%
-List<Document> searchResults = newSearchContainer.getResults();
-
-int searchResultsAmount = searchResults.size();
+int searchResultsAmount = newSearchContainer.getResults().size();
 
 String searchQuery = dc.getQ();
 %>

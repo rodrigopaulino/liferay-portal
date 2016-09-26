@@ -24,8 +24,6 @@ import com.liferay.portal.search.web.internal.request.params.SearchParameters;
 import com.liferay.portal.search.web.internal.request.params.SearchParametersImpl;
 import com.liferay.portal.search.web.internal.results.data.SearchResultsData;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -59,13 +57,7 @@ public class SearchResultsListDisplayContext {
 	}
 
 	public SearchContainer<Document> getSearchResultsContainer() {
-		List<Document> documents = _searchResultsData.getDocuments();
-
-		SearchContainer<Document> searchContainer = new SearchContainer<>();
-
-		searchContainer.setResults(documents);
-
-		return searchContainer;
+		return _searchResultsData.getDocuments();
 	}
 
 	private final SearchParameters _parameters;

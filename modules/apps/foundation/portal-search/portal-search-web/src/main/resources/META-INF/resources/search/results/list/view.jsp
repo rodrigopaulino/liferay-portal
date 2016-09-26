@@ -31,7 +31,7 @@ SearchResultsListDisplayContext dc = new SearchResultsListDisplayContext(request
 
 SearchResultsData searchResultsData = dc.getSearchResultsData();
 
-List<Document> documents = searchResultsData.getDocuments();
+List<Document> documents = searchResultsData.getDocuments().getResults();
 %>
 
 <ul class="tabular-list-group">
