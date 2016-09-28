@@ -17,12 +17,18 @@ package com.liferay.portal.search.web.components.results.list.portlet;
 import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.search.Document;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.search.web.internal.document.display.context.DocumentDisplayContext;
 import com.liferay.portal.search.web.internal.request.helper.OriginalHttpServletRequestSupplier;
 import com.liferay.portal.search.web.internal.request.helper.PortalOriginalHttpServletRequestSupplier;
 import com.liferay.portal.search.web.internal.request.helper.SearchHttpServletRequestHelper;
 import com.liferay.portal.search.web.internal.request.params.SearchParameters;
 import com.liferay.portal.search.web.internal.request.params.SearchParametersImpl;
 import com.liferay.portal.search.web.internal.results.data.SearchResultsData;
+
+import java.util.Locale;
+
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -31,17 +37,30 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class SearchResultsListDisplayContext {
 
-	public SearchResultsListDisplayContext(HttpServletRequest request) {
+	public SearchResultsListDisplayContext(
+		HttpServletRequest request, RenderRequest renderRequest,
+		RenderResponse renderResponse, Locale locale) {
+
 		OriginalHttpServletRequestSupplier originalHttpServletRequestSupplier =
 			new PortalOriginalHttpServletRequestSupplier(
 				()-> request, PortalUtil.getPortal());
+
+		_locale = locale;
 
 		_parameters = new SearchParametersImpl(
 			originalHttpServletRequestSupplier,
 			new SearchResultsListConfigurationImpl());
 
+		_renderResponse = renderResponse;
+		_renderRequest = renderRequest;
+
 		_searchResultsData = SearchHttpServletRequestHelper.getResults(
 			originalHttpServletRequestSupplier);
+	}
+
+	public DocumentDisplayContext getDocumentDisplayContext(Document document) {
+		return new DocumentDisplayContext(
+			document, _renderRequest, _renderResponse, _locale);
 	}
 
 	public String[] getQueryTerms() {
@@ -60,7 +79,10 @@ public class SearchResultsListDisplayContext {
 		return _searchResultsData.getDocuments();
 	}
 
+	private final Locale _locale;
 	private final SearchParameters _parameters;
+	private final RenderRequest _renderRequest;
+	private final RenderResponse _renderResponse;
 	private final SearchResultsData _searchResultsData;
 
 }

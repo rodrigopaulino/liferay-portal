@@ -28,7 +28,7 @@
 <%@ page import="com.liferay.blogs.kernel.service.BlogsEntryLocalServiceUtil" %>
 
 <%
-SearchResultsListDisplayContext dc = new SearchResultsListDisplayContext(request);
+SearchResultsListDisplayContext dc = new SearchResultsListDisplayContext(request, renderRequest, renderResponse, locale);
 
 SearchContainer<Document> newSearchContainer = dc.getSearchResultsContainer();
 %>

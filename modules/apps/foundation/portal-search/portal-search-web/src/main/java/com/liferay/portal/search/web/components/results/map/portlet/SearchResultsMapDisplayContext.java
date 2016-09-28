@@ -25,6 +25,7 @@ import com.liferay.portal.kernel.security.permission.ResourceActionsUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.search.web.internal.document.display.context.DocumentDisplayContext;
 import com.liferay.portal.search.web.internal.request.helper.OriginalHttpServletRequestSupplier;
 import com.liferay.portal.search.web.internal.request.helper.PortalOriginalHttpServletRequestSupplier;
 import com.liferay.portal.search.web.internal.request.helper.SearchHttpServletRequestHelper;
@@ -36,8 +37,12 @@ import java.text.SimpleDateFormat;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.stream.Stream;
+
+import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -46,10 +51,17 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class SearchResultsMapDisplayContext {
 
-	public SearchResultsMapDisplayContext(HttpServletRequest request) {
+	public SearchResultsMapDisplayContext(
+		HttpServletRequest request, RenderRequest renderRequest,
+		RenderResponse renderResponse, Locale locale) {
+
+		_request = request;
+
 		OriginalHttpServletRequestSupplier originalHttpServletRequestSupplier =
 			new PortalOriginalHttpServletRequestSupplier(
-				()->request, PortalUtil.getPortal());
+				()-> _request, PortalUtil.getPortal());
+
+		_locale = locale;
 
 		_parameters = new SearchParametersImpl(
 			originalHttpServletRequestSupplier,
@@ -58,10 +70,16 @@ public class SearchResultsMapDisplayContext {
 		_searchResultsData = SearchHttpServletRequestHelper.getResults(
 			originalHttpServletRequestSupplier);
 
-		_request = request;
+		_renderResponse = renderResponse;
+		_renderRequest = renderRequest;
 
 		_mapMarkersJSON = buildMapMarkersJSON();
 
+	}
+
+	public DocumentDisplayContext getDocumentDisplayContext(Document document) {
+		return new DocumentDisplayContext(
+			document, _renderRequest, _renderResponse, _locale);
 	}
 
 	public String getMapMarkersJSON() {
@@ -140,9 +158,12 @@ public class SearchResultsMapDisplayContext {
 		return _searchResultsData.getDocuments();
 	}
 
+	private final Locale _locale;
 	private final String _mapMarkersJSON;
 	private final SearchParameters _parameters;
 	private final HttpServletRequest _request;
+	private final RenderRequest _renderRequest;
+	private final RenderResponse _renderResponse;
 	private final SearchResultsData _searchResultsData;
 
 }

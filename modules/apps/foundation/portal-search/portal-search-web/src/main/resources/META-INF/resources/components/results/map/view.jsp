@@ -25,7 +25,7 @@
 <%@ page import="java.text.SimpleDateFormat" %>
 
 <%
-SearchResultsMapDisplayContext dc = new SearchResultsMapDisplayContext(request);
+SearchResultsMapDisplayContext dc = new SearchResultsMapDisplayContext(request, renderRequest, renderResponse, locale);
 
 SearchContainer<Document> newSearchContainer = dc.getSearchResultsContainer();
 %>
