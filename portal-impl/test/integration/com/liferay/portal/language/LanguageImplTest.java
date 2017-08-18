@@ -16,13 +16,23 @@ package com.liferay.portal.language;
 
 import com.liferay.portal.kernel.bean.PortalBeanLocatorUtil;
 import com.liferay.portal.kernel.language.LanguageWrapper;
+import com.liferay.portal.kernel.model.Company;
+import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.security.auth.CompanyThreadLocal;
+import com.liferay.portal.kernel.service.GroupLocalServiceUtil;
+import com.liferay.portal.kernel.test.AssertUtils;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
+import com.liferay.portal.kernel.test.util.CompanyTestUtil;
+import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleThreadLocal;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.struts.mock.MockHttpServletRequest;
@@ -40,6 +50,93 @@ import org.junit.runner.RunWith;
  */
 @RunWith(Enclosed.class)
 public class LanguageImplTest {
+
+	public static final class AvailableLocales {
+
+		@ClassRule
+		@Rule
+		public static final AggregateTestRule aggregateTestRule =
+			new LiferayIntegrationTestRule();
+
+		@Before
+		public void setUp() {
+			_languageImpl = (LanguageImpl)PortalBeanLocatorUtil.locate(
+				"com.liferay.portal.language.LanguageImpl");
+		}
+
+		@Test
+		public void testCompanyAvailableLocales() throws Exception {
+			long defaultCompanyId = CompanyThreadLocal.getCompanyId();
+
+			try {
+				Company newCompany = CompanyTestUtil.addCompany();
+
+				List<Locale> availableLocales = Arrays.asList(
+					LocaleUtil.US, LocaleUtil.HUNGARY, LocaleUtil.JAPAN,
+					LocaleUtil.CANADA_FRENCH);
+
+				CompanyTestUtil.resetCompanyLocales(
+					newCompany.getCompanyId(), availableLocales, LocaleUtil.US);
+
+				AssertUtils.assertEquals(
+					availableLocales,
+					ListUtil.fromArray(
+						_languageImpl.getAvailableLocales().toArray()));
+			}
+			finally {
+				CompanyThreadLocal.setCompanyId(defaultCompanyId);
+			}
+		}
+
+		@Test
+		public void testGroupAvailableLocales() throws Exception {
+			Company newCompany = CompanyTestUtil.addCompany();
+
+			List<Locale> availableLocales = Arrays.asList(
+				LocaleUtil.US, LocaleUtil.HUNGARY, LocaleUtil.JAPAN,
+				LocaleUtil.SPAIN);
+
+			Group group = GroupLocalServiceUtil.getGroup(
+				newCompany.getCompanyId(), "Guest");
+
+			GroupTestUtil.updateDisplaySettings(
+				group.getGroupId(), availableLocales, LocaleUtil.US);
+
+			AssertUtils.assertEquals(
+				availableLocales,
+				ListUtil.fromArray(
+					_languageImpl.getAvailableLocales(
+						group.getGroupId()).toArray()));
+		}
+
+		@Test
+		public void testGroupAvailableLocalesWithInheritedContent()
+			throws Exception {
+
+			long defaultCompanyId = CompanyThreadLocal.getCompanyId();
+
+			Company newCompany = CompanyTestUtil.addCompany();
+
+			List<Locale> availableLocales = Arrays.asList(
+				LocaleUtil.US, LocaleUtil.HUNGARY, LocaleUtil.JAPAN,
+				LocaleUtil.BRAZIL);
+
+			CompanyTestUtil.resetCompanyLocales(
+				newCompany.getCompanyId(), availableLocales, LocaleUtil.US);
+
+			CompanyThreadLocal.setCompanyId(defaultCompanyId);
+
+			Group group = GroupLocalServiceUtil.getGroup(
+				newCompany.getCompanyId(), "Guest");
+
+			AssertUtils.assertEquals(
+				availableLocales,
+				ListUtil.fromArray(
+					_languageImpl.getAvailableLocales(
+						group.getGroupId()).toArray()));
+		}
+
+	}
 
 	public static final class WhenFormattingFromLocale {
 
