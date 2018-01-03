@@ -39,19 +39,13 @@ public abstract class BaseSearchResultPermissionFilter
 		QueryConfig queryConfig = searchContext.getQueryConfig();
 
 		if (!queryConfig.isAllFieldsSelected()) {
-			Set<String> selectedFieldNameSet = SetUtil.fromArray(
-				queryConfig.getSelectedFieldNames());
-
-			Collections.addAll(
-				selectedFieldNameSet, _PERMISSION_SELECTED_FIELD_NAMES);
-
-			queryConfig.setSelectedFieldNames(
-				selectedFieldNameSet.toArray(
-					new String[selectedFieldNameSet.size()]));
+			setSelectedFields(queryConfig);
 		}
 
 		int end = searchContext.getEnd();
 		int start = searchContext.getStart();
+
+		int delta = end - start;
 
 		if ((end == QueryUtil.ALL_POS) && (start == QueryUtil.ALL_POS)) {
 			Hits hits = getHits(searchContext);
@@ -75,57 +69,95 @@ public abstract class BaseSearchResultPermissionFilter
 		int excludedDocsSize = 0;
 		int hitsSize = 0;
 		int offset = 0;
+		int totalSearchedDocuments = 0;
 		long startTime = 0;
 
 		List<Document> documents = new ArrayList<>();
 		List<Float> scores = new ArrayList<>();
 
 		while (true) {
-			int count = end - documents.size();
+			int oldDocsLength = 0;
+			int newDocsLength = 0;
+
+			int count = end - totalSearchedDocuments;
 
 			int amplifiedCount = (int)Math.ceil(count * amplificationFactor);
 
 			int amplifiedEnd = offset + amplifiedCount;
 
-			searchContext.setEnd(amplifiedEnd);
+			Hits hits = null;
 
-			searchContext.setStart(offset);
+			while (offset < amplifiedEnd) {
+				int partialEnd = offset + _INDEX_PERMISSION_FILTER_SEARCH_LIMIT;
 
-			Hits hits = getHits(searchContext);
+				if ((_INDEX_PERMISSION_FILTER_SEARCH_LIMIT == 0) ||
+					(partialEnd > amplifiedEnd)) {
 
-			if (startTime == 0) {
-				hitsSize = hits.getLength();
-				startTime = hits.getStart();
+					partialEnd = amplifiedEnd;
+				}
+
+				searchContext.setEnd(partialEnd);
+				searchContext.setStart(offset);
+
+				hits = getHits(searchContext);
+
+				if (startTime == 0) {
+					hitsSize = hits.getLength();
+					startTime = hits.getStart();
+				}
+
+				Document[] oldDocs = hits.getDocs();
+
+				oldDocsLength += oldDocs.length;
+
+				filterHits(hits, searchContext);
+
+				Document[] newDocs = hits.getDocs();
+
+				newDocsLength += newDocs.length;
+
+				if (((offset >= start) || (partialEnd >= start)) &&
+					((offset <= end) || (partialEnd <= end))) {
+
+					int indexStart = start - offset;
+
+					if (indexStart < 0) {
+						indexStart = 0;
+					}
+
+					collectHits(hits, documents, scores, indexStart, delta);
+				}
+
+				offset = partialEnd;
+
+				if (offset >= hitsSize) {
+					break;
+				}
 			}
 
-			Document[] oldDocs = hits.getDocs();
+			excludedDocsSize += oldDocsLength - newDocsLength;
 
-			filterHits(hits, searchContext);
-
-			Document[] newDocs = hits.getDocs();
-
-			excludedDocsSize += oldDocs.length - newDocs.length;
-
-			collectHits(hits, documents, scores, count);
-
-			if ((newDocs.length >= count) ||
-				(oldDocs.length < amplifiedCount) ||
+			if ((newDocsLength >= count) || (oldDocsLength < amplifiedCount) ||
 				(amplifiedEnd >= hitsSize)) {
 
 				updateHits(
-					hits, documents, scores, start, end,
-					hitsSize - excludedDocsSize, startTime);
+					hits, documents, scores, hitsSize - excludedDocsSize,
+					startTime);
 
 				return hits;
 			}
 
-			offset = amplifiedEnd;
-
+			totalSearchedDocuments += newDocsLength;
 			amplificationFactor = _getAmplificationFactor(
 				documents.size(), offset);
 		}
 	}
 
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #collectHits(Hits, List,
+	 *             List, int, int)}
+	 */
+	@Deprecated
 	protected void collectHits(
 		Hits hits, List<Document> documents, List<Float> scores, int count) {
 
@@ -142,6 +174,18 @@ public abstract class BaseSearchResultPermissionFilter
 		}
 	}
 
+	protected void collectHits(
+		Hits hits, List<Document> documents, List<Float> scores, int start,
+		int delta) {
+
+		Document[] docs = hits.getDocs();
+
+		for (int i = start; i < docs.length && documents.size() < delta; i++) {
+			documents.add(docs[i]);
+			scores.add(hits.score(i));
+		}
+	}
+
 	protected abstract void filterHits(Hits hits, SearchContext searchContext);
 
 	protected abstract Hits getHits(SearchContext searchContext)
@@ -149,6 +193,23 @@ public abstract class BaseSearchResultPermissionFilter
 
 	protected abstract boolean isGroupAdmin(SearchContext searchContext);
 
+	protected void setSelectedFields(QueryConfig queryConfig) {
+		Set<String> selectedFieldNameSet = SetUtil.fromArray(
+			queryConfig.getSelectedFieldNames());
+
+		Collections.addAll(
+			selectedFieldNameSet, _PERMISSION_SELECTED_FIELD_NAMES);
+
+		queryConfig.setSelectedFieldNames(
+			selectedFieldNameSet.toArray(
+				new String[selectedFieldNameSet.size()]));
+	}
+
+	/**
+	 * @deprecated As of 7.0.0, replaced by {@link #updateHits(Hits, List,
+	 *             List, int, long)}
+	 */
+	@Deprecated
 	protected void updateHits(
 		Hits hits, List<Document> documents, List<Float> scores, int start,
 		int end, int size, long startTime) {
@@ -161,6 +222,13 @@ public abstract class BaseSearchResultPermissionFilter
 
 		documents = documents.subList(start, end);
 		scores = scores.subList(start, end);
+
+		updateHits(hits, documents, scores, size, startTime);
+	}
+
+	protected void updateHits(
+		Hits hits, List<Document> documents, List<Float> scores, int size,
+		long startTime) {
 
 		hits.setDocs(documents.toArray(new Document[documents.size()]));
 		hits.setScores(ArrayUtil.toFloatArray(scores));
@@ -185,6 +253,10 @@ public abstract class BaseSearchResultPermissionFilter
 				PropsUtil.get(
 					PropsKeys.
 						INDEX_PERMISSION_FILTER_SEARCH_AMPLIFICATION_FACTOR));
+
+	private static final int _INDEX_PERMISSION_FILTER_SEARCH_LIMIT =
+		GetterUtil.getInteger(
+			PropsUtil.get(PropsKeys.INDEX_PERMISSION_FILTER_SEARCH_LIMIT));
 
 	private static final String[] _PERMISSION_SELECTED_FIELD_NAMES =
 		{Field.COMPANY_ID, Field.ENTRY_CLASS_NAME, Field.ENTRY_CLASS_PK};
