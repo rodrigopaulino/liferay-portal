@@ -17,9 +17,9 @@ AUI.add(
 
 		var CSS_SELECT_ARROW_DOWN = A.getClassName('select', 'arrow', 'down', 'container');
 
-		var CSS_SELECT_LABEL_ITEM_CLOSE = A.getClassName('trigger', 'label', 'item', 'close');
-
 		var CSS_SELECT_DROPDOWN_ITEM = A.getClassName('dropdown', 'item');
+
+		var CSS_SELECT_LABEL_ITEM_CLOSE = A.getClassName('trigger', 'label', 'item', 'close');
 
 		var CSS_SELECT_OPTION_ITEM = A.getClassName('select', 'option', 'item');
 
@@ -168,8 +168,8 @@ AUI.add(
 						return A.merge(
 							SelectField.superclass.getTemplateContext.apply(instance, arguments),
 							{
-								labelCloseIcon: soyIncDom(Liferay.Util.getLexiconIconTpl('times')),
 								fixedOptions: instance.get('fixedOptions'),
+								labelCloseIcon: soyIncDom(Liferay.Util.getLexiconIconTpl('times')),
 								multiple: instance.get('multiple'),
 								open: instance._open,
 								options: instance.get('options'),
@@ -309,16 +309,6 @@ AUI.add(
 						return instance.get('container').one('.' + CSS_SELECT_TRIGGER_ACTION);
 					},
 
-					_handleLabelItemCloseClick: function(target) {
-						var instance = this;
-
-						var value = target.getAttribute('data-label-value');
-
-						var values = instance._removeValue(value);
-
-						instance.setValue(values);
-					},
-
 					_handleContainerClick: function(event) {
 						var instance = this;
 
@@ -384,6 +374,16 @@ AUI.add(
 						instance.focus();
 
 						instance._fireStartedFillingEvent();
+					},
+
+					_handleLabelItemCloseClick: function(target) {
+						var instance = this;
+
+						var value = target.getAttribute('data-label-value');
+
+						var values = instance._removeValue(value);
+
+						instance.setValue(values);
 					},
 
 					_handleSelectTriggerClick: function(event) {
