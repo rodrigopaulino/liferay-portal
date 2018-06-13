@@ -345,6 +345,12 @@ AUI.add(
 					initializer: function() {
 						var instance = this;
 
+						var translationFlags = instance.get('translationFlags');
+
+						if (translationFlags) {
+							translationFlags.after('select', instance._afterFlagChange, instance);
+						}
+
 						instance.after(
 							{
 								'translationmanager:deleteAvailableLocale': instance._afterDeleteAvailableLocale,
@@ -596,15 +602,17 @@ AUI.add(
 
 						var translationManager = parent.get('translationManager');
 
-						var availableLocales = translationManager.get('availableLocales');
+						if (translationManager) {
+							var availableLocales = translationManager.get('availableLocales');
 
-						if (availableLocales.length == 0) {
-							return;
-						}
+							if (availableLocales.length == 0) {
+								return;
+							}
 
-						for (var localization in localizationMap) {
-							if (availableLocales.indexOf(localization) == -1) {
-								delete localizationMap[localization];
+							for (var localization in localizationMap) {
+								if (availableLocales.indexOf(localization) == -1) {
+									delete localizationMap[localization];
+								}
 							}
 						}
 					},
@@ -880,6 +888,45 @@ AUI.add(
 						delete localizationMap[event.locale];
 
 						instance.set('localizationMap', localizationMap);
+					},
+
+					_afterFlagChange: function(event) {
+						var instance = this;
+
+						var availableLocales = instance.get('availableLocales');
+
+						var defaultLocale = translationManager.get('defaultLocale');
+
+						if (availableLocales) {
+							if (availableLocales.indexOf(event.newVal) == -1) {
+								availableLocales.push(event.newVal);
+							}
+
+							if (availableLocales.indexOf(defaultLocale) == -1) {
+								availableLocales.push(defaultLocale);
+							}
+
+							instance.set('availableLocales', availableLocales);
+						}
+
+						var locales = [defaultLocale].concat(availableLocales);
+
+						if (locales.indexOf(event.prevVal) > -1) {
+							instance.updateLocalizationMap(event.prevVal);
+						}
+
+						if (locales.indexOf(event.newVal) > -1) {
+							instance.addLocaleToLocalizationMap(event.newVal);
+						}
+
+						var localizable = instance.get('localizable');
+
+						instance.set('displayLocale', event.newVal);
+						instance.set('readOnly', defaultLocale !== event.newVal && !localizable);
+
+						instance.syncLabelUI();
+						instance.syncValueUI();
+						instance.syncReadOnlyUI();
 					},
 
 					_afterEditingLocaleChange: function(event) {
@@ -3159,6 +3206,10 @@ AUI.add(
 					requestedLocale: {
 						validator: Lang.isString
 					},
+					
+					translationFlags: {
+						valueFn: '_valueTranslationFlags'
+					},
 
 					translationManager: {
 						valueFn: '_valueTranslationManager'
@@ -3526,6 +3577,16 @@ AUI.add(
 						}
 
 						return Liferay.Form.get(formName);
+					},
+
+					_valueTranslationFlags: function() {
+						var instance = this;
+
+						var translationFlagsId = ;// id ;
+
+						var translationFlags = A.one(translationFlagsId);
+
+						return translationFlags;
 					},
 
 					_valueTranslationManager: function() {
