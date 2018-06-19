@@ -1021,19 +1021,17 @@ AUI.add(
 
 						var datePicker = instance.getDatePicker();
 
-						var value;
+						var value = '';
 
-						if (!datePicker) {
-							value = '';
+						if (datePicker) {
+							var selectedDate = datePicker.getDate();
+
+							var formattedDate = A.DataType.Date.format(selectedDate);
+
+							var inputNode = instance.getInputNode();
+
+							value = inputNode.val() ? formattedDate : '';
 						}
-
-						var selectedDate = datePicker.getDate();
-
-						var formattedDate = A.DataType.Date.format(selectedDate);
-
-						var inputNode = instance.getInputNode();
-
-						value = inputNode.val() ? formattedDate : '';
 
 						return value;
 					},
