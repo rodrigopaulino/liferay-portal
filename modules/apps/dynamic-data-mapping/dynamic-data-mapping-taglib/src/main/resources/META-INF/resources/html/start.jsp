@@ -166,7 +166,7 @@
 				Liferay.fire(
 					'inputLocalized:localeChanged',
 					{
-						item: event.target
+						item: event.currentTarget
 					}
 				);
 			};
