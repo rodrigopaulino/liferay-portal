@@ -255,7 +255,9 @@ public class DDMFormPortlet extends MVCPortlet {
 	@Reference
 	private DDMFormValuesFactory _ddmFormValuesFactory;
 
-	@Reference
+	@Reference(
+		target = "(dynamic.data.mapping.form.values.merger.type=userView)"
+	)
 	private DDMFormValuesMerger _ddmFormValuesMerger;
 
 	@Reference

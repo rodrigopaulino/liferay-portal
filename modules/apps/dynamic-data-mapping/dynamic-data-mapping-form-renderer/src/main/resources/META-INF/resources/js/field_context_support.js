@@ -101,7 +101,25 @@ AUI.add(
 
 				if (!Util.compare(value, context[name])) {
 					instance.set('context.' + name, value);
+
+					if (name === 'value') {
+						instance._updateLocalizedValue();
+					}
 				}
+			},
+
+			_updateLocalizedValue: function() {
+				var instance = this;
+
+				var context = instance.get('context');
+
+				var localizedValue = context.localizedValue;
+
+				var value = context.value;
+
+				var locale = context.locale;
+
+				localizedValue[locale] = value;
 			},
 
 			_afterContextChange: function(event) {

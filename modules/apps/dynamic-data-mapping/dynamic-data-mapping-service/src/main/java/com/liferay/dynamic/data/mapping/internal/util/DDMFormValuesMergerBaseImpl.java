@@ -18,18 +18,17 @@ import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesMerger;
+import org.osgi.service.component.annotations.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import org.osgi.service.component.annotations.Component;
-
 /**
  * @author Inácio Nery
  */
-@Component(immediate = true)
-public class DDMFormValuesMergerImpl implements DDMFormValuesMerger {
+public abstract class DDMFormValuesMergerBaseImpl
+	implements DDMFormValuesMerger {
 
 	@Override
 	public DDMFormValues merge(
@@ -76,7 +75,7 @@ public class DDMFormValuesMergerImpl implements DDMFormValuesMerger {
 
 				List<DDMFormFieldValue> mergedNestedDDMFormFieldValues =
 					mergeDDMFormFieldValues(
-						newDDMFormFieldValue.getNestedDDMFormFieldValues(),
+						 newDDMFormFieldValue.getNestedDDMFormFieldValues(),
 						actualDDMFormFieldValue.getNestedDDMFormFieldValues());
 
 				newDDMFormFieldValue.setNestedDDMFormFields(
@@ -91,18 +90,6 @@ public class DDMFormValuesMergerImpl implements DDMFormValuesMerger {
 		return mergedDDMFormFieldValues;
 	}
 
-	protected void mergeValue(Value newValue, Value existingValue) {
-		if (existingValue == null) {
-			return;
-		}
-
-		for (Locale locale : existingValue.getAvailableLocales()) {
-			String value = newValue.getString(locale);
-
-			if (value == null) {
-				newValue.addString(locale, existingValue.getString(locale));
-			}
-		}
-	}
+	protected abstract void mergeValue(Value newValue, Value existingValue);
 
 }

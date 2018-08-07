@@ -14,7 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.util;
 
-import com.liferay.dynamic.data.mapping.internal.util.DDMFormValuesMergerImpl;
+import com.liferay.dynamic.data.mapping.internal.util.DefaultDDMFormValuesMergerImpl;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
@@ -334,6 +334,6 @@ public class DDMFormValuesMergerTest {
 	}
 
 	private final DDMFormValuesMerger _ddmFormValuesMerger =
-		new DDMFormValuesMergerImpl();
+		new DefaultDDMFormValuesMergerImpl();
 
 }
