@@ -76,11 +76,18 @@ public class DDMFormContextToDDMFormValues
 				"The property \"ddmForm\" is required");
 		}
 
-		return deserialize(ddmForm, serializedFormContext);
+		Locale currentLocale = ddmFormContextDeserializerRequest.getProperty(
+			"currentLocale");
+
+		if (currentLocale == null) {
+			currentLocale = LocaleThreadLocal.getSiteDefaultLocale();
+		}
+
+		return deserialize(ddmForm, serializedFormContext, currentLocale);
 	}
 
 	protected DDMFormValues deserialize(
-			DDMForm ddmForm, String serializedFormContext)
+			DDMForm ddmForm, String serializedFormContext, Locale currentLocale)
 		throws PortalException {
 
 		JSONObject jsonObject = jsonFactory.createJSONObject(
@@ -88,10 +95,8 @@ public class DDMFormContextToDDMFormValues
 
 		DDMFormValues ddmFormValues = new DDMFormValues(ddmForm);
 
-		Locale defaultLocale = LocaleThreadLocal.getSiteDefaultLocale();
-
-		ddmFormValues.addAvailableLocale(defaultLocale);
-		ddmFormValues.setDefaultLocale(defaultLocale);
+		ddmFormValues.addAvailableLocale(currentLocale);
+		ddmFormValues.setDefaultLocale(currentLocale);
 
 		setDDMFormValuesDDMFormFieldValues(
 			jsonObject.getJSONArray("pages"), ddmFormValues);
