@@ -36,6 +36,10 @@ AUI.add(
 							requestErrorMessage: Liferay.Language.get('there-was-an-error-when-trying-to-validate-your-form'),
 							requiredFields: Liferay.Language.get('all-fields-marked-with-x-are-required')
 						}
+					},
+
+					viewMode: {
+						value: false
 					}
 				},
 
