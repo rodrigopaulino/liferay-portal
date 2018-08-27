@@ -21,6 +21,10 @@ AUI.add(
 						value: themeDisplay.getDefaultLanguageId()
 					},
 
+					editingLanguageId: {
+						valueFn: '_valueEditingLanguageId'
+					},
+
 					enableEvaluations: {
 						value: true
 					},
@@ -91,11 +95,7 @@ AUI.add(
 
 						var portletNamespace = instance.get('portletNamespace');
 
-						var languageId = instance._getURLParameter(portletNamespace, 'languageId');
-
-						if (!languageId) {
-							languageId = instance.get('defaultLanguageId');
-						}
+						var languageId = instance.get('editingLanguageId');
 
 						return {
 							languageId: languageId,
@@ -211,6 +211,20 @@ AUI.add(
 								containerId: container.get('id')
 							}
 						);
+					},
+
+					_valueEditingLanguageId: function() {
+						var instance = this;
+
+						var portletNamespace = instance.get('portletNamespace');
+
+						var languageId = instance._getURLParameter(portletNamespace, 'languageId');
+
+						if (!languageId) {
+							languageId = instance.get('defaultLanguageId');
+						}
+
+						return languageId;
 					},
 
 					_getURLParameter: function(portletNamespace, parameterName) {
