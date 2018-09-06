@@ -641,7 +641,7 @@ public class CalendarPortlet extends MVCPortlet {
 	}
 
 	@Override
-	protected boolean callResourceMethod(
+	public void serveResource(
 			ResourceRequest resourceRequest, ResourceResponse resourceResponse)
 		throws PortletException {
 
@@ -679,13 +679,9 @@ public class CalendarPortlet extends MVCPortlet {
 			else if (resourceID.equals("resourceCalendars")) {
 				serveResourceCalendars(resourceRequest, resourceResponse);
 			}
-			else if (!super.callResourceMethod(
-						 resourceRequest, resourceResponse)) {
-
+			else {
 				serveUnknownResource(resourceRequest, resourceResponse);
 			}
-
-			return true;
 		}
 		catch (Exception e) {
 			throw new PortletException(e);
