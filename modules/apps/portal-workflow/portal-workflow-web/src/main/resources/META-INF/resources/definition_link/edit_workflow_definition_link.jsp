@@ -39,6 +39,7 @@ String workflowAssignedValue = "";
 	<aui:form action="<%= updateWorkflowDefinitionLinkURL %>" cssClass="workflow-definition-form" method="post">
 		<aui:input name="editMode" type="hidden" value="false" />
 		<aui:input name="groupId" type="hidden" value="<%= workflowDefinitionLinkDisplayContext.getGroupId() %>" />
+		<aui:input name="namespace" type="hidden" value="<%= randomNamespace %>" />
 		<aui:input name="redirect" type="hidden" value="<%= currentURL %>" />
 		<aui:input name="resource" type="hidden" value="<%= resource %>" />
 

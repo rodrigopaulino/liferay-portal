@@ -284,6 +284,8 @@ AUI.add(
 
 				var openDefinitionLinkNode = instance._getOpenDefinitionLinkNode();
 
+				var openDefinitionLinkNamespace;
+
 				if (buttonName === 'cancelButton') {
 					instance._doToggleDefinitionLinkEditionMode(namespace);
 
@@ -293,10 +295,22 @@ AUI.add(
 					instance._doToggleDefinitionLinkEditionMode(namespace);
 				}
 				else if (!instance._hasDefinitionLinkChanged(openDefinitionLinkNode)) {
+					openDefinitionLinkNamespace = instance._getDefinitionLinkNodeNamespace(openDefinitionLinkNode);
+
+					instance._doToggleDefinitionLinkEditionMode(openDefinitionLinkNamespace);
+
 					instance._doToggleDefinitionLinkEditionMode(namespace);
 				}
-				else if (confirm(Liferay.Language.get('you-have-unsaved-changes-do-you-want-to-proceed-without-saving'))) {
-					instance._doToggleDefinitionLinkEditionMode(namespace);
+				else {
+					openDefinitionLinkNamespace = instance._getDefinitionLinkNodeNamespace(openDefinitionLinkNode);
+
+					if (confirm(Liferay.Language.get('you-have-unsaved-changes-do-you-want-to-proceed-without-saving'))) {
+						instance._doToggleDefinitionLinkEditionMode(openDefinitionLinkNamespace);
+
+						instance._resetLastValue(openDefinitionLinkNamespace);
+
+						instance._doToggleDefinitionLinkEditionMode(namespace);
+					}
 				}
 			},
 
@@ -318,6 +332,14 @@ AUI.add(
 				var buttonType = buttonId.replace(namespace, '');
 
 				return buttonType;
+			},
+
+			_getDefinitionLinkNodeNamespace: function(definitionLinkNode) {
+				var definitionLinkNodeInput = definitionLinkNode.one('input[name$=namespace]');
+
+				var definitionLinkNamespace = definitionLinkNodeInput.val();
+
+				return definitionLinkNamespace;
 			},
 
 			_getElementsByIds: function() {
