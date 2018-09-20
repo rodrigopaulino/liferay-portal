@@ -63,6 +63,10 @@ import java.util.Map;
 public class DDMFormInstanceLocalServiceImpl
 	extends DDMFormInstanceLocalServiceBaseImpl {
 
+	/**
+	 * @deprecated As of Judson (7.1.x), with no direct replacement
+	 */
+	@Deprecated
 	@Override
 	public DDMFormInstance addFormInstance(
 			long userId, long groupId, long ddmStructureId,
@@ -70,54 +74,9 @@ public class DDMFormInstanceLocalServiceImpl
 			DDMFormValues settingsDDMFormValues, ServiceContext serviceContext)
 		throws PortalException {
 
-		Locale defaultLocale = getDDMFormDefaultLocale(ddmStructureId);
-
-		validate(ddmStructureId, nameMap, settingsDDMFormValues, defaultLocale);
-
-		User user = userLocalService.getUser(userId);
-
-		long ddmFormInstanceId = counterLocalService.increment();
-
-		DDMFormInstance ddmFormInstance = ddmFormInstancePersistence.create(
-			ddmFormInstanceId);
-
-		ddmFormInstance.setUuid(serviceContext.getUuid());
-		ddmFormInstance.setGroupId(groupId);
-		ddmFormInstance.setCompanyId(user.getCompanyId());
-		ddmFormInstance.setUserId(user.getUserId());
-		ddmFormInstance.setUserName(user.getFullName());
-		ddmFormInstance.setStructureId(ddmStructureId);
-		ddmFormInstance.setVersion(_VERSION_DEFAULT);
-		ddmFormInstance.setNameMap(nameMap, defaultLocale);
-		ddmFormInstance.setDescriptionMap(descriptionMap, defaultLocale);
-		ddmFormInstance.setSettings(serialize(settingsDDMFormValues));
-
-		DDMFormInstance updatedDDMFormInstance =
-			ddmFormInstancePersistence.update(ddmFormInstance);
-
-		updateWorkflowDefinitionLink(
-			ddmFormInstance, settingsDDMFormValues, serviceContext);
-
-		if (serviceContext.isAddGroupPermissions() ||
-			serviceContext.isAddGuestPermissions()) {
-
-			addFormInstanceResources(
-				ddmFormInstance, serviceContext.isAddGroupPermissions(),
-				serviceContext.isAddGuestPermissions());
-		}
-		else {
-			addFormInstanceResources(
-				ddmFormInstance, serviceContext.getGroupPermissions(),
-				serviceContext.getGuestPermissions());
-		}
-
-		long structureVersionId = getStructureVersionId(ddmStructureId);
-
-		addFormInstanceVersion(
-			structureVersionId, user, ddmFormInstance, _VERSION_DEFAULT,
-			serviceContext);
-
-		return updatedDDMFormInstance;
+		return doAddFormInstance(
+			userId, groupId, ddmStructureId, nameMap, descriptionMap,
+			settingsDDMFormValues, serviceContext);
 	}
 
 	@Override
@@ -131,7 +90,7 @@ public class DDMFormInstanceLocalServiceImpl
 		DDMFormValues settingsDDMFormValues = getFormInstanceSettingsFormValues(
 			serializedSettingsDDMFormValues);
 
-		return addFormInstance(
+		return doAddFormInstance(
 			userId, groupId, ddmStructureId, nameMap, descriptionMap,
 			settingsDDMFormValues, serviceContext);
 	}
@@ -151,7 +110,7 @@ public class DDMFormInstanceLocalServiceImpl
 			getStorageType(settingsDDMFormValues),
 			DDMStructureConstants.TYPE_AUTO, serviceContext);
 
-		return addFormInstance(
+		return doAddFormInstance(
 			userId, groupId, ddmStructure.getStructureId(), nameMap,
 			descriptionMap, settingsDDMFormValues, serviceContext);
 	}
@@ -409,6 +368,62 @@ public class DDMFormInstanceLocalServiceImpl
 		ddmFormInstanceVersionPersistence.update(ddmFormInstanceVersion);
 
 		return ddmFormInstanceVersion;
+	}
+
+	protected DDMFormInstance doAddFormInstance(
+			long userId, long groupId, long ddmStructureId,
+			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
+			DDMFormValues settingsDDMFormValues, ServiceContext serviceContext)
+		throws PortalException {
+
+		Locale defaultLocale = getDDMFormDefaultLocale(ddmStructureId);
+
+		validate(ddmStructureId, nameMap, settingsDDMFormValues, defaultLocale);
+
+		User user = userLocalService.getUser(userId);
+
+		long ddmFormInstanceId = counterLocalService.increment();
+
+		DDMFormInstance ddmFormInstance = ddmFormInstancePersistence.create(
+			ddmFormInstanceId);
+
+		ddmFormInstance.setUuid(serviceContext.getUuid());
+		ddmFormInstance.setGroupId(groupId);
+		ddmFormInstance.setCompanyId(user.getCompanyId());
+		ddmFormInstance.setUserId(user.getUserId());
+		ddmFormInstance.setUserName(user.getFullName());
+		ddmFormInstance.setStructureId(ddmStructureId);
+		ddmFormInstance.setVersion(_VERSION_DEFAULT);
+		ddmFormInstance.setNameMap(nameMap, defaultLocale);
+		ddmFormInstance.setDescriptionMap(descriptionMap, defaultLocale);
+		ddmFormInstance.setSettings(serialize(settingsDDMFormValues));
+
+		DDMFormInstance updatedDDMFormInstance =
+			ddmFormInstancePersistence.update(ddmFormInstance);
+
+		updateWorkflowDefinitionLink(
+			ddmFormInstance, settingsDDMFormValues, serviceContext);
+
+		if (serviceContext.isAddGroupPermissions() ||
+			serviceContext.isAddGuestPermissions()) {
+
+			addFormInstanceResources(
+				ddmFormInstance, serviceContext.isAddGroupPermissions(),
+				serviceContext.isAddGuestPermissions());
+		}
+		else {
+			addFormInstanceResources(
+				ddmFormInstance, serviceContext.getGroupPermissions(),
+				serviceContext.getGuestPermissions());
+		}
+
+		long structureVersionId = getStructureVersionId(ddmStructureId);
+
+		addFormInstanceVersion(
+			structureVersionId, user, ddmFormInstance, _VERSION_DEFAULT,
+			serviceContext);
+
+		return updatedDDMFormInstance;
 	}
 
 	protected DDMFormInstance doUpdateFormInstance(
