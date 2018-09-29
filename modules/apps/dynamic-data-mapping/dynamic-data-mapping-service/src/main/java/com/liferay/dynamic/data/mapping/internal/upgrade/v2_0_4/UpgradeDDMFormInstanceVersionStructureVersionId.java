@@ -91,8 +91,8 @@ public class UpgradeDDMFormInstanceVersionStructureVersionId
 				sb2.append("DDMFormInstanceVersion join DDMStructureVersion ");
 				sb2.append("on DDMFormInstanceVersion.version = '1.0' and ");
 				sb2.append("DDMFormInstanceVersion.structureVersionId = ");
-				sb2.append("DDMStructureVersion.structureVersionId) as sub ");
-				sb2.append("on sub.structureId = DDMStructureVersion.");
+				sb2.append("DDMStructureVersion.structureVersionId) sub on ");
+				sb2.append("sub.structureId = DDMStructureVersion.");
 				sb2.append("structureId where sub.createDate <= ");
 				sb2.append("DDMStructureVersion.createDate and ");
 				sb2.append("DDMStructureVersion.structureId in (");
