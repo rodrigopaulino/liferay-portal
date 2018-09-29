@@ -32,15 +32,15 @@ public class UpgradeDDMFormInstanceCorrectVersion extends UpgradeProcess {
 		StringBundler sb = new StringBundler(10);
 
 		sb.append("select DDMFormInstance.formInstanceId, DDMFormInstance.");
-		sb.append("version as oldVersion, DDMFormInstanceVersion.version as ");
-		sb.append("newVersion from DDMFormInstance join (select ");
-		sb.append("formInstanceId, status, max(formInstanceVersionId) as ");
-		sb.append("formInstanceVersionId from DDMFormInstanceVersion group ");
-		sb.append("by formInstanceId, status having status = 0) sub on sub.");
-		sb.append("formInstanceId = DDMFormInstance.formInstanceId join ");
+		sb.append("version, DDMFormInstanceVersion.version from ");
+		sb.append("DDMFormInstance join (select formInstanceId, status, max(");
+		sb.append("formInstanceVersionId) as formInstanceVersionId from ");
+		sb.append("DDMFormInstanceVersion group by formInstanceId, status ");
+		sb.append("having status = 0) sub on sub.formInstanceId = ");
+		sb.append("DDMFormInstance.formInstanceId join ");
 		sb.append("DDMFormInstanceVersion on sub.formInstanceVersionId = ");
-		sb.append("DDMFormInstanceVersion.formInstanceVersionId having ");
-		sb.append("oldVersion <> newVersion");
+		sb.append("DDMFormInstanceVersion.formInstanceVersionId where ");
+		sb.append("DDMFormInstance.version <> DDMFormInstanceVersion.version");
 
 		try (PreparedStatement ps1 = connection.prepareStatement(sb.toString());
 			ResultSet rs = ps1.executeQuery();
