@@ -121,6 +121,7 @@ public class UpgradeDDMFormInstanceVersionStructureVersionId
 
 						while (rs1.next()) {
 							long structureId1 = rs1.getLong("structureId");
+
 							long structureVersionId1 = rs1.getLong(
 								"structureVersionId");
 

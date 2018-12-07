@@ -52,6 +52,7 @@ public class UpgradeDDMFormInstanceCorrectVersion extends UpgradeProcess {
 
 			while (rs.next()) {
 				long formInstanceId = rs.getLong("formInstanceId");
+
 				String version = rs.getString("newVersion");
 
 				ps2.setString(1, version);
