@@ -20,7 +20,9 @@ import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.Role;
 import com.liferay.portal.kernel.model.RoleConstants;
+import com.liferay.portal.kernel.model.UserGroupGroupRole;
 import com.liferay.portal.kernel.service.RoleLocalServiceUtil;
+import com.liferay.portal.kernel.service.UserGroupGroupRoleLocalServiceUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
@@ -34,6 +36,8 @@ import com.liferay.users.admin.kernel.util.UsersAdminUtil;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
@@ -130,6 +134,9 @@ public class UserGroupRolesDisplayContext {
 		portletURL.setParameter(
 			"userGroupId", String.valueOf(getUserGroupId()));
 
+		portletURL.setParameter(
+			"assignRoles", String.valueOf(_isAssignRoles()));
+
 		String displayStyle = getDisplayStyle();
 
 		if (Validator.isNotNull(displayStyle)) {
@@ -194,6 +201,24 @@ public class UserGroupRolesDisplayContext {
 			new Integer[] {RoleConstants.TYPE_SITE}, QueryUtil.ALL_POS,
 			QueryUtil.ALL_POS, orderByComparator);
 
+		List<Role> selectedRoles = _getSelectedRoles();
+
+		Stream<Role> stream = roles.stream();
+
+		roles = stream.filter(
+			role -> {
+				if ((_isAssignRoles() && !selectedRoles.contains(role)) ||
+					(!_isAssignRoles() && selectedRoles.contains(role))) {
+
+					return true;
+				}
+
+				return false;
+			}
+		).collect(
+			Collectors.toList()
+		);
+
 		roles = UsersAdminUtil.filterGroupRoles(
 			themeDisplay.getPermissionChecker(), getGroupId(), roles);
 
@@ -242,6 +267,32 @@ public class UserGroupRolesDisplayContext {
 		return _orderByType;
 	}
 
+	private List<Role> _getSelectedRoles() {
+		List<UserGroupGroupRole> userGroupGroupRoles =
+			UserGroupGroupRoleLocalServiceUtil.getUserGroupGroupRoles(
+				getUserGroupId(), getGroupId());
+
+		Stream<UserGroupGroupRole> stream = userGroupGroupRoles.stream();
+
+		return stream.map(
+			userGroupGroupRole -> RoleLocalServiceUtil.fetchRole(
+				userGroupGroupRole.getRoleId())
+		).collect(
+			Collectors.toList()
+		);
+	}
+
+	private boolean _isAssignRoles() {
+		if (_assignRoles != null) {
+			return _assignRoles;
+		}
+
+		_assignRoles = ParamUtil.getBoolean(_request, "assignRoles", true);
+
+		return _assignRoles;
+	}
+
+	private Boolean _assignRoles;
 	private String _displayStyle;
 	private String _eventName;
 	private Long _groupId;

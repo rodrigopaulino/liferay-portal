@@ -55,6 +55,7 @@ UserGroup userGroup = (UserGroup)row.getObject();
 			<portlet:param name="mvcPath" value="/user_groups_roles.jsp" />
 			<portlet:param name="userGroupId" value="<%= String.valueOf(userGroup.getUserGroupId()) %>" />
 			<portlet:param name="groupId" value="<%= String.valueOf(siteMembershipsDisplayContext.getGroupId()) %>" />
+			<portlet:param name="assignRoles" value="<%= Boolean.FALSE.toString() %>" />
 		</portlet:renderURL>
 
 		<%
