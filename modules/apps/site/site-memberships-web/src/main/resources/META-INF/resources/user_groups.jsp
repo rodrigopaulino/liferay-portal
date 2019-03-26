@@ -77,9 +77,16 @@ Role role = userGroupsDisplayContext.getRole();
 	<aui:input name="tabs1" type="hidden" value="user-groups" />
 </aui:form>
 
-<portlet:actionURL name="editUserGroupGroupRole" var="editUserGroupGroupRoleURL" />
+<portlet:actionURL name="addUserGroupGroupRole" var="addUserGroupGroupRoleURL" />
 
-<aui:form action="<%= editUserGroupGroupRoleURL %>" cssClass="hide" name="editUserGroupGroupRoleFm">
+<aui:form action="<%= addUserGroupGroupRoleURL %>" cssClass="hide" name="addUserGroupGroupRoleFm">
+	<aui:input name="tabs1" type="hidden" value="user-groups" />
+	<aui:input name="userGroupId" type="hidden" />
+</aui:form>
+
+<portlet:actionURL name="unAssignUserGroupGroupRole" var="unAssignUserGroupGroupRoleURL" />
+
+<aui:form action="<%= unAssignUserGroupGroupRoleURL %>" cssClass="hide" name="unAssignUserGroupGroupRoleFm">
 	<aui:input name="tabs1" type="hidden" value="user-groups" />
 	<aui:input name="userGroupId" type="hidden" />
 </aui:form>

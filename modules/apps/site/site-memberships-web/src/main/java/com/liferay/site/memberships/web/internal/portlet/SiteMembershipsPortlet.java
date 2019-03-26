@@ -22,7 +22,6 @@ import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.MembershipRequest;
 import com.liferay.portal.kernel.model.MembershipRequestConstants;
 import com.liferay.portal.kernel.model.User;
-import com.liferay.portal.kernel.model.UserGroupGroupRole;
 import com.liferay.portal.kernel.model.UserGroupRole;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCPortlet;
@@ -145,6 +144,20 @@ public class SiteMembershipsPortlet extends MVCPortlet {
 		LiveUsers.joinGroup(group.getCompanyId(), groupId, addUserIds);
 	}
 
+	public void addUserGroupGroupRole(
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
+
+		Group group = _getGroup(actionRequest, actionResponse);
+
+		long userGroupId = ParamUtil.getLong(actionRequest, "userGroupId");
+
+		long[] roleIds = ParamUtil.getLongValues(actionRequest, "rowIds");
+
+		_userGroupGroupRoleService.addUserGroupGroupRoles(
+			userGroupId, group.getGroupId(), roleIds);
+	}
+
 	public void deleteGroupOrganizations(
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
@@ -227,38 +240,6 @@ public class SiteMembershipsPortlet extends MVCPortlet {
 
 			throw new RequiredUserException();
 		}
-	}
-
-	public void editUserGroupGroupRole(
-			ActionRequest actionRequest, ActionResponse actionResponse)
-		throws Exception {
-
-		Group group = _getGroup(actionRequest, actionResponse);
-
-		long userGroupId = ParamUtil.getLong(actionRequest, "userGroupId");
-
-		long[] roleIds = ParamUtil.getLongValues(actionRequest, "rowIds");
-
-		List<UserGroupGroupRole> userGroupGroupRoles =
-			_userGroupGroupRoleLocalService.getUserGroupGroupRoles(
-				userGroupId, group.getGroupId());
-
-		List<Long> curRoleIds = ListUtil.toList(
-			userGroupGroupRoles, UsersAdmin.USER_GROUP_GROUP_ROLE_ID_ACCESSOR);
-
-		List<Long> removeRoleIds = new ArrayList<>();
-
-		for (long roleId : curRoleIds) {
-			if (!ArrayUtil.contains(roleIds, roleId)) {
-				removeRoleIds.add(roleId);
-			}
-		}
-
-		_userGroupGroupRoleService.addUserGroupGroupRoles(
-			userGroupId, group.getGroupId(), roleIds);
-		_userGroupGroupRoleService.deleteUserGroupGroupRoles(
-			userGroupId, group.getGroupId(),
-			ArrayUtil.toLongArray(removeRoleIds));
 	}
 
 	public void editUserGroupRole(
@@ -382,6 +363,20 @@ public class SiteMembershipsPortlet extends MVCPortlet {
 		SessionMessages.add(actionRequest, "membershipReplySent");
 
 		sendRedirect(actionRequest, actionResponse);
+	}
+
+	public void unAssignUserGroupGroupRole(
+			ActionRequest actionRequest, ActionResponse actionResponse)
+		throws Exception {
+
+		Group group = _getGroup(actionRequest, actionResponse);
+
+		long userGroupId = ParamUtil.getLong(actionRequest, "userGroupId");
+
+		long[] roleIds = ParamUtil.getLongValues(actionRequest, "rowIds");
+
+		_userGroupGroupRoleService.deleteUserGroupGroupRoles(
+			userGroupId, group.getGroupId(), roleIds);
 	}
 
 	@Override
