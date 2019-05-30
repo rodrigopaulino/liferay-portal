@@ -74,18 +74,13 @@ public class DDMFormInstanceFieldSettingsValidator {
 	}
 
 	protected DDMFormValues createDDMFormFieldFormValues(
-		JSONObject jsonObject, DDMForm fieldSettingsDDMForm) {
+		JSONObject jsonObject, DDMForm fieldSettingsDDMForm,
+		Locale defaultLocale, Set<Locale> availableLocales) {
 
 		DDMFormValues fieldSettingsDDMFormValues = new DDMFormValues(
 			fieldSettingsDDMForm);
 
-		Locale defaultLocale = fieldSettingsDDMForm.getDefaultLocale();
-
 		fieldSettingsDDMFormValues.setDefaultLocale(defaultLocale);
-
-		Set<Locale> availableLocales =
-			fieldSettingsDDMForm.getAvailableLocales();
-
 		fieldSettingsDDMFormValues.setAvailableLocales(availableLocales);
 
 		DDMFormContextVisitor ddmFormContextVisitor = new DDMFormContextVisitor(
@@ -216,7 +211,8 @@ public class DDMFormInstanceFieldSettingsValidator {
 					DDMFormValues fieldDDMFormValues =
 						createDDMFormFieldFormValues(
 							jsonObject.getJSONObject("settingsContext"),
-							fieldDDMForm);
+							fieldDDMForm, ddmForm.getDefaultLocale(),
+							ddmForm.getAvailableLocales());
 
 					DDMFormEvaluatorEvaluateResponse
 						ddmFormEvaluatorEvaluateResponse = doEvaluate(
