@@ -176,7 +176,7 @@ class LayoutProvider extends Component {
 		const visitor = new PagesVisitor(pages);
 
 		pages = visitor.mapFields(field => {
-			const {settingsContext} = field;
+			const {options, settingsContext} = field;
 
 			return {
 				...getFieldProperties(
@@ -184,6 +184,7 @@ class LayoutProvider extends Component {
 					defaultLanguageId,
 					editingLanguageId
 				),
+				options,
 				settingsContext: {
 					...settingsContext,
 					availableLanguageIds: [editingLanguageId],
