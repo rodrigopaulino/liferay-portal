@@ -14,6 +14,7 @@
 
 import {generateName, generateNestedFieldName} from '../../util/repeatable.es';
 import {PagesVisitor} from '../../util/visitors.es';
+import {generateInstanceId} from 'dynamic-data-mapping-form-builder/js/util/fieldSupport.es';
 
 export default (pages, name) => {
 	const visitor = new PagesVisitor(pages);
@@ -34,11 +35,13 @@ export default (pages, name) => {
 		if (currentIndex > -1) {
 			const field = fields[currentIndex];
 			const indexToAddField = currentIndex + 1;
+			const instanceId = generateInstanceId(8);
 			const newField = {
 				...field,
-				name: generateName(name, indexToAddField)
+				name: generateName(name, instanceId, indexToAddField)
 			};
 
+			newField.instanceId = instanceId;
 			newField.localizedValue = {};
 
 			delete newField.value;
@@ -57,6 +60,7 @@ export default (pages, name) => {
 					if (currentField.fieldName === newField.fieldName) {
 						const name = generateName(
 							currentField.name,
+							currentField.instanceId,
 							currentRepeatedIndex++
 						);
 
@@ -70,16 +74,27 @@ export default (pages, name) => {
 								...currentField,
 								nestedFields: currentField.nestedFields.map(
 									nestedField => {
+										let nestedFieldInstanceId;
+
+										if (index === indexToAddField) {
+											nestedFieldInstanceId = generateInstanceId(8);
+										}
+										else {
+											nestedFieldInstanceId = nestedField.instanceId;
+										}
+
 										const newNestedField = {
 											...nestedField,
 											name: generateNestedFieldName(
 												nestedField.name,
+												nestedFieldInstanceId,
 												name
 											)
 										};
 
 										if (index === indexToAddField) {
-											newField.localizedValue = {};
+											newNestedField.instanceId = nestedFieldInstanceId;
+											newNestedField.localizedValue = {};
 
 											delete newNestedField.value;
 										}

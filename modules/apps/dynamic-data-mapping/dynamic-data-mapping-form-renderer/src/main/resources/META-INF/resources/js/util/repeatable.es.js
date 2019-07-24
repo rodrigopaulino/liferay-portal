@@ -16,20 +16,19 @@ const FIELD_NAME_REGEX = /(_\w+_)ddm\$\$(.+)\$(\w+)\$(\d+)\$\$(\w+)/;
 
 const NESTED_FIELD_NAME_REGEX = /(_\w+_)ddm\$\$(.+)\$(\w+)\$(\d+)#(.+)\$(\w+)\$(\d+)\$\$(\w+)/;
 
-export const generateName = (name, repeatedIndex) => {
+export const generateName = (name, instanceId, repeatedIndex) => {
 	const parsedName = parseName(name);
-	const {fieldName, instanceId, locale, portletNamespace} = parsedName;
+	const {fieldName, locale, portletNamespace} = parsedName;
 
 	return `${portletNamespace}ddm$$${fieldName}$${instanceId}$${repeatedIndex}$$${locale}`;
 };
 
-export const generateNestedFieldName = (name, parentFieldName) => {
+export const generateNestedFieldName = (name, instanceId, parentFieldName) => {
 	const parsedName = parseNestedFieldName(name);
 	const parsedParentFieldName = parseName(parentFieldName);
 
 	const {
 		fieldName,
-		instanceId,
 		locale,
 		portletNamespace,
 		repeatedIndex
