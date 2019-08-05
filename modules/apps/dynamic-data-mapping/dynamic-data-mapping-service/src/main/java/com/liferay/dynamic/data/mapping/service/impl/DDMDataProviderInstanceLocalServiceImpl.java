@@ -14,41 +14,21 @@
 
 package com.liferay.dynamic.data.mapping.service.impl;
 
-import com.liferay.dynamic.data.mapping.data.provider.DDMDataProvider;
-import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderTracker;
 import com.liferay.dynamic.data.mapping.exception.DataProviderInstanceNameException;
 import com.liferay.dynamic.data.mapping.exception.NoSuchDataProviderInstanceException;
 import com.liferay.dynamic.data.mapping.exception.RequiredDataProviderInstanceException;
-import com.liferay.dynamic.data.mapping.form.builder.context.DDMFormContextDeserializer;
-import com.liferay.dynamic.data.mapping.io.DDMFormValuesDeserializer;
-import com.liferay.dynamic.data.mapping.io.DDMFormValuesDeserializerDeserializeRequest;
-import com.liferay.dynamic.data.mapping.io.DDMFormValuesDeserializerDeserializeResponse;
-import com.liferay.dynamic.data.mapping.io.DDMFormValuesDeserializerTracker;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesSerializer;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesSerializerSerializeRequest;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesSerializerSerializeResponse;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesSerializerTracker;
 import com.liferay.dynamic.data.mapping.model.DDMDataProviderInstance;
-import com.liferay.dynamic.data.mapping.model.DDMDataProviderInstanceLink;
-import com.liferay.dynamic.data.mapping.model.DDMForm;
-import com.liferay.dynamic.data.mapping.model.DDMFormField;
-import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
-import com.liferay.dynamic.data.mapping.model.DDMStructure;
-import com.liferay.dynamic.data.mapping.model.Value;
-import com.liferay.dynamic.data.mapping.service.DDMFormInstanceLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.base.DDMDataProviderInstanceLocalServiceBaseImpl;
-import com.liferay.dynamic.data.mapping.service.persistence.DDMDataProviderInstanceLinkUtil;
-import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
-import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidator;
 import com.liferay.portal.kernel.dao.orm.ActionableDynamicQuery;
-import com.liferay.portal.kernel.dao.orm.DynamicQuery;
 import com.liferay.portal.kernel.dao.orm.Property;
 import com.liferay.portal.kernel.dao.orm.PropertyFactoryUtil;
-import com.liferay.portal.kernel.dao.orm.RestrictionsFactoryUtil;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -59,11 +39,9 @@ import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.spring.extender.service.ServiceReference;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Stream;
 
 /**
  * @author Leonardo Barros
@@ -304,59 +282,6 @@ public class DDMDataProviderInstanceLocalServiceImpl
 			ddmDataProviderInstancePersistence.findByPrimaryKey(
 				dataProviderInstanceId);
 
-		DDMDataProvider ddmDataProvider =
-			ddmDataProviderTracker.getDDMDataProvider(
-				dataProviderInstance.getType());
-
-		Class<?> clazz = ddmDataProvider.getSettings();
-
-		DDMForm ddmFormDataProvider = DDMFormFactory.create(clazz);
-
-		DDMFormValues originalDDMFormValues = deserialize(
-			dataProviderInstance.getDefinition(), ddmFormDataProvider);
-
-		Map<String, List<DDMFormFieldValue>> originalDDMFormFieldValuesMap =
-			originalDDMFormValues.getDDMFormFieldValuesMap();
-
-		List<DDMFormFieldValue> originalDDMFormFieldValues =
-			originalDDMFormFieldValuesMap.get("outputParameters");
-
-		Stream<DDMFormFieldValue> originalDDMFormFieldValuesStream =
-			originalDDMFormFieldValues.stream();
-
-		HashMap<String, String> changedOutputParameters =
-			originalDDMFormFieldValuesStream.collect(
-				HashMap::new,
-				(map, originalDDMFormFieldValue) -> {
-					String originalLabel = getOutputParameterLabel(
-						originalDDMFormFieldValue);
-
-					Map<String, List<DDMFormFieldValue>> ddmFormFieldValuesMap =
-						ddmFormValues.getDDMFormFieldValuesMap();
-
-					List<DDMFormFieldValue> ddmFormFieldValues =
-						ddmFormFieldValuesMap.get("outputParameters");
-
-					Stream<DDMFormFieldValue> ddmFormFieldValuesStream =
-						ddmFormFieldValues.stream();
-
-					ddmFormFieldValuesStream.forEach(
-						newDDMFormFieldValue -> {
-							if (newDDMFormFieldValue.getInstanceId().equals(
-									originalDDMFormFieldValue.
-										getInstanceId())) {
-
-								String newLabel = getOutputParameterLabel(
-									newDDMFormFieldValue);
-
-								if (!newLabel.equals(originalLabel)) {
-									map.put(originalLabel, newLabel);
-								}
-							}
-						});
-				},
-				HashMap::putAll);
-
 		dataProviderInstance.setUserId(user.getUserId());
 		dataProviderInstance.setUserName(user.getFullName());
 		dataProviderInstance.setNameMap(nameMap);
@@ -364,92 +289,6 @@ public class DDMDataProviderInstanceLocalServiceImpl
 		dataProviderInstance.setDefinition(serialize(ddmFormValues));
 
 		ddmDataProviderInstancePersistence.update(dataProviderInstance);
-
-		List<DDMDataProviderInstanceLink> dataProviderInstanceLinks =
-			DDMDataProviderInstanceLinkUtil.findByDataProviderInstanceId(
-				dataProviderInstanceId);
-
-		for (DDMDataProviderInstanceLink ddmDataProviderInstanceLink :
-				dataProviderInstanceLinks) {
-
-			DynamicQuery dynamicQuery =
-				DDMFormInstanceLocalServiceUtil.dynamicQuery();
-
-			dynamicQuery.add(
-				RestrictionsFactoryUtil.eq(
-					"structureId",
-					ddmDataProviderInstanceLink.getStructureId()));
-
-			List<DDMFormInstance> ddmFormInstances =
-				DDMFormInstanceLocalServiceUtil.dynamicQuery(dynamicQuery);
-
-			for (DDMFormInstance ddmFormInstance : ddmFormInstances) {
-				DDMForm ddmForm = ddmFormInstance.getDDMForm();
-
-				List<DDMFormField> listDDMFormField =
-					ddmForm.getDDMFormFields();
-
-				listDDMFormField.forEach(
-					ddmFormField -> {
-						String type = ddmFormField.getType();
-
-						Map<String, Object> properties =
-							ddmFormField.getProperties();
-
-						String dataSourceType = (String)properties.get(
-							"dataSourceType");
-
-						if (type.equals("select") &&
-							dataSourceType.equals("data-provider")) {
-
-							String ddmDataProviderInstanceId =
-								(String)properties.get(
-									"ddmDataProviderInstanceId");
-
-							ddmDataProviderInstanceId =
-								ddmDataProviderInstanceId.substring(
-									2, ddmDataProviderInstanceId.length() - 2);
-
-							if (Long.valueOf(ddmDataProviderInstanceId) ==
-									dataProviderInstanceId) {
-
-								String ddmDataProviderInstanceOutput =
-									(String)properties.get(
-										"ddmDataProviderInstanceOutput");
-
-								ddmDataProviderInstanceOutput =
-									ddmDataProviderInstanceOutput.substring(
-										2,
-										ddmDataProviderInstanceOutput.length() -
-											2);
-
-								if (changedOutputParameters.containsKey(
-										ddmDataProviderInstanceOutput)) {
-
-									String newDDMDataProviderInstanceOutput =
-										changedOutputParameters.get(
-											ddmDataProviderInstanceOutput);
-
-									properties.put(
-										"ddmDataProviderInstanceOutput",
-										"[\"" +
-											newDDMDataProviderInstanceOutput +
-												"\"]");
-								}
-							}
-						}
-					});
-
-				DDMStructure ddmStructure = ddmFormInstance.getStructure();
-
-				DDMFormInstanceLocalServiceUtil.updateFormInstance(
-					userId, ddmFormInstance.getFormInstanceId(),
-					ddmFormInstance.getNameMap(),
-					ddmFormInstance.getDescriptionMap(), ddmForm,
-					ddmStructure.getDDMFormLayout(),
-					ddmFormInstance.getSettingsDDMFormValues(), serviceContext);
-			}
-		}
 
 		return dataProviderInstance;
 	}
@@ -477,37 +316,6 @@ public class DDMDataProviderInstanceLocalServiceImpl
 			dataProviderInstance.getGroupId(), dataProviderInstance.getUserId(),
 			DDMDataProviderInstance.class.getName(),
 			dataProviderInstance.getDataProviderInstanceId(), modelPermissions);
-	}
-
-	protected DDMFormValues deserialize(String content, DDMForm ddmForm) {
-		DDMFormValuesDeserializer ddmFormValuesDeserializer =
-			ddmFormValuesDeserializerTracker.getDDMFormValuesDeserializer(
-				"json");
-
-		DDMFormValuesDeserializerDeserializeRequest.Builder builder =
-			DDMFormValuesDeserializerDeserializeRequest.Builder.newBuilder(
-				content, ddmForm);
-
-		DDMFormValuesDeserializerDeserializeResponse
-			ddmFormValuesDeserializerDeserializeResponse =
-				ddmFormValuesDeserializer.deserialize(builder.build());
-
-		return ddmFormValuesDeserializerDeserializeResponse.getDDMFormValues();
-	}
-
-	protected String getOutputParameterLabel(
-		DDMFormFieldValue ddmFormFieldValue) {
-
-		List<DDMFormFieldValue> list =
-			ddmFormFieldValue.getNestedDDMFormFieldValues();
-
-		DDMFormFieldValue outputParameterName = list.get(0);
-
-		Value value = outputParameterName.getValue();
-
-		Locale locale = value.getDefaultLocale();
-
-		return value.getString(locale);
 	}
 
 	protected String serialize(DDMFormValues ddmFormValues) {
@@ -541,25 +349,10 @@ public class DDMDataProviderInstanceLocalServiceImpl
 		ddmFormValuesValidator.validate(ddmFormValues);
 	}
 
-	@ServiceReference(type = DDMDataProviderTracker.class)
-	protected DDMDataProviderTracker ddmDataProviderTracker;
-
-	@ServiceReference(
-		filterString = "(dynamic.data.mapping.form.builder.context.deserializer.type=form)",
-		type = DDMFormContextDeserializer.class
-	)
-	protected DDMFormContextDeserializer<DDMForm> ddmFormContextDeserializer;
-
-	@ServiceReference(type = DDMFormValuesDeserializerTracker.class)
-	protected DDMFormValuesDeserializerTracker ddmFormValuesDeserializerTracker;
-
 	@ServiceReference(type = DDMFormValuesSerializerTracker.class)
 	protected DDMFormValuesSerializerTracker ddmFormValuesSerializerTracker;
 
 	@ServiceReference(type = DDMFormValuesValidator.class)
 	protected DDMFormValuesValidator ddmFormValuesValidator;
-
-	@ServiceReference(type = JSONFactory.class)
-	protected JSONFactory jsonFactory;
 
 }
