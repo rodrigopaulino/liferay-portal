@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -63,12 +64,23 @@ public class FieldSetDDMFormFieldTemplateContextContributor
 		List<Object> nestedFields = getNestedFields(
 			nestedFieldsMap, nestedFieldNames);
 
+		Stream<Object> stream = nestedFields.stream();
+
+		Long nestedFieldsSize = stream.filter(
+			o -> {
+				HashMap map = (HashMap)o;
+
+				return (Boolean)map.get("visible");
+			}
+		).count();
+
 		parameters.put("nestedFields", nestedFields);
 
 		String orientation = GetterUtil.getString(
 			ddmFormField.getProperty("orientation"), "horizontal");
 
-		int columnSize = getColumnSize(nestedFields.size(), orientation);
+		int columnSize = getColumnSize(
+			nestedFieldsSize.intValue(), orientation);
 
 		parameters.put("columnSize", columnSize);
 
