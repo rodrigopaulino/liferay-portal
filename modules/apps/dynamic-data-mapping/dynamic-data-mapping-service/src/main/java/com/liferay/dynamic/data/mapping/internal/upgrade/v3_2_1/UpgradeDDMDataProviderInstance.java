@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.internal.upgrade.v3_1_3;
+package com.liferay.dynamic.data.mapping.internal.upgrade.v3_2_1;
 
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
