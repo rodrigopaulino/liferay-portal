@@ -117,6 +117,8 @@ public class UpgradeDDMDataProviderInstance extends UpgradeProcess {
 		JSONArray fieldValuesJSONArray = definitionJSONObject.getJSONArray(
 			"fieldValues");
 
+		String instanceId = StringUtil.randomString();
+
 		for (int i = 0; i < fieldValuesJSONArray.length(); i++) {
 			JSONObject fieldValueJSONObject =
 				fieldValuesJSONArray.getJSONObject(i);
@@ -136,7 +138,7 @@ public class UpgradeDDMDataProviderInstance extends UpgradeProcess {
 
 				nestedFieldValuesJSONArray.put(
 					JSONUtil.put(
-						"instanceId", StringUtil.randomString()
+						"instanceId", instanceId
 					).put(
 						"name", "outputParameterId"
 					).put(
