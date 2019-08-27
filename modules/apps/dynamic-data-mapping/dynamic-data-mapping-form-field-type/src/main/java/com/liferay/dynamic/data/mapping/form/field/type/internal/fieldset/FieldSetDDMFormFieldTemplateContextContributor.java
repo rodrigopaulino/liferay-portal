@@ -132,7 +132,7 @@ public class FieldSetDDMFormFieldTemplateContextContributor
 
 	private boolean _isNestedFieldVisible(Object nestedFieldContext) {
 		return MapUtil.getBoolean(
-			(Map<String, ?>)nestedFieldContext, "visible");
+			(Map<String, ?>)nestedFieldContext, "visible", true);
 	}
 
 }
