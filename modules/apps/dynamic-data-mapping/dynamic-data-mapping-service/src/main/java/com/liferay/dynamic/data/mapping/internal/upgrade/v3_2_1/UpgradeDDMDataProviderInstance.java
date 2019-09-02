@@ -256,14 +256,13 @@ public class UpgradeDDMDataProviderInstance extends UpgradeProcess {
 			AutoBatchPreparedStatementUtil.concurrentAutoBatch(
 				connection, sb2.toString());
 
-		StringBundler sb3 = new StringBundler(10);
+		StringBundler sb3 = new StringBundler(9);
 
 		sb3.append("select structureVersionId, DDMStructureVersion.");
 		sb3.append("structureId, DDMStructureVersion.definition, case when ");
-		sb3.append("DDMStructure.structureId is not null then true else ");
-		sb3.append("false end as updateStructure from ");
-		sb3.append("DDMDataProviderInstanceLink join DDMStructureVersion on ");
-		sb3.append("DDMStructureVersion.structureId = ");
+		sb3.append("DDMStructure.structureId is not null then 1 else 0 end ");
+		sb3.append("as updateStructure from DDMDataProviderInstanceLink join ");
+		sb3.append("DDMStructureVersion on DDMStructureVersion.structureId = ");
 		sb3.append("DDMDataProviderInstanceLink.structureId left join ");
 		sb3.append("DDMStructure on DDMStructure.structureId = ");
 		sb3.append("DDMDataProviderInstanceLink.structureId and ");
