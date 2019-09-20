@@ -177,6 +177,11 @@ public class DiscussionTag extends IncludeTag {
 	}
 
 	@Override
+	protected boolean isCleanUpSetAttributes() {
+		return true;
+	}
+
+	@Override
 	protected void setAttributes(HttpServletRequest httpServletRequest) {
 		httpServletRequest.setAttribute(
 			"liferay-comment:discussion:assetEntryVisible",
@@ -185,12 +190,8 @@ public class DiscussionTag extends IncludeTag {
 			"liferay-comment:discussion:className", _className);
 		httpServletRequest.setAttribute(
 			"liferay-comment:discussion:classPK", String.valueOf(_classPK));
-
-		if (_discussion != null) {
-			httpServletRequest.setAttribute(
-				"liferay-comment:discussion:discussion", _discussion);
-		}
-
+		httpServletRequest.setAttribute(
+			"liferay-comment:discussion:discussion", _discussion);
 		httpServletRequest.setAttribute(
 			"liferay-comment:discussion:editorURL",
 			getEditorURL(httpServletRequest));
