@@ -26,9 +26,14 @@ import com.liferay.dynamic.data.mapping.model.DDMFormLayoutColumn;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutPage;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayoutRow;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
+import com.liferay.dynamic.data.mapping.model.UnlocalizedValue;
+import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalService;
+import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
@@ -71,6 +76,8 @@ public class AddFormInstanceRecordMVCCommandHelper {
 			ddmFormEvaluatorEvaluateResponse, getDDMFormLayout(actionRequest));
 
 		invisibleFields.addAll(fieldsFromDisabledPages);
+
+		removeValue(ddmFormValues, invisibleFields);
 
 		removeDDMValidationExpression(
 			ddmForm.getDDMFormFields(), invisibleFields);
@@ -229,6 +236,40 @@ public class AddFormInstanceRecordMVCCommandHelper {
 			field -> invisibleFields.contains(field.getName()));
 
 		stream.forEach(this::removeRequiredProperty);
+	}
+
+	protected void removeValue(
+		DDMFormFieldValue ddmFormFieldValue, Locale defaultLocale) {
+
+		DDMFormField ddmFormField = ddmFormFieldValue.getDDMFormField();
+
+		if (ddmFormField.isLocalizable()) {
+			Value value = new LocalizedValue(defaultLocale);
+
+			value.addString(defaultLocale, StringPool.BLANK);
+
+			ddmFormFieldValue.setValue(value);
+		}
+		else {
+			ddmFormFieldValue.setValue(new UnlocalizedValue(StringPool.BLANK));
+		}
+	}
+
+	protected void removeValue(
+		DDMFormValues ddmFormValues, Set<String> invisibleFields) {
+
+		List<DDMFormFieldValue> ddmFormFieldValues =
+			ddmFormValues.getDDMFormFieldValues();
+
+		Stream<DDMFormFieldValue> stream = ddmFormFieldValues.stream();
+
+		stream = stream.filter(
+			ddmFormFieldValue -> invisibleFields.contains(
+				ddmFormFieldValue.getName()));
+
+		stream.forEach(
+			ddmFormFieldValue -> removeValue(
+				ddmFormFieldValue, ddmFormValues.getDefaultLocale()));
 	}
 
 	@Reference
