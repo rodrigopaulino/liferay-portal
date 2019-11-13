@@ -280,6 +280,29 @@ public class DDMTemplateLocalServiceTest extends BaseDDMServiceTestCase {
 	}
 
 	@Test
+	public void testSearchByNameAndDescription1ResourcePermission()
+		throws Exception {
+
+		addDisplayTemplate(
+			_classNameId, 0, _resourceClassNameId, "Event", "Event",
+			WorkflowConstants.STATUS_APPROVED);
+		addDisplayTemplate(
+			_classNameId, 0, _resourceClassNameId, "Contact", "Contact",
+			WorkflowConstants.STATUS_APPROVED);
+		addDisplayTemplate(
+			_classNameId, 0, _resourceClassNameId, "Meeting", "Meeting",
+			WorkflowConstants.STATUS_APPROVED);
+
+		List<DDMTemplate> templates = DDMTemplateLocalServiceUtil.search(
+			TestPropsValues.getCompanyId(), new long[] {group.getGroupId()},
+			null, null, _resourceClassNameId, "Event", "Meeting", null, null,
+			null, WorkflowConstants.STATUS_APPROVED, true, QueryUtil.ALL_POS,
+			QueryUtil.ALL_POS, null);
+
+		Assert.assertEquals(templates.toString(), 2, templates.size());
+	}
+
+	@Test
 	public void testSearchByNameAndDescription2() throws Exception {
 		addDisplayTemplate(
 			_classNameId, 0, _resourceClassNameId, "Event", "Event",
@@ -448,6 +471,25 @@ public class DDMTemplateLocalServiceTest extends BaseDDMServiceTestCase {
 	}
 
 	@Test
+	public void testSearchCountByKeywordsResourcePermission() throws Exception {
+		int initialCount = DDMTemplateLocalServiceUtil.searchCount(
+			TestPropsValues.getCompanyId(), group.getGroupId(), _classNameId, 0,
+			_resourceClassNameId, "Test", null, null,
+			WorkflowConstants.STATUS_APPROVED);
+
+		addDisplayTemplate(
+			_classNameId, 0, _resourceClassNameId, "Test Template",
+			"Test Template", WorkflowConstants.STATUS_APPROVED);
+
+		int count = DDMTemplateLocalServiceUtil.searchCount(
+			TestPropsValues.getCompanyId(), group.getGroupId(), _classNameId, 0,
+			_resourceClassNameId, "Test", null, null,
+			WorkflowConstants.STATUS_APPROVED);
+
+		Assert.assertEquals(initialCount + 1, count);
+	}
+
+	@Test
 	public void testSearchCountByLanguage() throws Exception {
 		String velocityLanguage = TemplateConstants.LANG_TYPE_VM;
 
@@ -497,6 +539,25 @@ public class DDMTemplateLocalServiceTest extends BaseDDMServiceTestCase {
 			WorkflowConstants.STATUS_APPROVED);
 
 		Assert.assertEquals(3, count);
+	}
+
+	@Test
+	public void testSearchCountResourcePermission() throws Exception {
+		int initialCount = DDMTemplateLocalServiceUtil.searchCount(
+			TestPropsValues.getCompanyId(), group.getGroupId(), _classNameId, 0,
+			_resourceClassNameId, "Test Template", null, null, null, null,
+			WorkflowConstants.STATUS_APPROVED, false);
+
+		addDisplayTemplate(
+			_classNameId, 0, _resourceClassNameId, "Test Template",
+			"Test Template", WorkflowConstants.STATUS_APPROVED);
+
+		int count = DDMTemplateLocalServiceUtil.searchCount(
+			TestPropsValues.getCompanyId(), group.getGroupId(), _classNameId, 0,
+			_resourceClassNameId, "Test Template", null, null, null, null,
+			WorkflowConstants.STATUS_APPROVED, false);
+
+		Assert.assertEquals(initialCount + 1, count);
 	}
 
 	@Test
