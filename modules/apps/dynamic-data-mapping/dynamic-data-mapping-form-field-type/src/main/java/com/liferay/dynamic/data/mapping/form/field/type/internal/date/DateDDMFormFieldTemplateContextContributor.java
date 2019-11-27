@@ -18,13 +18,18 @@ import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTemplateCont
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
+import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.util.CalendarUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
+import com.liferay.portal.kernel.util.LocaleThreadLocal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -71,6 +76,22 @@ public class DateDDMFormFieldTemplateContextContributor
 		}
 
 		parameters.put("years", years);
+
+		parameters.put(
+			"months",
+			Arrays.asList(
+				CalendarUtil.getMonths(
+					LocaleThreadLocal.getThemeDisplayLocale())));
+
+		Stream<String> stream = Arrays.stream(CalendarUtil.DAYS_ABBREVIATION);
+
+		parameters.put(
+			"weekdaysShort",
+			Arrays.asList(
+				stream.map(
+					key -> LanguageUtil.get(
+						LocaleThreadLocal.getThemeDisplayLocale(), key)
+				).toArray()));
 
 		return parameters;
 	}
