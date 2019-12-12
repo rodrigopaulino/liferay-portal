@@ -40,6 +40,8 @@ import com.liferay.portal.kernel.dao.orm.QueryUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.HtmlUtil;
 import com.liferay.portal.kernel.util.OrderByComparator;
+import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.time.LocalDateTime;
@@ -160,9 +162,22 @@ public class DDMFormInstanceRecordExporterImpl
 			ddmFormFieldTypeServicesTracker.getDDMFormFieldValueRenderer(
 				ddmFormField.getType());
 
+		Stream<DDMFormFieldValue> stream = ddmFormFieldValues.stream();
+
+		ArrayList<String> arrayListValues = stream.collect(
+			ArrayList::new,
+			(list, ddmForFieldValue) -> {
+				String value = ddmFormFieldValueRenderer.render(
+					ddmForFieldValue, locale);
+
+				if (Validator.isNotNull(value)) {
+					list.add(value);
+				}
+			},
+			ArrayList::addAll);
+
 		return HtmlUtil.render(
-			ddmFormFieldValueRenderer.render(
-				ddmFormFieldValues.get(0), locale));
+			StringUtil.merge(arrayListValues, StringPool.COMMA_AND_SPACE));
 	}
 
 	protected List<Map<String, String>> getDDMFormFieldValues(
