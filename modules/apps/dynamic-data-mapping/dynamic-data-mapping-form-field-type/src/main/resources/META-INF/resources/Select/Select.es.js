@@ -52,6 +52,11 @@ class Select extends Component {
 		this._eventHandler.add(
 			dom.on(document, 'click', this._handleDocumentClicked.bind(this))
 		);
+
+		this.refs.base.context.store.on(
+			'evaluated',
+			this._handleEvaluated.bind(this)
+		);
 	}
 
 	deleteValue(value) {
@@ -168,6 +173,10 @@ class Select extends Component {
 		}
 
 		this.expanded = newVal;
+	}
+
+	_handleEvaluated() {
+		delete this.refs.base.components.dropdown._originalItems;
 	}
 
 	_handleItemClicked({data, preventDefault}) {
