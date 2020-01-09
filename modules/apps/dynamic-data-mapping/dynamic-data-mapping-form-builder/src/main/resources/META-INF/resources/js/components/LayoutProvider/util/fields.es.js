@@ -98,6 +98,11 @@ export const updateFieldValidationProperty = (
 				);
 			}
 
+
+
+
+
+			
 			field = {
 				...field,
 				validation: {
