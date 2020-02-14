@@ -44,12 +44,16 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.AggregateResourceBundle;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.MapUtil;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.liferay.portal.kernel.util.ResourceBundleLoaderUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+
+import java.text.DecimalFormat;
+import java.text.ParseException;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -60,6 +64,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -127,6 +132,8 @@ public class DDMFormEvaluatorHelper {
 		verifyFieldsMarkedAsRequired();
 
 		validateFields();
+
+		_localizeNumericDDMFormFieldValues();
 
 		return buildDDMFormEvaluatorEvaluateResponse();
 	}
@@ -575,15 +582,8 @@ public class DDMFormEvaluatorHelper {
 			ddmFormFieldValidations = ddmFormFieldStream.filter(
 				this::fieldsWithValidations
 			).flatMap(
-				formField -> {
-					Set<DDMFormEvaluatorFieldContextKey>
-						ddmFormFieldContextKeySet =
-							_ddmFormEvaluatorFormValuesHelper.
-								getDDMFormFieldContextKeySet(
-									formField.getName());
-
-					return ddmFormFieldContextKeySet.stream();
-				}
+				ddmFormField -> _getDDMFormEvaluatorFieldContextKey(
+					ddmFormField.getName())
 			).collect(
 				Collectors.toMap(
 					Function.identity(), this::getDDMFormFieldValidation)
@@ -599,13 +599,7 @@ public class DDMFormEvaluatorHelper {
 		Stream<Map.Entry<String, DDMFormField>> stream = entrySet.stream();
 
 		stream.flatMap(
-			entry -> {
-				Set<DDMFormEvaluatorFieldContextKey> ddmFormFieldContextKeySet =
-					_ddmFormEvaluatorFormValuesHelper.
-						getDDMFormFieldContextKeySet(entry.getKey());
-
-				return ddmFormFieldContextKeySet.stream();
-			}
+			entry -> _getDDMFormEvaluatorFieldContextKey(entry.getKey())
 		).filter(
 			this::filterVisibleFieldsMarkedAsRequired
 		).filter(
@@ -627,8 +621,102 @@ public class DDMFormEvaluatorHelper {
 		defaultDDMFormFieldValueAccessor =
 			new DefaultDDMFormFieldValueAccessor();
 
+	private Stream<DDMFormEvaluatorFieldContextKey>
+		_getDDMFormEvaluatorFieldContextKey(String name) {
+
+		Set<DDMFormEvaluatorFieldContextKey> ddmFormFieldContextKeySet =
+			_ddmFormEvaluatorFormValuesHelper.getDDMFormFieldContextKeySet(
+				name);
+
+		return ddmFormFieldContextKeySet.stream();
+	}
+
+	private DecimalFormat _getDecimalFormat(Locale locale) {
+		DecimalFormat decimalFormat = _decimalFormatsMap.get(locale);
+
+		if (decimalFormat == null) {
+			decimalFormat = (DecimalFormat)DecimalFormat.getInstance(locale);
+
+			decimalFormat.setGroupingUsed(false);
+			decimalFormat.setMaximumFractionDigits(Integer.MAX_VALUE);
+			decimalFormat.setParseBigDecimal(true);
+
+			_decimalFormatsMap.put(locale, decimalFormat);
+		}
+
+		return decimalFormat;
+	}
+
+	private boolean _isNumericField(DDMFormField ddmFormField) {
+		String type = ddmFormField.getType();
+
+		return type.equals("numeric");
+	}
+
+	private void _localizeDDMFormFieldValue(
+		DDMFormEvaluatorFieldContextKey ddmFormFieldContextKey) {
+
+		DDMFormFieldValue ddmFormFieldValue =
+			_ddmFormEvaluatorFormValuesHelper.getDDMFormFieldValue(
+				ddmFormFieldContextKey);
+
+		Value value = ddmFormFieldValue.getValue();
+
+		forEachEntry(
+			value.getValues(),
+			entry -> {
+				if (Validator.isNotNull(entry.getValue())) {
+					try {
+						DecimalFormat decimalFormat = _getDecimalFormat(
+							entry.getKey());
+
+						String valueString = entry.getValue();
+
+						Number number = GetterUtil.getNumber(
+							decimalFormat.parse(valueString));
+
+						String formattedNumber = decimalFormat.format(number);
+
+						if (!valueString.equals(formattedNumber)) {
+							DecimalFormat normalDecimalFormat =
+								_getDecimalFormat(LocaleUtil.US);
+
+							number = normalDecimalFormat.parse(valueString);
+
+							formattedNumber = decimalFormat.format(number);
+						}
+
+						value.addString(entry.getKey(), formattedNumber);
+					}
+					catch (ParseException parseException) {
+						if (_log.isDebugEnabled()) {
+							_log.debug(parseException, parseException);
+						}
+					}
+				}
+			});
+	}
+
+	private void _localizeNumericDDMFormFieldValues() {
+		Collection<DDMFormField> ddmFormFields = _ddmFormFieldsMap.values();
+
+		Stream<DDMFormField> stream = ddmFormFields.stream();
+
+		stream.filter(
+			this::_isNumericField
+		).flatMap(
+			ddmFormField -> _getDDMFormEvaluatorFieldContextKey(
+				ddmFormField.getName())
+		).forEach(
+			this::_localizeDDMFormFieldValue
+		);
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		DDMFormEvaluatorHelper.class);
+
+	private static final Map<Locale, DecimalFormat> _decimalFormatsMap =
+		new ConcurrentHashMap<>();
 
 	private final DDMExpressionFactory _ddmExpressionFactory;
 	private final DDMForm _ddmForm;
