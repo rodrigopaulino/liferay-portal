@@ -285,7 +285,7 @@ long formInstanceId = ddmFormDisplayContext.getFormInstanceId();
 						</c:choose>
 					}
 
-					<portlet:namespace />sessionIntervalId = setInterval(function() {
+					<portlet:namespace />sessionIntervalId = setInterval(function () {
 						if (Liferay.Session) {
 							clearInterval(<portlet:namespace />sessionIntervalId);
 
@@ -299,7 +299,7 @@ long formInstanceId = ddmFormDisplayContext.getFormInstanceId();
 							else {
 								Liferay.componentReady(
 									'<%= ddmFormDisplayContext.getContainerId() %>'
-								).then(function(component) {
+								).then(function (component) {
 									<portlet:namespace />form = component;
 
 									if (component) {
