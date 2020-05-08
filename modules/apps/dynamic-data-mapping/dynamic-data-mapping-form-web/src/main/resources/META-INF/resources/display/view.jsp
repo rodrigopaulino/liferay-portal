@@ -285,24 +285,30 @@ long formInstanceId = ddmFormDisplayContext.getFormInstanceId();
 						</c:choose>
 					}
 
-					<portlet:namespace />form = Liferay.component(
-						'<%= ddmFormDisplayContext.getContainerId() %>'
-					);
+					<portlet:namespace />sessionIntervalId = setInterval(function() {
+						if (Liferay.Session) {
+							clearInterval(<portlet:namespace />sessionIntervalId);
 
-					if (<portlet:namespace />form) {
-						<portlet:namespace />initForm();
-					}
-					else {
-						Liferay.componentReady(
-							'<%= ddmFormDisplayContext.getContainerId() %>'
-						).then(function (component) {
-							<portlet:namespace />form = component;
+							<portlet:namespace />form = Liferay.component(
+								'<%= ddmFormDisplayContext.getContainerId() %>'
+							);
 
-							if (component) {
+							if (<portlet:namespace />form) {
 								<portlet:namespace />initForm();
 							}
-						});
-					}
+							else {
+								Liferay.componentReady(
+									'<%= ddmFormDisplayContext.getContainerId() %>'
+								).then(function(component) {
+									<portlet:namespace />form = component;
+
+									if (component) {
+										<portlet:namespace />initForm();
+									}
+								});
+							}
+						}
+					}, 1000);
 				</aui:script>
 			</c:when>
 			<c:otherwise>
