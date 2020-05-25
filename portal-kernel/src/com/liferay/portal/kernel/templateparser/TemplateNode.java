@@ -63,12 +63,12 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 
 		_themeDisplay = themeDisplay;
 
-		put("attributes", attributes);
-		put("name", name);
-		put("data", data);
-		put("type", type);
-		put("options", new ArrayList<String>());
-		put("optionsMap", new HashMap<String, String>());
+		put("$attributes", attributes);
+		put("$name", name);
+		put("$data", data);
+		put("$type", type);
+		put("$options", new ArrayList<String>());
+		put("$optionsMap", new HashMap<String, String>());
 	}
 
 	public void appendChild(TemplateNode templateNode) {
@@ -122,7 +122,7 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 	}
 
 	public Map<String, String> getAttributes() {
-		return (Map<String, String>)get("attributes");
+		return (Map<String, String>)get("$attributes");
 	}
 
 	public TemplateNode getChild(String name) {
@@ -143,7 +143,7 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 			return _getLinkToLayoutData();
 		}
 
-		return (String)get("data");
+		return (String)get("$data");
 	}
 
 	public String getFriendlyUrl() {
@@ -162,15 +162,15 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 	}
 
 	public String getName() {
-		return (String)get("name");
+		return (String)get("$name");
 	}
 
 	public List<String> getOptions() {
-		return (List<String>)get("options");
+		return (List<String>)get("$options");
 	}
 
 	public Map<String, String> getOptionsMap() {
-		return (Map<String, String>)get("optionsMap");
+		return (Map<String, String>)get("$optionsMap");
 	}
 
 	public List<TemplateNode> getSiblings() {
@@ -178,7 +178,7 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 	}
 
 	public String getType() {
-		return (String)get("type");
+		return (String)get("$type");
 	}
 
 	public String getUrl() {
@@ -192,7 +192,7 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 		long layoutId = getLayoutId();
 		String layoutType = getLayoutType();
 
-		String data = (String)get("data");
+		String data = (String)get("$data");
 
 		if (JSONUtil.isValid(data)) {
 			try {
@@ -258,7 +258,7 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 	}
 
 	protected long getLayoutGroupId() {
-		String data = (String)get("data");
+		String data = (String)get("$data");
 
 		int pos = data.lastIndexOf(CharPool.AT);
 
@@ -270,7 +270,7 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 	}
 
 	protected long getLayoutId() {
-		String data = (String)get("data");
+		String data = (String)get("$data");
 
 		int pos = data.indexOf(CharPool.AT);
 
@@ -282,7 +282,7 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 	}
 
 	protected String getLayoutType() {
-		String data = (String)get("data");
+		String data = (String)get("$data");
 
 		int x = data.indexOf(CharPool.AT);
 		int y = data.lastIndexOf(CharPool.AT);
@@ -304,7 +304,7 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 			return StringPool.BLANK;
 		}
 
-		String data = (String)get("data");
+		String data = (String)get("$data");
 
 		try {
 			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(data);
@@ -348,7 +348,7 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 	}
 
 	private String _getFileEntryData() {
-		String data = (String)get("data");
+		String data = (String)get("$data");
 
 		try {
 			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(data);
@@ -375,7 +375,7 @@ public class TemplateNode extends LinkedHashMap<String, Object> {
 	}
 
 	private String _getLinkToLayoutData() {
-		String data = (String)get("data");
+		String data = (String)get("$data");
 
 		int pos = data.indexOf(CharPool.AT);
 
