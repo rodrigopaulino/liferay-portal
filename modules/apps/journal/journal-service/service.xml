@@ -545,6 +545,7 @@
 		<exception>FeedTargetPortletId</exception>
 		<exception>FolderName</exception>
 		<exception>InvalidDDMStructure</exception>
+		<exception>InvalidDDMStructureFieldName</exception>
 		<exception>InvalidFolder</exception>
 	</exceptions>
 </service-builder>
