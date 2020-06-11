@@ -426,29 +426,42 @@ public class JournalArticleIndexer extends BaseIndexer<JournalArticle> {
 
 		Localization localization = getLocalization();
 
-		String[] languageIds = localization.getAvailableLanguageIds(
-			journalArticle.getDocument());
+		String[] titleAvailableLanguageIds =
+			localization.getAvailableLanguageIds(
+				journalArticle.getTitleMapAsXML());
 
-		for (String languageId : languageIds) {
-			String content = extractDDMContent(journalArticle, languageId);
-
+		for (String titleAvailableLanguageId : titleAvailableLanguageIds) {
 			String description = _html.stripHtml(
-				journalArticle.getDescription(languageId));
+				journalArticle.getDescription(titleAvailableLanguageId));
 
-			String title = journalArticle.getTitle(languageId);
+			String title = journalArticle.getTitle(titleAvailableLanguageId);
 
 			document.addText(
-				localization.getLocalizedName(Field.CONTENT, languageId),
-				content);
-			document.addText(
-				localization.getLocalizedName(Field.DESCRIPTION, languageId),
+				localization.getLocalizedName(
+					Field.DESCRIPTION, titleAvailableLanguageId),
 				description);
 			document.addText(
-				localization.getLocalizedName(Field.TITLE, languageId), title);
+				localization.getLocalizedName(
+					Field.TITLE, titleAvailableLanguageId),
+				title);
 			document.addKeywordSortable(
-				localization.getLocalizedName("urlTitle", languageId),
+				localization.getLocalizedName(
+					"urlTitle", titleAvailableLanguageId),
 				journalArticle.getUrlTitle(
-					LocaleUtil.fromLanguageId(languageId)));
+					LocaleUtil.fromLanguageId(titleAvailableLanguageId)));
+		}
+
+		String[] contentAvailableLanguageIds =
+			localization.getAvailableLanguageIds(journalArticle.getDocument());
+
+		for (String contentAvailableLanguageId : contentAvailableLanguageIds) {
+			String content = extractDDMContent(
+				journalArticle, contentAvailableLanguageId);
+
+			document.addText(
+				localization.getLocalizedName(
+					Field.CONTENT, contentAvailableLanguageId),
+				content);
 		}
 
 		document.addKeyword(Field.FOLDER_ID, journalArticle.getFolderId());
