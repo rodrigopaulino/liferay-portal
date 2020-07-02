@@ -69,9 +69,8 @@ public class DDMFormInstanceTable extends BaseTable<DDMFormInstanceTable> {
 		"version", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
 	public final Column<DDMFormInstanceTable, String> name = createColumn(
 		"name", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
-	public final Column<DDMFormInstanceTable, String> description =
-		createColumn(
-			"description", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
+	public final Column<DDMFormInstanceTable, Clob> description = createColumn(
+		"description", Clob.class, Types.CLOB, Column.FLAG_DEFAULT);
 	public final Column<DDMFormInstanceTable, Clob> settings = createColumn(
 		"settings_", Clob.class, Types.CLOB, Column.FLAG_DEFAULT);
 	public final Column<DDMFormInstanceTable, Date> lastPublishDate =

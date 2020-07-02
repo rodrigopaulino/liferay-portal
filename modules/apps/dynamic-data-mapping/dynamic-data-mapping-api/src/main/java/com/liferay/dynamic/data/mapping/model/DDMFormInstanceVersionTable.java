@@ -67,9 +67,9 @@ public class DDMFormInstanceVersionTable
 			Column.FLAG_DEFAULT);
 	public final Column<DDMFormInstanceVersionTable, String> name =
 		createColumn("name", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
-	public final Column<DDMFormInstanceVersionTable, String> description =
+	public final Column<DDMFormInstanceVersionTable, Clob> description =
 		createColumn(
-			"description", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
+			"description", Clob.class, Types.CLOB, Column.FLAG_DEFAULT);
 	public final Column<DDMFormInstanceVersionTable, Clob> settings =
 		createColumn("settings_", Clob.class, Types.CLOB, Column.FLAG_DEFAULT);
 	public final Column<DDMFormInstanceVersionTable, String> version =

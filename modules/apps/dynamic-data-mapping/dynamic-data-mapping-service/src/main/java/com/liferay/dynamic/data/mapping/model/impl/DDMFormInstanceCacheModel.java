@@ -239,7 +239,7 @@ public class DDMFormInstanceCacheModel
 		structureId = objectInput.readLong();
 		version = objectInput.readUTF();
 		name = objectInput.readUTF();
-		description = objectInput.readUTF();
+		description = (String)objectInput.readObject();
 		settings = (String)objectInput.readObject();
 		lastPublishDate = objectInput.readLong();
 
@@ -305,10 +305,10 @@ public class DDMFormInstanceCacheModel
 		}
 
 		if (description == null) {
-			objectOutput.writeUTF("");
+			objectOutput.writeObject("");
 		}
 		else {
-			objectOutput.writeUTF(description);
+			objectOutput.writeObject(description);
 		}
 
 		if (settings == null) {
