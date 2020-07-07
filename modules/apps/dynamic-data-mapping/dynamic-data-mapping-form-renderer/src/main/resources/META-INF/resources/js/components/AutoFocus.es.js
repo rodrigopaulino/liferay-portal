@@ -18,7 +18,7 @@ import {usePage} from '../hooks/usePage.es';
 
 export const AutoFocus = ({children}) => {
 	const childRef = useRef();
-	const {containerElement} = usePage();
+	const {activePage, containerElement} = usePage();
 
 	// This is a hack to know when FieldLazy is ready.
 
@@ -39,7 +39,7 @@ export const AutoFocus = ({children}) => {
 				}
 			}
 		}
-	}, [childRef, containerElement, lazyStatus]);
+	}, [activePage, childRef, containerElement, lazyStatus]);
 
 	return React.cloneElement(children, {
 		ref: (node) => {
