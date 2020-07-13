@@ -56,6 +56,20 @@ export const renameFieldInsideExpression = (
 	);
 };
 
+export const renameFieldInsideAutofill = (
+	object,
+	oldFieldName,
+	newFieldName
+) => {
+	Object.keys(object).map(key => {
+		if (object[key] === oldFieldName) {
+			object[key] = newFieldName;
+		}
+	});
+
+	return object;
+};
+
 export const updateRulesReferences = (rules, oldProperties, newProperties) => {
 	const oldFieldName = oldProperties.fieldName;
 	const newFieldName = newProperties.fieldName;
@@ -77,6 +91,21 @@ export const updateRulesReferences = (rules, oldProperties, newProperties) => {
 					oldFieldName,
 					newFieldName
 				),
+			};
+		}
+		else if (action.action === 'auto-fill') {
+			action = {
+				...action,
+				inputs: renameFieldInsideAutofill(
+					action.inputs,
+					oldFieldName,
+					newFieldName
+				),
+				outputs: renameFieldInsideAutofill(
+					action.outputs,
+					oldFieldName,
+					newFieldName
+				)
 			};
 		}
 
