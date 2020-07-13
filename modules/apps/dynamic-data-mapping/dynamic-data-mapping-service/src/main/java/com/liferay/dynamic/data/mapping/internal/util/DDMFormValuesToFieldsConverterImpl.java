@@ -182,46 +182,19 @@ public class DDMFormValuesToFieldsConverterImpl
 	protected void setDDMFieldLocalizedValue(
 		Field ddmField, String type, Value value) {
 
-		for (Locale availableLocales : value.getAvailableLocales()) {
-			Serializable serializable = null;
+		for (Locale availableLocale : value.getAvailableLocales()) {
+			Serializable serializable = _getSerializable(
+				availableLocale, availableLocale, type, value);
 
-			if (FieldConstants.isNumericType(type)) {
-				NumberFormat numberFormat = NumberFormat.getInstance(
-					availableLocales);
-
-				if (type.equals(FieldConstants.DOUBLE) ||
-					type.equals(FieldConstants.FLOAT)) {
-
-					numberFormat.setMinimumFractionDigits(1);
-				}
-
-				try {
-					Number number = numberFormat.parse(
-						GetterUtil.getString(
-							value.getString(availableLocales)));
-
-					serializable = FieldConstants.getSerializable(
-						type, number.toString());
-				}
-				catch (ParseException parseException) {
-					serializable = FieldConstants.getSerializable(
-						type, value.getString(availableLocales));
-				}
-			}
-			else {
-				serializable = FieldConstants.getSerializable(
-					type, value.getString(availableLocales));
-			}
-
-			ddmField.addValue(availableLocales, serializable);
+			ddmField.addValue(availableLocale, serializable);
 		}
 	}
 
 	protected void setDDMFieldUnlocalizedValue(
 		Field ddmField, String type, Value value, Locale defaultLocale) {
 
-		Serializable serializable = FieldConstants.getSerializable(
-			type, value.getString(LocaleUtil.ROOT));
+		Serializable serializable = _getSerializable(
+			defaultLocale, LocaleUtil.ROOT, type, value);
 
 		ddmField.addValue(defaultLocale, serializable);
 	}
@@ -235,6 +208,47 @@ public class DDMFormValuesToFieldsConverterImpl
 		else {
 			setDDMFieldUnlocalizedValue(ddmField, type, value, defaultLocale);
 		}
+	}
+
+	private Serializable _getSerializable(
+		Locale defaultLocale, Locale locale, String type, Value value) {
+
+		Serializable serializable;
+
+		if (FieldConstants.isNumericType(type)) {
+			NumberFormat numberFormat;
+
+			if (locale.equals(LocaleUtil.ROOT)) {
+				numberFormat = NumberFormat.getInstance(defaultLocale);
+			}
+			else {
+				numberFormat = NumberFormat.getInstance(locale);
+			}
+
+			if (type.equals(FieldConstants.DOUBLE) ||
+				type.equals(FieldConstants.FLOAT)) {
+
+				numberFormat.setMinimumFractionDigits(1);
+			}
+
+			try {
+				Number number = numberFormat.parse(
+					GetterUtil.getString(value.getString(locale)));
+
+				serializable = FieldConstants.getSerializable(
+					type, number.toString());
+			}
+			catch (ParseException parseException) {
+				serializable = FieldConstants.getSerializable(
+					type, value.getString(locale));
+			}
+		}
+		else {
+			serializable = FieldConstants.getSerializable(
+				type, value.getString(locale));
+		}
+
+		return serializable;
 	}
 
 }
