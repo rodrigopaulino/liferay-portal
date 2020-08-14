@@ -131,7 +131,11 @@ export const getFieldProperties = (
 
 	visitor.mapFields(
 		({fieldName, localizable, localizedValue = {}, type, value}) => {
-			if (localizable && localizedValue[editingLanguageId]) {
+			if (
+				localizable &&
+				(fieldName == 'predefinedValue' ||
+					localizedValue[editingLanguageId])
+			) {
 				properties[fieldName] = localizedValue[editingLanguageId];
 			}
 			else if (localizable && localizedValue[defaultLanguageId]) {
