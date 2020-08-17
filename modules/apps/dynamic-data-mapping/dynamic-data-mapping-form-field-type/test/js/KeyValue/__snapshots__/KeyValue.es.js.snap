@@ -3,21 +3,25 @@
 exports[`KeyValue has a helptext 1`] = `
 <div>
   <div
+    aria-labelledby="keyValue_fieldDetails"
     class="form-group hide"
     data-field-name="keyValue"
+    tabindex="0"
   >
     <div
+      aria-labelledby="keyValueLabelkeyValue_fieldDetails"
       class="form-group hide"
       data-field-name="keyValueLabelkeyValue"
+      tabindex="0"
     >
       <input
-        aria-label="text"
         class="form-control ddm-field-text"
         id="keyValueLabelkeyValue"
         name="keyValueLabelkeyValue"
         type="text"
         value=""
       />
+      
     </div>
     <div
       class="active form-text key-value-editor"
@@ -36,9 +40,18 @@ exports[`KeyValue has a helptext 1`] = `
       />
     </div>
     <span
+      aria-hidden="true"
       class="form-text"
     >
       Type something
+    </span>
+    <span
+      aria-hidden="false"
+      hidden=""
+      id="keyValue_fieldDetails"
+    >
+      Type something
+      <br />
     </span>
   </div>
 </div>
@@ -51,23 +64,27 @@ exports[`KeyValue has a label 1`] = `
     data-field-name="keyValue"
   >
     <label
+      aria-labelledby="keyValue_fieldDetails"
       class="ddm-label"
       for="keyValue"
+      tabindex="0"
     >
       label
     </label>
     <div
+      aria-labelledby="keyValueLabelkeyValue_fieldDetails"
       class="form-group hide"
       data-field-name="keyValueLabelkeyValue"
+      tabindex="0"
     >
       <input
-        aria-label="text"
         class="form-control ddm-field-text"
         id="keyValueLabelkeyValue"
         name="keyValueLabelkeyValue"
         type="text"
         value=""
       />
+      
     </div>
     <div
       class="active form-text key-value-editor"
@@ -85,6 +102,14 @@ exports[`KeyValue has a label 1`] = `
         value=""
       />
     </div>
+    <span
+      aria-hidden="false"
+      hidden=""
+      id="keyValue_fieldDetails"
+    >
+      label
+      <br />
+    </span>
   </div>
 </div>
 `;
@@ -92,15 +117,18 @@ exports[`KeyValue has a label 1`] = `
 exports[`KeyValue has a predefined Value 1`] = `
 <div>
   <div
+    aria-labelledby="keyValue_fieldDetails"
     class="form-group hide"
     data-field-name="keyValue"
+    tabindex="0"
   >
     <div
+      aria-labelledby="keyValueLabelkeyValue_fieldDetails"
       class="form-group hide"
       data-field-name="keyValueLabelkeyValue"
+      tabindex="0"
     >
       <input
-        aria-label="text"
         class="form-control ddm-field-text"
         id="keyValueLabelkeyValue"
         name="keyValueLabelkeyValue"
@@ -108,6 +136,7 @@ exports[`KeyValue has a predefined Value 1`] = `
         type="text"
         value=""
       />
+      
     </div>
     <div
       class="active form-text key-value-editor"
@@ -125,6 +154,7 @@ exports[`KeyValue has a predefined Value 1`] = `
         value=""
       />
     </div>
+    
   </div>
 </div>
 `;
@@ -132,21 +162,25 @@ exports[`KeyValue has a predefined Value 1`] = `
 exports[`KeyValue has a value 1`] = `
 <div>
   <div
+    aria-labelledby="keyValue_fieldDetails"
     class="form-group hide"
     data-field-name="keyValue"
+    tabindex="0"
   >
     <div
+      aria-labelledby="keyValueLabelkeyValue_fieldDetails"
       class="form-group hide"
       data-field-name="keyValueLabelkeyValue"
+      tabindex="0"
     >
       <input
-        aria-label="text"
         class="form-control ddm-field-text"
         id="keyValueLabelkeyValue"
         name="keyValueLabelkeyValue"
         type="text"
         value="value"
       />
+      
     </div>
     <div
       class="active form-text key-value-editor"
@@ -164,6 +198,7 @@ exports[`KeyValue has a value 1`] = `
         value=""
       />
     </div>
+    
   </div>
 </div>
 `;
@@ -171,21 +206,25 @@ exports[`KeyValue has a value 1`] = `
 exports[`KeyValue has an id 1`] = `
 <div>
   <div
+    aria-labelledby="keyValue_fieldDetails"
     class="form-group hide"
     data-field-name="keyValue"
+    tabindex="0"
   >
     <div
+      aria-labelledby="keyValueLabelkeyValue_fieldDetails"
       class="form-group hide"
       data-field-name="keyValueLabelkeyValue"
+      tabindex="0"
     >
       <input
-        aria-label="text"
         class="form-control ddm-field-text"
         id="keyValueLabelkeyValue"
         name="keyValueLabelkeyValue"
         type="text"
         value=""
       />
+      
     </div>
     <div
       class="active form-text key-value-editor"
@@ -203,6 +242,7 @@ exports[`KeyValue has an id 1`] = `
         value=""
       />
     </div>
+    
   </div>
 </div>
 `;
@@ -210,15 +250,18 @@ exports[`KeyValue has an id 1`] = `
 exports[`KeyValue is not editable 1`] = `
 <div>
   <div
+    aria-labelledby="keyValue_fieldDetails"
     class="form-group hide"
     data-field-name="keyValue"
+    tabindex="0"
   >
     <div
+      aria-labelledby="keyValueLabelkeyValue_fieldDetails"
       class="form-group hide"
       data-field-name="keyValueLabelkeyValue"
+      tabindex="0"
     >
       <input
-        aria-label="text"
         class="form-control ddm-field-text"
         disabled=""
         id="keyValueLabelkeyValue"
@@ -226,6 +269,7 @@ exports[`KeyValue is not editable 1`] = `
         type="text"
         value=""
       />
+      
     </div>
     <div
       class="active form-text key-value-editor"
@@ -243,6 +287,7 @@ exports[`KeyValue is not editable 1`] = `
         value=""
       />
     </div>
+    
   </div>
 </div>
 `;
@@ -250,21 +295,25 @@ exports[`KeyValue is not editable 1`] = `
 exports[`KeyValue is not required 1`] = `
 <div>
   <div
+    aria-labelledby="keyValue_fieldDetails"
     class="form-group hide"
     data-field-name="keyValue"
+    tabindex="0"
   >
     <div
+      aria-labelledby="keyValueLabelkeyValue_fieldDetails"
       class="form-group hide"
       data-field-name="keyValueLabelkeyValue"
+      tabindex="0"
     >
       <input
-        aria-label="text"
         class="form-control ddm-field-text"
         id="keyValueLabelkeyValue"
         name="keyValueLabelkeyValue"
         type="text"
         value=""
       />
+      
     </div>
     <div
       class="active form-text key-value-editor"
@@ -282,6 +331,7 @@ exports[`KeyValue is not required 1`] = `
         value=""
       />
     </div>
+    
   </div>
 </div>
 `;
@@ -293,23 +343,27 @@ exports[`KeyValue renders Label if showLabel is true 1`] = `
     data-field-name="keyValue"
   >
     <label
+      aria-labelledby="keyValue_fieldDetails"
       class="ddm-label"
       for="keyValue"
+      tabindex="0"
     >
       text
     </label>
     <div
+      aria-labelledby="keyValueLabelkeyValue_fieldDetails"
       class="form-group hide"
       data-field-name="keyValueLabelkeyValue"
+      tabindex="0"
     >
       <input
-        aria-label="text"
         class="form-control ddm-field-text"
         id="keyValueLabelkeyValue"
         name="keyValueLabelkeyValue"
         type="text"
         value=""
       />
+      
     </div>
     <div
       class="active form-text key-value-editor"
@@ -327,6 +381,14 @@ exports[`KeyValue renders Label if showLabel is true 1`] = `
         value=""
       />
     </div>
+    <span
+      aria-hidden="false"
+      hidden=""
+      id="keyValue_fieldDetails"
+    >
+      text
+      <br />
+    </span>
   </div>
 </div>
 `;
@@ -334,21 +396,25 @@ exports[`KeyValue renders Label if showLabel is true 1`] = `
 exports[`KeyValue renders component with a key 1`] = `
 <div>
   <div
+    aria-labelledby="keyValue_fieldDetails"
     class="form-group hide"
     data-field-name="keyValue"
+    tabindex="0"
   >
     <div
+      aria-labelledby="keyValueLabelkeyValue_fieldDetails"
       class="form-group hide"
       data-field-name="keyValueLabelkeyValue"
+      tabindex="0"
     >
       <input
-        aria-label="text"
         class="form-control ddm-field-text"
         id="keyValueLabelkeyValue"
         name="keyValueLabelkeyValue"
         type="text"
         value=""
       />
+      
     </div>
     <div
       class="active form-text key-value-editor"
@@ -366,6 +432,7 @@ exports[`KeyValue renders component with a key 1`] = `
         value="key"
       />
     </div>
+    
   </div>
 </div>
 `;

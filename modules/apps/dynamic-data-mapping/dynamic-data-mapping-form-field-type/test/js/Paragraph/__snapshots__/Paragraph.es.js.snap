@@ -3,8 +3,10 @@
 exports[`Field Paragraph has a key 1`] = `
 <div>
   <div
+    aria-labelledby="textField_fieldDetails"
     class="form-group hide"
     data-field-name="textField"
+    tabindex="0"
   >
     <div
       class="form-group liferay-ddm-form-field-paragraph"
@@ -14,6 +16,7 @@ exports[`Field Paragraph has a key 1`] = `
         class="liferay-ddm-form-field-paragraph-text"
       />
     </div>
+    
   </div>
 </div>
 `;
@@ -25,8 +28,10 @@ exports[`Field Paragraph has a label 1`] = `
     data-field-name="textField"
   >
     <label
+      aria-labelledby="textField_fieldDetails"
       class="ddm-label"
       for="textField"
+      tabindex="0"
     >
       label
     </label>
@@ -38,6 +43,14 @@ exports[`Field Paragraph has a label 1`] = `
         class="liferay-ddm-form-field-paragraph-text"
       />
     </div>
+    <span
+      aria-hidden="false"
+      hidden=""
+      id="textField_fieldDetails"
+    >
+      label
+      <br />
+    </span>
   </div>
 </div>
 `;
@@ -45,8 +58,10 @@ exports[`Field Paragraph has a label 1`] = `
 exports[`Field Paragraph has a placeholder 1`] = `
 <div>
   <div
+    aria-labelledby="textField_fieldDetails"
     class="form-group hide"
     data-field-name="textField"
+    tabindex="0"
   >
     <div
       class="form-group liferay-ddm-form-field-paragraph"
@@ -56,6 +71,7 @@ exports[`Field Paragraph has a placeholder 1`] = `
         class="liferay-ddm-form-field-paragraph-text"
       />
     </div>
+    
   </div>
 </div>
 `;
@@ -63,8 +79,10 @@ exports[`Field Paragraph has a placeholder 1`] = `
 exports[`Field Paragraph has a value 1`] = `
 <div>
   <div
+    aria-labelledby="textField_fieldDetails"
     class="form-group hide"
     data-field-name="textField"
+    tabindex="0"
   >
     <div
       class="form-group liferay-ddm-form-field-paragraph"
@@ -74,6 +92,7 @@ exports[`Field Paragraph has a value 1`] = `
         class="liferay-ddm-form-field-paragraph-text"
       />
     </div>
+    
   </div>
 </div>
 `;
@@ -81,8 +100,10 @@ exports[`Field Paragraph has a value 1`] = `
 exports[`Field Paragraph has an id 1`] = `
 <div>
   <div
+    aria-labelledby="textField_fieldDetails"
     class="form-group hide"
     data-field-name="textField"
+    tabindex="0"
   >
     <div
       class="form-group liferay-ddm-form-field-paragraph"
@@ -92,6 +113,7 @@ exports[`Field Paragraph has an id 1`] = `
         class="liferay-ddm-form-field-paragraph-text"
       />
     </div>
+    
   </div>
 </div>
 `;
@@ -99,8 +121,10 @@ exports[`Field Paragraph has an id 1`] = `
 exports[`Field Paragraph is not required 1`] = `
 <div>
   <div
+    aria-labelledby="textField_fieldDetails"
     class="form-group hide"
     data-field-name="textField"
+    tabindex="0"
   >
     <div
       class="form-group liferay-ddm-form-field-paragraph"
@@ -110,6 +134,7 @@ exports[`Field Paragraph is not required 1`] = `
         class="liferay-ddm-form-field-paragraph-text"
       />
     </div>
+    
   </div>
 </div>
 `;
@@ -117,8 +142,10 @@ exports[`Field Paragraph is not required 1`] = `
 exports[`Field Paragraph is readOnly 1`] = `
 <div>
   <div
+    aria-labelledby="textField_fieldDetails"
     class="form-group hide"
     data-field-name="textField"
+    tabindex="0"
   >
     <div
       class="form-group liferay-ddm-form-field-paragraph"
@@ -128,6 +155,7 @@ exports[`Field Paragraph is readOnly 1`] = `
         class="liferay-ddm-form-field-paragraph-text"
       />
     </div>
+    
   </div>
 </div>
 `;
@@ -139,8 +167,10 @@ exports[`Field Paragraph renders Label if showLabel is true 1`] = `
     data-field-name="textField"
   >
     <label
+      aria-labelledby="textField_fieldDetails"
       class="ddm-label"
       for="textField"
+      tabindex="0"
     >
       text
     </label>
@@ -152,6 +182,14 @@ exports[`Field Paragraph renders Label if showLabel is true 1`] = `
         class="liferay-ddm-form-field-paragraph-text"
       />
     </div>
+    <span
+      aria-hidden="false"
+      hidden=""
+      id="textField_fieldDetails"
+    >
+      text
+      <br />
+    </span>
   </div>
 </div>
 `;
