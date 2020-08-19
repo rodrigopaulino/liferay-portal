@@ -96,10 +96,11 @@ function FieldBase({
 	valid,
 	visible,
 }) {
-	const requiredText = Liferay.Language.get('required');
 	const {editingLanguageId = themeDisplay.getLanguageId()} = usePage();
+	let fieldDetails = '';
+	const fieldDetailsId = name + '_fieldDetails';
 	const dispatch = useForm();
-
+	const hasError = displayErrors && errorMessage && !valid;
 	const localizedValueArray = useMemo(() => {
 		const languageValues = [];
 
@@ -114,15 +115,14 @@ function FieldBase({
 
 		return languageValues;
 	}, [localizedValue, editingLanguageId, name]);
-	const repeatedIndex = useMemo(() => getRepeatedIndex(name), [name]);
-	const hasError = displayErrors && errorMessage && !valid;
-	const fieldDetailsId = name + '_fieldDetails';
-	let fieldDetails = '';
-	let parentDivTabIndex;
+
 	let parentDivAriaLabelledby;
+	let parentDivTabIndex;
 	const renderLabel =
 		(label && showLabel) || required || tooltip || repeatable;
 
+	const repeatedIndex = useMemo(() => getRepeatedIndex(name), [name]);
+	const requiredText = Liferay.Language.get('required');
 	const showLegend =
 		type &&
 		(type === 'checkbox_multiple' ||
