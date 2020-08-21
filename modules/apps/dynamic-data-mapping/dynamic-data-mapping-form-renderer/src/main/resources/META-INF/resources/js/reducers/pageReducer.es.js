@@ -79,7 +79,7 @@ export default (state, action) => {
 			return {
 				forceAriaUpdate: Date.now(),
 				invalidFormMessage: sub(
-					Liferay.Language.get('invalid-form-check-field-x'),
+					Liferay.Language.get('this-form-is-invalid-check-field-x'),
 					[firstInvalidFieldLabel]
 				),
 				pages,
