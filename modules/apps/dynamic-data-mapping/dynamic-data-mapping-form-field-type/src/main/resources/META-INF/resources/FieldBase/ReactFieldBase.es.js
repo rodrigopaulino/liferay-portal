@@ -126,9 +126,9 @@ function FieldBase({
 	const showLegend =
 		type &&
 		(type === 'checkbox_multiple' ||
-		 type === 'grid' ||
-		 type === 'paragraph' ||
-		 type === 'radio');
+			type === 'grid' ||
+			type === 'paragraph' ||
+			type === 'radio');
 
 	if (renderLabel) {
 		fieldDetails += label + '<br>';
@@ -209,7 +209,11 @@ function FieldBase({
 					<>
 						{showLegend ? (
 							<fieldset>
-								<legend className="lfr-ddm-legend">
+								<legend
+									aria-labelledby={fieldDetailsId}
+									className="lfr-ddm-legend"
+									tabIndex="0"
+								>
 									{label && showLabel && label}
 
 									<FieldProperties
