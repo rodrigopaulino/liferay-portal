@@ -73,12 +73,6 @@ const FieldProperties = ({required, tooltip}) => {
 				</span>
 			)}
 
-			{required && (
-				<span className="sr-only">
-					{Liferay.Language.get('required')}
-				</span>
-			)}
-
 			{tooltip && (
 				<span className="ddm-tooltip">
 					<ClayIcon
