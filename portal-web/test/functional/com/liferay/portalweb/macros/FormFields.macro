@@ -496,18 +496,10 @@ definition {
 	}
 
 	macro viewCheckboxLabel {
-		var key_fieldName = "${fieldName}";
-
-		if (isSet(fieldLabelRequired)) {
-			AssertTextEquals.assertText(
-				locator1 = "FormFields#CHECKBOX_LABEL",
-				value1 = "${fieldLabelRequired}");
-		}
-		else {
-			AssertTextEquals.assertText(
-				locator1 = "FormFields#CHECKBOX_LABEL",
-				value1 = "${fieldLabel}");
-		}
+		AssertTextEquals.assertText(
+			key_fieldName = "${fieldName}",
+			locator1 = "FormFields#CHECKBOX_LABEL",
+			value1 = "${fieldLabel}");
 	}
 
 	macro viewCheckboxNotChecked {
@@ -517,17 +509,9 @@ definition {
 	}
 
 	macro viewDateField {
-		if (isSet(fieldLabelRequired)) {
-			FormFields.viewDateLabel(
-				fieldLabel = "${fieldLabel}",
-				fieldLabelRequired = "${fieldLabelRequired}",
-				fieldName = "${fieldName}");
-		}
-		else {
-			FormFields.viewDateLabel(
-				fieldLabel = "${fieldLabel}",
-				fieldName = "${fieldName}");
-		}
+		FormFields.viewDateLabel(
+			fieldLabel = "${fieldLabel}",
+			fieldName = "${fieldName}");
 
 		AssertElementPresent.assertVisible(
 			key_fieldName = "${fieldName}",
@@ -551,19 +535,11 @@ definition {
 	}
 
 	macro viewDateLabel {
-		var key_fieldLabel = "${fieldLabel}";
-		var key_fieldName = "${fieldName}";
-
-		if (isSet(fieldLabelRequired)) {
-			AssertTextEquals.assertText(
-				locator1 = "FormFields#LABEL",
-				value1 = "${fieldLabelRequired}");
-		}
-		else {
-			AssertTextEquals.assertText(
-				locator1 = "FormFields#LABEL",
-				value1 = "${fieldLabel}");
-		}
+		AssertTextEquals.assertText(
+			key_fieldLabel = "${fieldLabel}",
+			key_fieldName = "${fieldName}",
+			locator1 = "FormFields#LABEL",
+			value1 = "${fieldLabel}");
 	}
 
 	macro viewDateValue {
@@ -698,18 +674,10 @@ definition {
 	}
 
 	macro viewRadioLabel {
-		var key_fieldName = "${fieldName}";
-
-		if (isSet(fieldLabelRequired)) {
-			AssertTextEquals.assertText(
-				locator1 = "Form#FIELD_LABEL",
-				value1 = "${fieldLabelRequired}");
-		}
-		else {
-			AssertTextEquals.assertText(
-				locator1 = "Form#FIELD_LABEL",
-				value1 = "${fieldLabel}");
-		}
+		AssertTextEquals.assertText(
+			key_fieldName = "${fieldName}",
+			locator1 = "Form#FIELD_LABEL",
+			value1 = "${fieldLabel}");
 	}
 
 	macro viewRadioValue {
@@ -733,40 +701,20 @@ definition {
 		var key_fieldLabel = "${fieldLabel}";
 		var key_fieldName = "${fieldName}";
 
-		if (isSet(fieldLabelRequired)) {
-			AssertTextEquals.assertText(
-				locator1 = "FormFields#LABEL",
-				value1 = "${fieldLabelRequired}");
+		AssertTextEquals.assertText(
+			locator1 = "FormFields#LABEL",
+			value1 = "${fieldLabel}");
 
-			AssertTextEquals.assertText(
-				locator1 = "FormFields#TEXT_LABEL_2",
-				value1 = "${fieldLabelRequired}");
-		}
-		else {
-			AssertTextEquals.assertText(
-				locator1 = "FormFields#LABEL",
-				value1 = "${fieldLabel}");
-
-			AssertTextEquals.assertText(
-				locator1 = "FormFields#TEXT_LABEL_2",
-				value1 = "${fieldLabel}");
-		}
+		AssertTextEquals.assertText(
+			locator1 = "FormFields#TEXT_LABEL_2",
+			value1 = "${fieldLabel}");
 	}
 
 	macro viewRepeatableTextMultilineField {
-		if (isSet(fieldLabelRequired)) {
-			FormFields.viewRepeatableTextMultilineLabel(
-				fieldLabel = "${fieldLabel}",
-				fieldLabelRequired = "${fieldLabelRequired}",
-				fieldName = "${fieldName}",
-				repeatableFieldNumber = "${repeatableFieldNumber}");
-		}
-		else {
-			FormFields.viewRepeatableTextMultilineLabel(
-				fieldLabel = "${fieldLabel}",
-				fieldName = "${fieldName}",
-				repeatableFieldNumber = "${repeatableFieldNumber}");
-		}
+		FormFields.viewRepeatableTextMultilineLabel(
+			fieldLabel = "${fieldLabel}",
+			fieldName = "${fieldName}",
+			repeatableFieldNumber = "${repeatableFieldNumber}");
 
 		if (isSet(fieldHelpText)) {
 			FormFields.viewRepeatableFieldHelpText(
@@ -782,20 +730,12 @@ definition {
 	}
 
 	macro viewRepeatableTextMultilineLabel {
-		var key_fieldLabel = "${fieldLabel}";
-		var key_fieldName = "${fieldName}";
-		var key_repeatableFieldNumber = "${repeatableFieldNumber}";
-
-		if (isSet(fieldLabelRequired)) {
-			AssertTextEquals.assertText(
-				locator1 = "FormFields#REPEATABLE_TEXT_MULTILINE_LABEL",
-				value1 = "${fieldLabelRequired}");
-		}
-		else {
-			AssertTextEquals.assertText(
-				locator1 = "FormFields#REPEATABLE_TEXT_MULTILINE_LABEL",
-				value1 = "${fieldLabel}");
-		}
+		AssertTextEquals.assertText(
+			key_fieldLabel = "${fieldLabel}",
+			key_fieldName = "${fieldName}",
+			key_repeatableFieldNumber = "${repeatableFieldNumber}",
+			locator1 = "FormFields#REPEATABLE_TEXT_MULTILINE_LABEL",
+			value1 = "${fieldLabel}");
 	}
 
 	macro viewRepeatableTextMultilineValue {
@@ -815,18 +755,10 @@ definition {
 	}
 
 	macro viewSelectLabel {
-		var key_fieldName = "${fieldName}";
-
-		if (isSet(fieldLabelRequired)) {
-			AssertTextEquals.assertText(
-				locator1 = "Form#FIELD_LABEL",
-				value1 = "${fieldLabelRequired}");
-		}
-		else {
-			AssertTextEquals.assertText(
-				locator1 = "Form#FIELD_LABEL",
-				value1 = "${fieldLabel}");
-		}
+		AssertTextEquals.assertText(
+			key_fieldName = "${fieldName}",
+			locator1 = "Form#FIELD_LABEL",
+			value1 = "${fieldLabel}");
 	}
 
 	macro viewSelectMultipleOptions {
@@ -883,19 +815,11 @@ definition {
 	}
 
 	macro viewSwitcherLabel {
-		var key_fieldLabel = "${fieldLabel}";
-		var key_fieldName = "${fieldName}";
-
-		if (isSet(fieldLabelRequired)) {
-			AssertTextEquals.assertText(
-				locator1 = "FormFields#LABEL",
-				value1 = "${fieldLabelRequired}");
-		}
-		else {
-			AssertTextEquals.assertText(
-				locator1 = "FormFields#LABEL",
-				value1 = "${fieldLabel}");
-		}
+		AssertTextEquals.assertText(
+			key_fieldLabel = "${fieldLabel}",
+			key_fieldName = "${fieldName}",
+			locator1 = "FormFields#LABEL",
+			value1 = "${fieldLabel}");
 	}
 
 	macro viewSwitcherLabelNotPresent {
@@ -907,17 +831,9 @@ definition {
 	}
 
 	macro viewTextField {
-		if (isSet(fieldLabelRequired)) {
-			FormFields.viewTextLabel(
-				fieldLabel = "${fieldLabel}",
-				fieldLabelRequired = "${fieldLabelRequired}",
-				fieldName = "${fieldName}");
-		}
-		else {
-			FormFields.viewTextLabel(
-				fieldLabel = "${fieldLabel}",
-				fieldName = "${fieldName}");
-		}
+		FormFields.viewTextLabel(
+			fieldLabel = "${fieldLabel}",
+			fieldName = "${fieldName}");
 
 		if (isSet(fieldHelpText)) {
 			FormFields.viewFieldHelpText(
@@ -950,19 +866,11 @@ definition {
 	}
 
 	macro viewTextLabel {
-		var key_fieldLabel = "${fieldLabel}";
-		var key_fieldName = "${fieldName}";
-
-		if (isSet(fieldLabelRequired)) {
-			AssertTextEquals.assertText(
-				locator1 = "FormFields#LABEL",
-				value1 = "${fieldLabelRequired}");
-		}
-		else {
-			AssertTextEquals.assertText(
-				locator1 = "FormFields#LABEL",
-				value1 = "${fieldLabel}");
-		}
+		AssertTextEquals.assertText(
+			key_fieldLabel = "${fieldLabel}",
+			key_fieldName = "${fieldName}",
+			locator1 = "FormFields#LABEL",
+			value1 = "${fieldLabel}");
 	}
 
 	macro viewTextMultilineValue {
@@ -987,17 +895,9 @@ definition {
 	}
 
 	macro viewUploadField {
-		if (isSet(fieldLabelRequired)) {
-			FormFields.viewUploadLabel(
-				fieldLabel = "${fieldLabel}",
-				fieldLabelRequired = "${fieldLabelRequired}",
-				fieldName = "${fieldName}");
-		}
-		else {
-			FormFields.viewUploadLabel(
-				fieldLabel = "${fieldLabel}",
-				fieldName = "${fieldName}");
-		}
+		FormFields.viewUploadLabel(
+			fieldLabel = "${fieldLabel}",
+			fieldName = "${fieldName}");
 
 		var key_fieldLabel = "${fieldLabel}";
 		var key_fieldName = "${fieldName}";
@@ -1009,16 +909,9 @@ definition {
 		var key_fieldLabel = "${fieldLabel}";
 		var key_fieldName = "${fieldName}";
 
-		if (isSet(fieldLabelRequired)) {
-			AssertTextEquals.assertText(
-				locator1 = "Form#FIELD_LABEL",
-				value1 = "${fieldLabelRequired}");
-		}
-		else {
-			AssertTextEquals.assertText(
-				locator1 = "Form#FIELD_LABEL",
-				value1 = "${fieldLabel}");
-		}
+		AssertTextEquals.assertText(
+			locator1 = "Form#FIELD_LABEL",
+			value1 = "${fieldLabel}");
 	}
 
 }

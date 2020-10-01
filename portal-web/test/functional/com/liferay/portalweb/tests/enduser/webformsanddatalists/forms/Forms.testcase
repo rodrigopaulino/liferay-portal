@@ -122,7 +122,7 @@ definition {
 
 		Form.editElementSetFieldLabel(fieldValue = "Text Field Required");
 
-		FormFields.enableSwitcher(fieldName = "Required Field");
+		FormFields.enableSwitcher(fieldName = "required");
 
 		Form.closeSidebar();
 
@@ -163,9 +163,7 @@ definition {
 
 		FormsAdminNavigator.gotoEditField(fieldName = "Text Field Required");
 
-		Form.editElementSetFieldLabel(
-			fieldLabelRequired = "表格文本 Required",
-			fieldValue = "表格文本");
+		Form.editElementSetFieldLabel(fieldValue = "表格文本");
 
 		Form.closeSidebar();
 
@@ -219,7 +217,6 @@ definition {
 
 		FormFields.viewTextLabel(
 			fieldLabel = "表格文本",
-			fieldLabelRequired = "表格文本 Required",
 			fieldName = "${textFieldRequiredName1}");
 
 		FormFields.viewSelectLabel(
@@ -270,7 +267,6 @@ definition {
 
 		FormFields.viewTextLabel(
 			fieldLabel = "Text Field Required",
-			fieldLabelRequired = "Text Field Required Required",
 			fieldName = "${textFieldRequiredName1}");
 
 		FormFields.viewSelectLabel(
@@ -279,7 +275,6 @@ definition {
 
 		FormFields.viewTextLabel(
 			fieldLabel = "Text Field Required",
-			fieldLabelRequired = "Text Field Required Required",
 			fieldName = "${textFieldRequiredName2}");
 
 		FormFields.viewSelectLabel(
@@ -292,7 +287,6 @@ definition {
 
 		FormFields.viewTextLabel(
 			fieldLabel = "表格文本",
-			fieldLabelRequired = "表格文本 Required",
 			fieldName = "${textFieldRequiredName1}");
 
 		FormFields.viewSelectLabel(
@@ -301,7 +295,6 @@ definition {
 
 		FormFields.viewTextLabel(
 			fieldLabel = "表格文本",
-			fieldLabelRequired = "表格文本 Required",
 			fieldName = "${textFieldRequiredName2}");
 
 		FormFields.viewSelectLabel(
@@ -356,7 +349,6 @@ definition {
 
 		FormFields.viewTextLabel(
 			fieldLabel = "表格文本",
-			fieldLabelRequired = "表格文本 Required",
 			fieldName = "${textFieldRequiredName3}");
 
 		FormFields.viewSelectLabel(
@@ -416,7 +408,7 @@ definition {
 			fieldHelpText = "Help Text",
 			fieldName = "tip");
 
-		FormFields.enableSwitcher(fieldName = "Required Field");
+		FormFields.enableSwitcher(fieldName = "Required");
 
 		Form.closeSidebar();
 
@@ -468,7 +460,6 @@ definition {
 
 		FormFields.viewTextLabel(
 			fieldLabel = "Label",
-			fieldLabelRequired = "Label Required",
 			fieldName = "Label");
 	}
 
@@ -771,7 +762,7 @@ definition {
 				rowNumber = "${number}");
 		}
 
-		FormFields.enableSwitcher(fieldName = "Required Field");
+		FormFields.enableSwitcher(fieldName = "Required");
 
 		Form.closeSidebar();
 
@@ -789,7 +780,6 @@ definition {
 
 		FormFields.viewTextLabel(
 			fieldLabel = "Testing Title",
-			fieldLabelRequired = "Testing Title Required",
 			fieldName = "TestingTitle");
 
 		FormFields.viewFieldHelpText(
@@ -804,7 +794,6 @@ definition {
 
 		FormFields.viewTextLabel(
 			fieldLabel = "Testing Title",
-			fieldLabelRequired = "Testing Title Required",
 			fieldName = "TestingTitle");
 
 		FormFields.viewFieldHelpText(
@@ -832,7 +821,6 @@ definition {
 
 		FormFields.viewTextLabel(
 			fieldLabel = "Testing Title",
-			fieldLabelRequired = "Testing Title Required",
 			fieldName = "TestingTitle");
 
 		FormFields.viewFieldHelpText(
@@ -853,7 +841,6 @@ definition {
 
 		FormFields.viewTextLabel(
 			fieldLabel = "Testing Title",
-			fieldLabelRequired = "Testing Title Required",
 			fieldName = "TestingTitle");
 
 		FormFields.viewFieldHelpText(
@@ -868,7 +855,6 @@ definition {
 
 		FormFields.viewTextLabel(
 			fieldLabel = "Testing Title",
-			fieldLabelRequired = "Testing Title Required",
 			fieldName = "TestingTitle");
 
 		FormFields.viewFieldHelpText(
@@ -896,7 +882,6 @@ definition {
 
 		FormFields.viewTextLabel(
 			fieldLabel = "Testing Title",
-			fieldLabelRequired = "Testing Title Required",
 			fieldName = "TestingTitle");
 
 		FormFields.viewFieldHelpText(
@@ -917,7 +902,6 @@ definition {
 
 		FormFields.viewTextLabel(
 			fieldLabel = "Testing Title",
-			fieldLabelRequired = "Testing Title Required",
 			fieldName = "TestingTitle");
 
 		FormFields.viewFieldHelpText(
@@ -932,7 +916,6 @@ definition {
 
 		FormFields.viewTextLabel(
 			fieldLabel = "Testing Title",
-			fieldLabelRequired = "Testing Title Required",
 			fieldName = "TestingTitle");
 
 		FormFields.viewRadioValue(
@@ -945,7 +928,6 @@ definition {
 
 		FormFields.viewTextLabel(
 			fieldLabel = "Testing Title",
-			fieldLabelRequired = "Testing Title Required",
 			fieldName = "TestingTitle");
 
 		FormFields.viewFieldHelpText(
@@ -985,7 +967,6 @@ definition {
 
 		FormFields.viewTextLabel(
 			fieldLabel = "Testing Title",
-			fieldLabelRequired = "Testing Title Required",
 			fieldName = "TestingTitle");
 
 		FormFields.viewFieldHelpText(
@@ -1075,7 +1056,6 @@ definition {
 
 		FormsAdmin.viewSelectEntry(
 			fieldLabel = "Testing Title",
-			fieldLabelRequired = "Testing Title Required",
 			fieldName = "${fieldSelectFromField}",
 			selectOption = "Select 2");
 
@@ -1817,7 +1797,6 @@ definition {
 		FormFields.viewTextField(
 			fieldHelpText = "Configure how long a lock is held before releasing due to suspected deadlock.",
 			fieldLabel = "Lock Timeout Milliseconds",
-			fieldLabelRequired = "Lock Timeout Milliseconds Required",
 			fieldName = "ds.lock.timeout.milliseconds");
 
 		Refresh();
@@ -3204,7 +3183,7 @@ definition {
 
 		FormFields.selectTextFieldLineOption(textFieldLineOption = "Multiple Lines");
 
-		FormFields.enableSwitcher(fieldName = "Required Field");
+		FormFields.enableSwitcher(fieldName = "Required");
 
 		Form.closeSidebar();
 
@@ -3235,7 +3214,7 @@ definition {
 
 		Form.editFieldLabelMetal(fieldValue = "Radio");
 
-		FormFields.enableSwitcher(fieldName = "Required Field");
+		FormFields.enableSwitcher(fieldName = "Required");
 
 		FormFields.editOptionsRow(
 			optionName = "Option1",
@@ -3266,7 +3245,7 @@ definition {
 
 		Form.editFieldLabelMetal(fieldValue = "Checkbox");
 
-		FormFields.enableSwitcher(fieldName = "Required Field");
+		FormFields.enableSwitcher(fieldName = "Required");
 
 		FormFields.editOptionsRow(
 			optionName = "Checkbox1",
@@ -3449,7 +3428,6 @@ definition {
 
 		FormsAdmin.viewMultilineTextEntry(
 			fieldLabel = "MultilineText",
-			fieldLabelRequired = "MultilineText Required",
 			fieldName = "${fieldMultilineTextField}",
 			fieldValue = "Multiline Text");
 
@@ -3460,7 +3438,6 @@ definition {
 
 		FormsAdmin.viewRadioEntry(
 			fieldLabel = "Radio",
-			fieldLabelRequired = "Radio Required",
 			fieldName = "${fieldSingleSelectionField}",
 			fieldValue = "Option 1");
 
@@ -3796,7 +3773,7 @@ definition {
 
 		Form.editFieldLabelMetal(fieldValue = "Checkbox Field");
 
-		FormFields.enableSwitcher(fieldName = "Required Field");
+		FormFields.enableSwitcher(fieldName = "Required");
 
 		FormFields.editOptionsRow(
 			optionName = "Checkbox1",
@@ -3831,7 +3808,6 @@ definition {
 
 		FormFields.viewCheckboxLabel(
 			fieldLabel = "Checkbox Field",
-			fieldLabelRequired = "Checkbox Field Required",
 			fieldName = "${fieldMultipleSelectionField}");
 
 		FormFields.viewRequiredAsterisk();
@@ -3978,7 +3954,7 @@ definition {
 
 		FormFields.selectTextFieldLineOption(textFieldLineOption = "Multiple Lines");
 
-		FormFields.enableSwitcher(fieldName = "Required Field");
+		FormFields.enableSwitcher(fieldName = "Required");
 
 		Form.closeSidebar();
 
@@ -4008,7 +3984,6 @@ definition {
 
 		FormFields.viewTextLabel(
 			fieldLabel = "Text Field",
-			fieldLabelRequired = "Text Field Required",
 			fieldName = "TextField");
 
 		FormFields.viewRequiredAsterisk();
@@ -4061,7 +4036,7 @@ definition {
 
 		Form.editFieldLabelMetal(fieldValue = "Radio Field");
 
-		FormFields.enableSwitcher(fieldName = "Required Field");
+		FormFields.enableSwitcher(fieldName = "Required");
 
 		FormFields.editOptionsRow(
 			optionName = "Option1",
@@ -4100,7 +4075,6 @@ definition {
 
 		FormFields.viewRadioLabel(
 			fieldLabel = "Radio Field",
-			fieldLabelRequired = "Radio Field Required",
 			fieldName = "${fieldSingleSelectionField}");
 
 		FormFields.viewRequiredAsterisk();
@@ -4152,7 +4126,7 @@ definition {
 
 		Form.editFieldLabelMetal(fieldValue = "Text Field");
 
-		FormFields.enableSwitcher(fieldName = "Required Field");
+		FormFields.enableSwitcher(fieldName = "Required");
 
 		Form.gotoAdvancedTab();
 
@@ -4233,7 +4207,7 @@ definition {
 
 		Form.editFieldLabelMetal(fieldValue = "Text Field");
 
-		FormFields.enableSwitcher(fieldName = "Required Field");
+		FormFields.enableSwitcher(fieldName = "Required");
 
 		Form.closeSidebar();
 
@@ -4263,7 +4237,6 @@ definition {
 
 		FormFields.viewTextLabel(
 			fieldLabel = "Text Field",
-			fieldLabelRequired = "Text Field Required",
 			fieldName = "${fieldTextField}");
 
 		FormFields.viewRequiredAsterisk();
@@ -4485,7 +4458,7 @@ definition {
 
 		Form.editFieldLabelMetal(fieldValue = "Date Field");
 
-		FormFields.enableSwitcher(fieldName = "Required Field");
+		FormFields.enableSwitcher(fieldName = "Required");
 
 		Form.closeSidebar();
 
@@ -4505,7 +4478,6 @@ definition {
 
 		FormFields.viewDateField(
 			fieldLabel = "Date Field",
-			fieldLabelRequired = "Date Field Required",
 			fieldName = "${fieldDateField}");
 
 		FormFields.viewRequiredAsterisk();
@@ -4544,7 +4516,6 @@ definition {
 
 		FormsAdmin.viewDateEntry(
 			fieldLabel = "Date Field",
-			fieldLabelRequired = "Date Field Required",
 			fieldName = "${fieldDateField}",
 			fieldValue = "01/01/2016");
 	}
@@ -4724,7 +4695,7 @@ definition {
 
 		Form.editFieldLabelMetal(fieldValue = "Text Field Page 2");
 
-		FormFields.enableSwitcher(fieldName = "Required Field");
+		FormFields.enableSwitcher(fieldName = "Required");
 
 		Form.closeSidebar();
 

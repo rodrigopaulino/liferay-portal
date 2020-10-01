@@ -28,14 +28,7 @@ definition {
 
 		DoubleClick(locator1 = "FormViewBuilder#OBJECT_FIELD_LABEL");
 
-		if (isSet(fieldLabelRequired)) {
-			FormViewBuilder.validateFieldLabel(
-				fieldLabel = "${fieldLabel}",
-				fieldLabelRequired = "${fieldLabelRequired}");
-		}
-		else {
-			FormViewBuilder.validateFieldLabel(fieldLabel = "${fieldLabel}");
-		}
+		FormViewBuilder.validateFieldLabel(fieldLabel = "${fieldLabel}");
 	}
 
 	macro addFieldByDragAndDrop {
@@ -434,16 +427,9 @@ definition {
 	}
 
 	macro validateFieldLabel {
-		if (isSet(fieldLabelRequired)) {
-			AssertTextEquals(
-				locator1 = "FormViewBuilder#FIELD_LABEL",
-				value1 = "${fieldLabelRequired}");
-		}
-		else {
-			AssertTextEquals(
-				locator1 = "FormViewBuilder#FIELD_LABEL",
-				value1 = "${fieldLabel}");
-		}
+		AssertTextEquals(
+			locator1 = "FormViewBuilder#FIELD_LABEL",
+			value1 = "${fieldLabel}");
 	}
 
 	macro validateFieldLabelRequired {
@@ -455,14 +441,7 @@ definition {
 	macro validateFormMultipleSelectionField {
 		var key_fieldType = "${fieldLabel}";
 
-		if (isSet(fieldLabelRequired)) {
-			FormViewBuilder.validateFieldLabel(
-				fieldLabel = "${fieldName}",
-				fieldLabelRequired = "${fieldLabelRequired}");
-		}
-		else {
-			FormViewBuilder.validateFieldLabel(fieldLabel = "${fieldName}");
-		}
+		FormViewBuilder.validateFieldLabel(fieldLabel = "${fieldName}");
 
 		AssertTextEquals(
 			locator1 = "FormViewBuilder#FIELD_LABEL_MULTIPLE_SELECTION",

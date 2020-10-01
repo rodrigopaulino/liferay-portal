@@ -614,7 +614,6 @@ definition {
 
 		FormFields.viewTextField(
 			fieldLabel = "Manager",
-			fieldLabelRequired = "Manager Required",
 			fieldName = "${fieldNameManager}");
 
 		FormFields.editText(
@@ -624,6 +623,10 @@ definition {
 		FormFields.editText(
 			fieldName = "${fieldNameManager}",
 			fieldValue = "Admin Comments");
+
+		FormFields.viewTextField(
+			fieldLabel = "Manager",
+			fieldName = "${fieldNameManager}");
 
 		FormPortlet.submitSuccessfully();
 
@@ -1118,7 +1121,7 @@ definition {
 
 		Form.editFieldLabelMetal(fieldValue = "Date Field");
 
-		FormFields.enableSwitcher(fieldName = "Required Field");
+		FormFields.enableSwitcher(fieldName = "Required");
 
 		Form.closeSidebar();
 
@@ -1162,7 +1165,6 @@ definition {
 
 		FormFields.viewDateFieldNotPresent(
 			fieldLabel = "Date Field",
-			fieldLabelRequired = "Date Field Required",
 			fieldName = "${fieldNameDateField}");
 
 		FormFields.editText(
@@ -1171,7 +1173,6 @@ definition {
 
 		FormFields.viewDateField(
 			fieldLabel = "Date Field",
-			fieldLabelRequired = "Date Field Required",
 			fieldName = "${fieldNameDateField}");
 	}
 

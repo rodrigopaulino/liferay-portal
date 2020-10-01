@@ -172,14 +172,7 @@ definition {
 			var fieldName = StringUtil.replace("${fieldValue}", " ", "");
 		}
 
-		if (isSet(fieldLabelRequired)) {
-			Form.editFieldLabelMetal(
-				fieldLabelRequired = "${fieldLabelRequired}",
-				fieldValue = "${fieldValue}");
-		}
-		else {
-			Form.editFieldLabelMetal(fieldValue = "${fieldValue}");
-		}
+		Form.editFieldLabelMetal(fieldValue = "${fieldValue}");
 	}
 
 	macro editFieldDataProvider {
@@ -205,16 +198,9 @@ definition {
 
 		var key_fieldName = "${fieldValue}";
 
-		if (isSet(fieldLabelRequired)) {
-			AssertTextEquals(
-				locator1 = "Form#FIELD_LABEL",
-				value1 = "${fieldLabelRequired}");
-		}
-		else {
-			AssertTextEquals(
-				locator1 = "Form#FIELD_LABEL",
-				value1 = "${fieldValue}");
-		}
+		AssertTextEquals(
+			locator1 = "Form#FIELD_LABEL",
+			value1 = "${fieldValue}");
 	}
 
 	macro editImageDescription {
