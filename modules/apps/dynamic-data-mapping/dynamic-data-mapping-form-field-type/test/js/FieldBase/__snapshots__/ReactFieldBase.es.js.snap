@@ -112,11 +112,6 @@ exports[`ReactFieldBase renders the FieldBase with required 1`] = `
           />
         </svg>
       </span>
-      <span
-        class="sr-only"
-      >
-        required
-      </span>
     </label>
     <span
       aria-hidden="false"
