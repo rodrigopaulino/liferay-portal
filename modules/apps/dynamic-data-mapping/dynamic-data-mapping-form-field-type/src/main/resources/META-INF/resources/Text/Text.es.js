@@ -63,7 +63,7 @@ const Text = ({
 		<ClayInput
 			className="ddm-field-text"
 			disabled={disabled}
-			id={id ? id : name}
+			id={id}
 			name={name}
 			onBlur={onBlur}
 			onChange={(event) => {
