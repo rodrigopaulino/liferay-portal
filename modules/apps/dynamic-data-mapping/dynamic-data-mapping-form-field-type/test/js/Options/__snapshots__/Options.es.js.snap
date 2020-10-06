@@ -47,7 +47,6 @@ exports[`Options shows the options 1`] = `
             >
               <input
                 class="form-control ddm-field-text"
-                id="keyValueLabeloption0"
                 name="keyValueLabeloption0"
                 placeholder="enter-an-option"
                 type="text"
@@ -124,7 +123,6 @@ exports[`Options shows the options 1`] = `
             >
               <input
                 class="form-control ddm-field-text"
-                id="keyValueLabeloption1"
                 name="keyValueLabeloption1"
                 placeholder="enter-an-option"
                 type="text"
@@ -201,7 +199,6 @@ exports[`Options shows the options 1`] = `
             >
               <input
                 class="form-control ddm-field-text"
-                id="keyValueLabeloption2"
                 name="keyValueLabeloption2"
                 placeholder="enter-an-option"
                 type="text"
