@@ -43,13 +43,6 @@ public class OpenIdConnectUserInfoProcessorImpl
 	implements OpenIdConnectUserInfoProcessor {
 
 	@Override
-	public long processUserInfo(UserInfo userInfo, long companyId)
-		throws PortalException {
-
-		return processUserInfo(userInfo, companyId, null, null);
-	}
-
-	@Override
 	public long processUserInfo(
 			UserInfo userInfo, long companyId, String pathMain,
 			String portalURL)

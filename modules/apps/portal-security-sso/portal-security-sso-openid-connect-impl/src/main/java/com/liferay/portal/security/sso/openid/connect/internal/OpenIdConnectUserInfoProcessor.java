@@ -23,9 +23,6 @@ import com.nimbusds.openid.connect.sdk.claims.UserInfo;
  */
 public interface OpenIdConnectUserInfoProcessor {
 
-	public long processUserInfo(UserInfo userInfo, long companyId)
-		throws PortalException;
-
 	public long processUserInfo(
 			UserInfo userInfo, long companyId, String pathMain,
 			String portalURL)
