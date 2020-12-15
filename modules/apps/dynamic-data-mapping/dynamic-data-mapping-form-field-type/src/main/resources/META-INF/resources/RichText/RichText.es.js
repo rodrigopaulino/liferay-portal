@@ -45,7 +45,7 @@ const RichText = ({
 			<ClassicEditor
 				contents={currentValue}
 				data={currentValue}
-				editorConfig={editorConfig.JSONObject}
+				editorConfig={editorConfig}
 				name={name}
 				onChange={(data) => {
 					if (currentValue !== data) {
