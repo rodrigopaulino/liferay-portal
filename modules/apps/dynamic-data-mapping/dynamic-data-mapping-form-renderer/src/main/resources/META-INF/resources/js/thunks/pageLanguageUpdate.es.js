@@ -177,6 +177,8 @@ export default function pageLanguageUpdate({
 					namespace: portletNamespace,
 					pathThemeImages: themeDisplay.getPathThemeImages(),
 					readOnly,
+					scopeGroupId: themeDisplay.getScopeGroupId(),
+					siteGroupId: themeDisplay.getSiteGroupId(),
 				}),
 				headers: {
 					'Accept-Language': nextEditingLanguageId.replace('_', '-'),
