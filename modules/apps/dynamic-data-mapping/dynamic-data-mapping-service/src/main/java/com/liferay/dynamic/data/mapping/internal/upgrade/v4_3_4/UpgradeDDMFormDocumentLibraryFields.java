@@ -218,8 +218,12 @@ public class UpgradeDDMFormDocumentLibraryFields extends UpgradeProcess {
 				String uuid = jsonObject.getString("uuid");
 
 				DLFileEntry dlFileEntry =
-					_dlFileEntryLocalService.getFileEntryByUuidAndGroupId(
+					_dlFileEntryLocalService.fetchDLFileEntryByUuidAndGroupId(
 						uuid, groupId);
+
+				if (dlFileEntry == null) {
+					continue;
+				}
 
 				jsonObject.put("title", dlFileEntry.getTitle());
 
