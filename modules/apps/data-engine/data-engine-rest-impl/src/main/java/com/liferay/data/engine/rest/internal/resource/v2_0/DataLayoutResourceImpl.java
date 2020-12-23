@@ -228,6 +228,8 @@ public class DataLayoutResourceImpl
 			DataLayoutRenderingContext dataLayoutRenderingContext)
 		throws Exception {
 
+		_initThemeDisplay(dataLayoutRenderingContext);
+
 		DDMStructureLayout ddmStructureLayout =
 			_ddmStructureLayoutLocalService.getDDMStructureLayout(dataLayoutId);
 
@@ -265,8 +267,6 @@ public class DataLayoutResourceImpl
 			LocaleThreadLocal.setThemeDisplayLocale(
 				contextAcceptLanguage.getPreferredLocale());
 		}
-
-		_servicePre(dataLayoutRenderingContext);
 
 		Map<String, Object> ddmFormTemplateContext =
 			_ddmFormTemplateContextFactory.create(
@@ -484,7 +484,7 @@ public class DataLayoutResourceImpl
 			"$[\"pages\"][*][\"rows\"][*][\"columns\"][*][\"fieldNames\"][*]");
 	}
 
-	private void _servicePre(
+	private void _initThemeDisplay(
 			DataLayoutRenderingContext dataLayoutRenderingContext)
 		throws Exception {
 
