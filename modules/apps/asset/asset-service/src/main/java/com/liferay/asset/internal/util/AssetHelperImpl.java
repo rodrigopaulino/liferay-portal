@@ -758,6 +758,7 @@ public class AssetHelperImpl implements AssetHelper {
 		}
 		else if (fieldType.equals(DDMFormFieldType.DECIMAL) ||
 				 fieldType.equals(DDMFormFieldType.NUMBER) ||
+				 fieldType.equals(DDMFormFieldType.NUMERIC) ||
 				 fieldType.equals(Field.PRIORITY)) {
 
 			sortType = Sort.DOUBLE_TYPE;
