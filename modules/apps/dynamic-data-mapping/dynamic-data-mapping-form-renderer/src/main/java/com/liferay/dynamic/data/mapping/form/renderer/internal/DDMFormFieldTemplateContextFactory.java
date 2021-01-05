@@ -713,7 +713,9 @@ public class DDMFormFieldTemplateContextFactory {
 					ddmFormFieldValueAccessor.getValue(
 						ddmFormFieldValue, availableLocale);
 
-				if (!(ddmFormFieldValueAccessorValue instanceof BigDecimal)) {
+				if (!(ddmFormFieldValueAccessorValue instanceof BigDecimal) &&
+					!StringUtil.equals(ddmFormField.getType(), "numeric")) {
+
 					localizedValue = ddmFormFieldValueAccessor.getValue(
 						ddmFormFieldValue, availableLocale);
 				}
