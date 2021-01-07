@@ -23,6 +23,7 @@ import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.form.renderer.constants.DDMFormRendererConstants;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidationExpression;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
@@ -714,7 +715,8 @@ public class DDMFormFieldTemplateContextFactory {
 						ddmFormFieldValue, availableLocale);
 
 				if (!(ddmFormFieldValueAccessorValue instanceof BigDecimal) &&
-					!StringUtil.equals(ddmFormField.getType(), "numeric")) {
+					!StringUtil.equals(
+						ddmFormField.getType(), DDMFormFieldType.NUMERIC)) {
 
 					localizedValue = ddmFormFieldValueAccessor.getValue(
 						ddmFormFieldValue, availableLocale);
@@ -895,7 +897,9 @@ public class DDMFormFieldTemplateContextFactory {
 	}
 
 	private boolean _isFieldSetField(DDMFormField ddmFormField) {
-		if (StringUtil.equals(ddmFormField.getType(), "fieldset")) {
+		if (StringUtil.equals(
+				ddmFormField.getType(), DDMFormFieldType.FIELDSET)) {
+
 			return true;
 		}
 
