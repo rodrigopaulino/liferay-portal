@@ -33,10 +33,10 @@ export default (state, action) => {
 						({localizedValue, localizedValueEdited}) => {
 							let value;
 
-							const defaultValue =
-								localizedValue[defaultSiteLanguageId];
-
 							if (localizedValue) {
+								const defaultValue =
+									localizedValue[defaultSiteLanguageId];
+
 								if (
 									localizedValue[editingLanguageId] !==
 									undefined
