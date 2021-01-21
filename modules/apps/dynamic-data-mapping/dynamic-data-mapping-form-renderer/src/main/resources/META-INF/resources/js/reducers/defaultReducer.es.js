@@ -43,12 +43,10 @@ export default (state, action) => {
 							let _value;
 
 							if (localizedValue) {
-
 								const defaultValue =
 									localizedValue[defaultSiteLanguageId];
 
 								if (localizedValue[editingLanguageId] != null) {
-
 									if (
 										Array.isArray(
 											localizedValue[editingLanguageId]

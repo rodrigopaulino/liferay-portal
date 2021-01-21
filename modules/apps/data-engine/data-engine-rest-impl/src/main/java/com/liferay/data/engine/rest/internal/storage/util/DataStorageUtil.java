@@ -31,6 +31,7 @@ import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -174,58 +175,53 @@ public class DataStorageUtil {
 			return;
 		}
 
-		String name = ddmFormField.getName();
+		HashMap<String, Object> hashMap = HashMapBuilder.<String, Object>put(
+			"instanceId", ddmFormFieldValue.getInstanceId()
+		).build();
 
 		Value value = ddmFormFieldValue.getValue();
 
-		if (value == null) {
-			values.put(name, null);
-
-			return;
-		}
-
-		if (ddmFormField.isRepeatable()) {
+		if (value != null) {
 			if (ddmFormField.isLocalizable()) {
-				Map<String, Object> localizedValues =
-					(Map<String, Object>)values.getOrDefault(
-						name, new HashMap<>());
-
 				LocalizedValue localizedValue = (LocalizedValue)value;
 
 				Set<Locale> availableLocales =
 					localizedValue.getAvailableLocales();
 
+				HashMap<String, Object> localizationMap = new HashMap<>();
+
 				for (Locale locale : availableLocales) {
-					String languageId = LanguageUtil.getLanguageId(locale);
+					String fieldType = ddmFormField.getType();
 
-					List<Object> list =
-						(List<Object>)localizedValues.getOrDefault(
-							languageId, new ArrayList<>());
+					if (fieldType.equals(DDMFormFieldType.CHECKBOX_MULTIPLE) ||
+						fieldType.equals(DDMFormFieldType.SELECT)) {
 
-					list.add(localizedValue.getString(locale));
-
-					localizedValues.put(languageId, list);
+						localizationMap.put(
+							LanguageUtil.getLanguageId(locale),
+							_toStringList(locale, localizedValue));
+					}
+					else {
+						localizationMap.put(
+							LanguageUtil.getLanguageId(locale),
+							localizedValue.getString(locale));
+					}
 				}
 
-				values.put(name, localizedValues);
+				hashMap.put("localizedValue", localizationMap);
 			}
 			else {
-				List<Object> list = (List<Object>)values.getOrDefault(
-					name, new ArrayList<>());
-
-				list.add(value.getString(value.getDefaultLocale()));
-
-				values.put(name, list);
+				hashMap.put("value", value.getString(value.getDefaultLocale()));
 			}
 		}
-		else if (ddmFormField.isLocalizable()) {
-			values.put(
-				name,
-				_toLocalizedMap(ddmFormField.getType(), (LocalizedValue)value));
-		}
-		else {
-			values.put(name, value.getString(value.getDefaultLocale()));
-		}
+
+		String name = ddmFormField.getName();
+
+		List<Object> list = (List<Object>)values.getOrDefault(
+			name, new ArrayList<>());
+
+		list.add(hashMap);
+
+		values.put(name, list);
 	}
 
 	private static void _addValues(
@@ -238,34 +234,30 @@ public class DataStorageUtil {
 		if ((ddmFormField != null) &&
 			StringUtil.equals(ddmFormField.getType(), "fieldset")) {
 
-			if (ListUtil.isEmpty(
-					ddmFormFieldValue.getNestedDDMFormFieldValues())) {
+			HashMap<String, Object> nestedFields = new HashMap<>();
 
-				return;
-			}
-
-			if (!values.containsKey(ddmFormField.getName())) {
-				values.put(ddmFormField.getName(), new HashMap<>());
-			}
-
-			Map<String, Object> fieldSetInstanceValues =
-				(Map<String, Object>)values.get(ddmFormField.getName());
-
-			if (!fieldSetInstanceValues.containsKey(
-					ddmFormFieldValue.getInstanceId())) {
-
-				fieldSetInstanceValues.put(
-					ddmFormFieldValue.getInstanceId(), new HashMap<>());
-			}
+			HashMap<String, Object> hashMap =
+				HashMapBuilder.<String, Object>put(
+					"instanceId", ddmFormFieldValue.getInstanceId()
+				).put(
+					"nestedFields", nestedFields
+				).build();
 
 			for (DDMFormFieldValue nestedDDMFormFieldValue :
 					ddmFormFieldValue.getNestedDDMFormFieldValues()) {
 
 				_addValues(
-					ddmFormFields, nestedDDMFormFieldValue,
-					(Map<String, Object>)fieldSetInstanceValues.get(
-						ddmFormFieldValue.getInstanceId()));
+					ddmFormFields, nestedDDMFormFieldValue, nestedFields);
 			}
+
+			String name = ddmFormField.getName();
+
+			List<Object> list = (List<Object>)values.getOrDefault(
+				name, new ArrayList<>());
+
+			list.add(hashMap);
+
+			values.put(name, list);
 		}
 		else {
 			_addValue(ddmFormField, ddmFormFieldValue, values);
@@ -297,27 +289,6 @@ public class DataStorageUtil {
 		}
 
 		return false;
-	}
-
-	private static Map<String, Object> _toLocalizedMap(
-		String fieldType, LocalizedValue localizedValue) {
-
-		Set<Locale> availableLocales = localizedValue.getAvailableLocales();
-
-		Stream<Locale> stream = availableLocales.stream();
-
-		if (fieldType.equals(DDMFormFieldType.CHECKBOX_MULTIPLE) ||
-			fieldType.equals(DDMFormFieldType.SELECT)) {
-
-			return stream.collect(
-				Collectors.toMap(
-					LanguageUtil::getLanguageId,
-					locale -> _toStringList(locale, localizedValue)));
-		}
-
-		return stream.collect(
-			Collectors.toMap(
-				LanguageUtil::getLanguageId, localizedValue::getString));
 	}
 
 	private static List<String> _toStringList(

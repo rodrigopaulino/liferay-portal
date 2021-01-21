@@ -423,7 +423,7 @@ public abstract class BaseJSONParser<T> {
 		do {
 			_readWhileLastCharIsWhiteSpace();
 
-			objects.add(_readValue());
+			objects.add(_readValue(true));
 
 			_readWhileLastCharIsWhiteSpace();
 		}

@@ -33,9 +33,11 @@ import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.Inject;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Before;
@@ -564,13 +566,18 @@ public class DataRecordResourceTest extends BaseDataRecordResourceTestCase {
 				dataRecordCollectionId = _dataRecordCollectionId;
 				dataRecordValues = HashMapBuilder.<String, Object>put(
 					fieldName,
-					HashMapBuilder.put(
-						"en_US",
-						new String[] {
-							RandomTestUtil.randomString(),
-							RandomTestUtil.randomString()
-						}
-					).build()
+					new HashMap[] {
+						HashMapBuilder.<String, Object>put(
+							"instanceId", StringUtil.randomString(8)
+						).put(
+							"localizedValue",
+							HashMapBuilder.put(
+								"en_US", "Value 1"
+							).put(
+								"pt_BR", "Valor 1"
+							).build()
+						).build()
+					}
 				).build();
 			}
 		};

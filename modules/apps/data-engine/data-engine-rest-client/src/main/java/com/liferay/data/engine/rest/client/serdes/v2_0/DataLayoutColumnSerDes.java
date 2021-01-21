@@ -203,9 +203,14 @@ public class DataLayoutColumnSerDes {
 				sb.append("[");
 
 				for (int i = 0; i < values.length; i++) {
-					sb.append("\"");
-					sb.append(_escape(values[i]));
-					sb.append("\"");
+					if (values[i] instanceof Map) {
+						sb.append(_toJSON((Map)values[i]));
+					}
+					else {
+						sb.append("\"");
+						sb.append(_escape(values[i]));
+						sb.append("\"");
+					}
 
 					if ((i + 1) < values.length) {
 						sb.append(", ");

@@ -73,24 +73,25 @@ const formatDataRecord = (languageId, pages, preserveValue) => {
 			}
 		}
 
+		const fieldDataRecordValues = {
+			instanceId,
+		};
+
 		if (localizable) {
-			const fieldDataRecordValues = {
-				instanceId,
-				localizedValue: {
-					...localizedValue,
-					[languageId]: _value,
-				},
+			fieldDataRecordValues.localizedValue = {
+				...localizedValue,
+				[languageId]: _value,
 			};
-
-			if (!dataRecordValues[fieldName]) {
-				dataRecordValues[fieldName] = [];
-			}
-
-			dataRecordValues[fieldName].push(fieldDataRecordValues);
 		}
 		else {
-			dataRecordValues[fieldName] = _value;
+			fieldDataRecordValues.value = _value;
 		}
+
+		if (!dataRecordValues[fieldName]) {
+			dataRecordValues[fieldName] = [];
+		}
+
+		dataRecordValues[fieldName].push(fieldDataRecordValues);
 	};
 
 	visitor.mapFields((field) => {
