@@ -370,6 +370,14 @@ public class DDMFormField implements Serializable {
 		return MapUtil.getBoolean(_properties, "showLabel", true);
 	}
 
+	/**
+	 * This method returns <code>true</code> if the DDMFormField is not supposed
+	 * to hold value/data, i.e. its "dataType" property is blank or
+	 * <code>null</code>. Transient fields can be considered structural fields
+	 * like Liferay's native Separator or Fieldset fields.
+	 *
+	 * @return boolean
+	 */
 	public boolean isTransient() {
 		if (Validator.isNull(getDataType())) {
 			return true;
