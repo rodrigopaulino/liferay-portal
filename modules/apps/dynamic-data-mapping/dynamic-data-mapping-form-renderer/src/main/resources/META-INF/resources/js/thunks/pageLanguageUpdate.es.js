@@ -16,87 +16,17 @@ import {PagesVisitor} from 'dynamic-data-mapping-form-renderer';
 import {fetch} from 'frontend-js-web';
 
 import {EVENT_TYPES} from '../actions/eventTypes.es';
-
-const extractDataRecordValueKey = (name) => {
-	return name.split('$$')[1];
-};
+import extractDataRecordValueKey from '../util/extractDataRecordValueKey.es';
+import setDataRecord from '../util/setDataRecord.es';
 
 const formatDataRecord = (languageId, pages, preserveValue) => {
-	const dataRecordValues = {};
-
 	const visitor = new PagesVisitor(pages);
 
-	const setDataRecord = ({
-		localizable,
-		localizedValue,
-		localizedValueEdited,
-		name,
-		transient,
-		value,
-		visible,
-	}) => {
-		const dataRecordValueKey = extractDataRecordValueKey(name);
-
-		if (transient) {
-			dataRecordValues[dataRecordValueKey] = '';
-
-			return;
-		}
-
-		let _value = null;
-
-		try {
-			_value = JSON.parse(value);
-		}
-		catch (e) {
-			_value = value;
-		}
-
-		if (!visible) {
-			_value = '';
-		}
-
-		if (localizable) {
-			const edited =
-				!!localizedValue?.[languageId] ||
-				(localizedValueEdited && localizedValueEdited[languageId]);
-
-			let availableLanguageIds;
-
-			if (localizedValue) {
-				availableLanguageIds = Object.keys(localizedValue);
-			}
-			else {
-				availableLanguageIds = [];
-			}
-
-			if (!availableLanguageIds.includes(languageId)) {
-				availableLanguageIds.push(languageId);
-			}
-
-			dataRecordValues[dataRecordValueKey] = {...localizedValue};
-
-			if (edited) {
-				dataRecordValues[dataRecordValueKey] = {
-					...localizedValue,
-					[languageId]: _value,
-				};
-			}
-			else if (preserveValue) {
-				dataRecordValues[dataRecordValueKey] = {
-					...localizedValue,
-					[languageId]: value,
-				};
-			}
-		}
-		else {
-			dataRecordValues[dataRecordValueKey] = _value;
-		}
-	};
+	const dataRecordValues = {};
 
 	visitor.mapFields(
 		(field) => {
-			setDataRecord(field);
+			setDataRecord(field, dataRecordValues, languageId, preserveValue);
 		},
 		true,
 		true
