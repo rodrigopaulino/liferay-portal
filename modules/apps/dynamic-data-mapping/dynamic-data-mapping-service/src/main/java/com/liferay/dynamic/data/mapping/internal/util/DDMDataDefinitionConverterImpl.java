@@ -164,13 +164,14 @@ public class DDMDataDefinitionConverterImpl
 
 		return _createFieldSetDDMFormField(
 			StringPool.BLANK, StringPool.BLANK, defaultLocale, name,
-			nestedDDMFormFields, repeatable);
+			nestedDDMFormFields, repeatable, false);
 	}
 
 	private DDMFormField _createFieldSetDDMFormField(
 		String ddmStructureId, String ddmStructureLayoutId,
 		Locale defaultLocale, String name,
-		List<DDMFormField> nestedDDMFormFields, boolean repeatable) {
+		List<DDMFormField> nestedDDMFormFields, boolean repeatable,
+		boolean upgradedStructure) {
 
 		return new DDMFormField(name, "fieldset") {
 			{
@@ -184,7 +185,7 @@ public class DDMDataDefinitionConverterImpl
 				setNestedDDMFormFields(nestedDDMFormFields);
 				setProperty("ddmStructureId", ddmStructureId);
 				setProperty("ddmStructureLayoutId", ddmStructureLayoutId);
-				setProperty("upgradedStructure", false);
+				setProperty("upgradedStructure", upgradedStructure);
 				setReadOnly(false);
 				setRepeatable(repeatable);
 				setRequired(false);
@@ -529,12 +530,17 @@ public class DDMDataDefinitionConverterImpl
 			return;
 		}
 
-		ddmForm.addDDMFormField(
+		List<DDMFormField> ddmFormFields = ddmForm.getDDMFormFields();
+
+		ddmFormFields.add(
+			0,
 			_createFieldSetDDMFormField(
 				String.valueOf(parentStructureId),
 				String.valueOf(parentStructureLayoutId),
 				ddmForm.getDefaultLocale(), "parentStructureFieldSet",
-				Collections.emptyList(), false));
+				Collections.emptyList(), false, true));
+
+		ddmForm.setDDMFormFields(ddmFormFields);
 	}
 
 	private void _upgradeSelectField(DDMFormField ddmFormField) {
