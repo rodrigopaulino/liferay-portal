@@ -876,7 +876,7 @@ public class JournalConverterImpl implements JournalConverter {
 	@Reference
 	private DLAppLocalService _dlAppLocalService;
 
-	@Reference
+	@Reference(target = "(ddm.form.values.converter.type=journal)")
 	private FieldsToDDMFormValuesConverter _fieldsToDDMFormValuesConverter;
 
 	@Reference

@@ -15,7 +15,7 @@
 package com.liferay.dynamic.data.mapping.util;
 
 import com.liferay.dynamic.data.mapping.BaseDDMTestCase;
-import com.liferay.dynamic.data.mapping.internal.util.FieldsToDDMFormValuesConverterImpl;
+import com.liferay.dynamic.data.mapping.internal.util.DefaultFieldsToDDMFormValuesConverter;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
@@ -315,8 +315,8 @@ public class FieldsToDDMFormValuesConverterTest extends BaseDDMTestCase {
 			expectedEnValue, expectedPtValue, ddmFormFieldValue);
 	}
 
-	private final FieldsToDDMFormValuesConverterImpl
+	private final DefaultFieldsToDDMFormValuesConverter
 		_fieldsToDDMFormValuesConverterImpl =
-			new FieldsToDDMFormValuesConverterImpl();
+			new DefaultFieldsToDDMFormValuesConverter();
 
 }
