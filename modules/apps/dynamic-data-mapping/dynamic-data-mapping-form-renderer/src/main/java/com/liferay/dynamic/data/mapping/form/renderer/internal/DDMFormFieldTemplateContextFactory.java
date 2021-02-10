@@ -733,6 +733,10 @@ public class DDMFormFieldTemplateContextFactory {
 				}
 			}
 
+			if (localizedValue instanceof JSONObject) {
+				localizedValue = localizedValue.toString();
+			}
+
 			localizedValues.put(
 				languageId,
 				GetterUtil.getObject(localizedValue, StringPool.BLANK));
