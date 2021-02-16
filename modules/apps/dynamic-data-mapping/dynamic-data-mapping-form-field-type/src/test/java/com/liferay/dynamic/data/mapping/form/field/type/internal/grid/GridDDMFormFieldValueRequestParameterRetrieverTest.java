@@ -122,7 +122,7 @@ public class GridDDMFormFieldValueRequestParameterRetrieverTest {
 				new MockHttpServletRequest(), _PARAMETER_NAME,
 				StringPool.BLANK);
 
-		Assert.assertEquals("{}", parameterValue);
+		Assert.assertEquals("", parameterValue);
 	}
 
 	private void _setUpJSONFactoryUtil() {
