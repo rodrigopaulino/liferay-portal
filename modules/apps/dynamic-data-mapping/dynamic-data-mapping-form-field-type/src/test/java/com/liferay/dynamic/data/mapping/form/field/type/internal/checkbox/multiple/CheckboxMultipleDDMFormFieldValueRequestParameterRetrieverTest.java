@@ -68,7 +68,7 @@ public class CheckboxMultipleDDMFormFieldValueRequestParameterRetrieverTest {
 
 	@Test
 	public void testEmptySubmission() {
-		String expectedResult = "[]";
+		String expectedResult = "";
 
 		String defaultDDMFormFieldParameterValue = createJSONArrayString(
 			"Option 1");
