@@ -16,10 +16,12 @@ package com.liferay.dynamic.data.mapping.form.field.type.internal.checkbox.multi
 
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueRequestParameterRetriever;
 import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ArrayUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -54,7 +56,11 @@ public class CheckboxMultipleDDMFormFieldValueRequestParameterRetriever
 			getDefaultDDMFormFieldParameterValues(
 				defaultDDMFormFieldParameterValue));
 
-		return jsonFactory.serialize(parameterValues);
+		if (ArrayUtil.isNotEmpty(parameterValues)) {
+			return jsonFactory.serialize(parameterValues);
+		}
+
+		return StringPool.BLANK;
 	}
 
 	protected String[] getDefaultDDMFormFieldParameterValues(

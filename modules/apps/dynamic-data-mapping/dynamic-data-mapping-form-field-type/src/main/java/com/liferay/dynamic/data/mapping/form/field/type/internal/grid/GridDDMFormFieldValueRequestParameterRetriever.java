@@ -16,6 +16,7 @@ package com.liferay.dynamic.data.mapping.form.field.type.internal.grid;
 
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueRequestParameterRetriever;
 import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -51,7 +52,7 @@ public class GridDDMFormFieldValueRequestParameterRetriever
 			httpServletRequest.getParameterMap();
 
 		if (!parameterMap.containsKey(ddmFormFieldParameterName)) {
-			return jsonObject.toString();
+			return StringPool.BLANK;
 		}
 
 		String[] parameterValues = parameterMap.get(ddmFormFieldParameterName);
