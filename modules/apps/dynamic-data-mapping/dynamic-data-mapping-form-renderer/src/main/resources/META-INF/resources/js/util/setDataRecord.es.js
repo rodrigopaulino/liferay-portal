@@ -36,7 +36,7 @@ export default (
 		return;
 	}
 
-	let _value = value;
+	let _value = JSON.stringify(value);
 
 	if (!visible) {
 		_value = '';
