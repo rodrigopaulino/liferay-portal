@@ -59,7 +59,8 @@ public class GridDDMFormFieldValueRequestParameterRetriever
 
 		if (parameterValues.length == 1) {
 			try {
-				jsonObject = jsonFactory.createJSONObject(parameterValues[0]);
+				jsonObject = jsonFactory.createJSONObject(
+					(String)jsonFactory.deserialize(parameterValues[0]));
 
 				return jsonObject.toString();
 			}
