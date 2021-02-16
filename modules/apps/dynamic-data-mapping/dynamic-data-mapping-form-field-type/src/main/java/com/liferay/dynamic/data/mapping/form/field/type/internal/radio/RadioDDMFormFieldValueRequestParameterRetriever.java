@@ -16,12 +16,14 @@ package com.liferay.dynamic.data.mapping.form.field.type.internal.radio;
 
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueRequestParameterRetriever;
 import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -48,7 +50,14 @@ public class RadioDDMFormFieldValueRequestParameterRetriever
 			ddmFormFieldParameterName);
 
 		if (parameterValue == null) {
-			return getPredefinedValue(defaultDDMFormFieldParameterValue);
+			parameterValue = getPredefinedValue(
+				defaultDDMFormFieldParameterValue);
+
+			if (Validator.isNotNull(parameterValue)) {
+				return parameterValue;
+			}
+
+			return StringPool.BLANK;
 		}
 
 		return GetterUtil.getString(parameterValue);

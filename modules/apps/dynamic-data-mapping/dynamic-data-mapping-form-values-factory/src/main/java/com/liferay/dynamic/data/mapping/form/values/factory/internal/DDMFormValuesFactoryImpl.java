@@ -486,7 +486,9 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 				httpServletRequest, fieldType, ddmFormFieldParameterName,
 				predefinedValue.getString(availableLocale), availableLocale);
 
-			value.addString(availableLocale, ddmFormFieldParameterValue);
+			if (Validator.isNotNull(ddmFormFieldParameterValue)) {
+				value.addString(availableLocale, ddmFormFieldParameterValue);
+			}
 		}
 
 		ddmFormFieldValue.setValue(value);
@@ -511,9 +513,10 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 			httpServletRequest, fieldType, ddmFormFieldParameterName,
 			predefinedValue.getString(defaultLocale), defaultLocale);
 
-		Value value = new UnlocalizedValue(ddmFormFieldParameterValue);
-
-		ddmFormFieldValue.setValue(value);
+		if (Validator.isNotNull(ddmFormFieldParameterValue)) {
+			ddmFormFieldValue.setValue(
+				new UnlocalizedValue(ddmFormFieldParameterValue));
+		}
 	}
 
 	protected void setDDMFormValuesAvailableLocales(
