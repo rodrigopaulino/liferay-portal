@@ -62,9 +62,21 @@ public class GridDDMFormFieldValueRequestParameterRetriever
 
 				return jsonObject.toString();
 			}
-			catch (JSONException jsonException) {
+			catch (JSONException jsonException1) {
 				if (_log.isDebugEnabled()) {
-					_log.debug(jsonException, jsonException);
+					_log.debug(jsonException1, jsonException1);
+				}
+
+				try {
+					jsonObject = jsonFactory.createJSONObject(
+						(String)jsonFactory.deserialize(parameterValues[0]));
+
+					return jsonObject.toString();
+				}
+				catch (JSONException jsonException2) {
+					if (_log.isDebugEnabled()) {
+						_log.debug(jsonException2, jsonException2);
+					}
 				}
 
 				jsonObject = jsonFactory.createJSONObject();
