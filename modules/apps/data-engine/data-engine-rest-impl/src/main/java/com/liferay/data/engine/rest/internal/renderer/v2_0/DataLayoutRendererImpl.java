@@ -85,6 +85,15 @@ public class DataLayoutRendererImpl implements DataLayoutRenderer {
 
 		ddmFormRenderingContext.setContainerId(
 			dataLayoutRendererContext.getContainerId());
+
+		if (Validator.isNotNull(
+				dataLayoutRendererContext.getDefaultLanguageId())) {
+
+			ddmFormRenderingContext.addProperty(
+				"defaultLanguageId",
+				dataLayoutRendererContext.getDefaultLanguageId());
+		}
+
 		ddmFormRenderingContext.setDDMFormValues(
 			MapToDDMFormValuesConverterUtil.toDDMFormValues(
 				dataLayoutRendererContext.getDataRecordValues(), ddmForm,
