@@ -12,32 +12,29 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.form.field.type.internal.grid;
+package com.liferay.journal.article.dynamic.data.mapping.form.field.type.internal.journal.article;
 
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueRequestParameterRetriever;
-import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
-import com.liferay.portal.kernel.json.JSONFactory;
-import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.journal.article.dynamic.data.mapping.form.field.type.constants.JournalArticleDDMFormFieldTypeConstants;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
- * @author Pedro Queiroz
+ * @author Rodrigo Paulino
  */
 @Component(
 	immediate = true,
-	property = "ddm.form.field.type.name=" + DDMFormFieldTypeConstants.GRID,
+	property = "ddm.form.field.type.name=" + JournalArticleDDMFormFieldTypeConstants.JOURNAL_ARTICLE,
 	service = DDMFormFieldValueRequestParameterRetriever.class
 )
-public class GridDDMFormFieldValueRequestParameterRetriever
+public class JournalArticleDDMFormFieldValueRequestParameterRetriever
 	implements DDMFormFieldValueRequestParameterRetriever {
 
 	@Override
@@ -45,39 +42,21 @@ public class GridDDMFormFieldValueRequestParameterRetriever
 		HttpServletRequest httpServletRequest, String ddmFormFieldParameterName,
 		String defaultDDMFormFieldParameterValue) {
 
-		JSONObject jsonObject = jsonFactory.createJSONObject();
-
-		String[] parameterValues = httpServletRequest.getParameterValues(
+		String parameter = httpServletRequest.getParameter(
 			ddmFormFieldParameterName);
 
-		if (ArrayUtil.isNotEmpty(parameterValues)) {
-			if (parameterValues.length == 1) {
-				jsonObject = Optional.ofNullable(
-					getJSONObject(_log, parameterValues[0])
-				).orElse(
-					jsonObject
-				);
-			}
-			else {
-				for (String parameterValue : parameterValues) {
-					if (!parameterValue.isEmpty()) {
-						String[] parameterValueParts = parameterValue.split(
-							";");
-
-						jsonObject.put(
-							parameterValueParts[0], parameterValueParts[1]);
-					}
-				}
-			}
+		if (!Validator.isBlank(parameter)) {
+			parameter = String.valueOf(getJSONObject(_log, parameter));
 		}
 
-		return jsonObject.toString();
+		return Optional.ofNullable(
+			parameter
+		).orElse(
+			defaultDDMFormFieldParameterValue
+		);
 	}
 
-	@Reference
-	protected JSONFactory jsonFactory;
-
 	private static final Log _log = LogFactoryUtil.getLog(
-		GridDDMFormFieldValueRequestParameterRetriever.class);
+		JournalArticleDDMFormFieldValueRequestParameterRetriever.class);
 
 }

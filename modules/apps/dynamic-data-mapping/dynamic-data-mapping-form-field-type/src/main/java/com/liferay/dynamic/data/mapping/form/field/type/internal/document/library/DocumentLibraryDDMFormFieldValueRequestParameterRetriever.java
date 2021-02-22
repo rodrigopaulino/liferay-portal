@@ -16,6 +16,9 @@ package com.liferay.dynamic.data.mapping.form.field.type.internal.document.libra
 
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueRequestParameterRetriever;
 import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -37,7 +40,17 @@ public class DocumentLibraryDDMFormFieldValueRequestParameterRetriever
 		HttpServletRequest httpServletRequest, String ddmFormFieldParameterName,
 		String defaultDDMFormFieldParameterValue) {
 
-		return httpServletRequest.getParameter(ddmFormFieldParameterName);
+		String parameter = httpServletRequest.getParameter(
+			ddmFormFieldParameterName);
+
+		if (!Validator.isBlank(parameter)) {
+			parameter = String.valueOf(getJSONObject(_log, parameter));
+		}
+
+		return parameter;
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		DocumentLibraryDDMFormFieldValueRequestParameterRetriever.class);
 
 }
