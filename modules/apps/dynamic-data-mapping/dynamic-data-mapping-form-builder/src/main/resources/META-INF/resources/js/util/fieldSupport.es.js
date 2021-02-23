@@ -109,7 +109,7 @@ export const normalizeSettingsContextPages = (
 
 	return visitor.mapFields(
 		(field) => {
-			const {fieldName} = field;
+			const {fieldName, instanceId} = field;
 
 			if (fieldName === 'fieldReference' || fieldName === 'name') {
 				field = {
@@ -190,6 +190,19 @@ export const normalizeSettingsContextPages = (
 			}
 
 			const newInstanceId = generateInstanceId(8);
+
+			if (field.type === 'rich_text' && field.editorConfig) {
+				const {editorConfig} = field;
+
+				Object.keys(editorConfig).map((key) => {
+					if (typeof editorConfig[key] === 'string') {
+						editorConfig[key] = editorConfig[key].replace(
+							instanceId,
+							newInstanceId
+						);
+					}
+				});
+			}
 
 			return {
 				...field,
