@@ -159,7 +159,14 @@ const DatePicker = ({
 			});
 
 			if (localizedValue[locale]) {
-				inputRef.current.value = localizedValue[locale];
+				if (typeof localizedValue[locale] === 'string') {
+					inputRef.current.value = localizedValue[locale];
+				}
+				else {
+					inputRef.current.value = moment(
+						localizedValue[locale]
+					).format(dateMask.toUpperCase());
+				}
 			}
 			else if (initialValueMemoized) {
 				inputRef.current.value = moment(initialValueMemoized).format(
