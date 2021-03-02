@@ -615,7 +615,7 @@ public class DDMDataDefinitionConverterImpl
 		ddmFormField.setVisibilityExpression(StringPool.BLANK);
 	}
 
-	@Reference
+	@Reference(target = "(ddm.form.deserializer.type=json)")
 	private DDMFormDeserializer _ddmFormDeserializer;
 
 	@Reference
