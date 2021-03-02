@@ -35,7 +35,7 @@ import org.junit.runner.RunWith;
  * @author Eudaldo Alonso
  */
 @RunWith(Arquillian.class)
-public class DMMDataDefinitionConverterTest {
+public class DDMDataDefinitionConverterTest {
 
 	@ClassRule
 	@Rule
