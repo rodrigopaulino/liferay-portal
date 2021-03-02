@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author Jeyvison Nascimento
@@ -117,21 +118,23 @@ public class DefaultMapToDDMFormValuesConverterStrategy
 								value.addString(
 									LocaleUtil.fromLanguageId(
 										localizedValue.getKey()),
-									String.valueOf(
+									Objects.toString(
 										localizedValues.get(
-											localizedValue.getKey())));
+											localizedValue.getKey()),
+										null));
 							}
 						}
 						else {
 							value.addString(
 								locale,
-								String.valueOf(
+								Objects.toString(
 									GetterUtil.getObject(
 										localizedValues.get(
 											LocaleUtil.toLanguageId(locale)),
 										localizedValues.get(
 											LocaleUtil.toLanguageId(
-												defaultLocale)))));
+												defaultLocale))),
+									null));
 						}
 					}
 					else {
