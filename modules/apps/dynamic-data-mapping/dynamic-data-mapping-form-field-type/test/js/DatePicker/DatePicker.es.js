@@ -159,7 +159,7 @@ describe('DatePicker', () => {
 		await wait(() =>
 			expect(
 				getAllByDisplayValue(moment().format('MM/DD/YYYY'))
-			).toBeTruthy()
+			).toHaveLength(2)
 		);
 
 		expect(handleFieldEdited).toHaveBeenCalled();
