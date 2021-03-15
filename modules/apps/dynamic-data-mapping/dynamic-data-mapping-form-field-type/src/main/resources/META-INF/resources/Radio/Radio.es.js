@@ -48,7 +48,9 @@ const Radio = ({
 	}, [predefinedValue]);
 
 	const [currentValue, setCurrentValue] = useSyncValue(
-		initialValue ? initialValue : predefinedValueMemo
+		initialValue ? initialValue : predefinedValueMemo,
+		true,
+		true
 	);
 
 	return (
