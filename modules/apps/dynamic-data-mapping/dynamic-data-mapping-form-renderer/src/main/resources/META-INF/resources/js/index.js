@@ -20,6 +20,7 @@ export {
 	getRepeatedIndex,
 	generateName,
 	generateInstanceId,
+	parseName,
 } from './util/repeatable.es';
 export {PagesVisitor, RulesVisitor} from './util/visitors.es';
 export * as FormSupport from './util/FormSupport.es';

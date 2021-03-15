@@ -12,10 +12,11 @@
  * details.
  */
 
+import {parseName} from 'dynamic-data-mapping-form-renderer';
 import Leaflet from 'leaflet';
 import MapGoogleMaps from 'map-google-maps/js/MapGoogleMaps.es';
 import MapOpenStreetMap from 'map-openstreetmap/js/MapOpenStreetMap.es';
-import {useEffect, useRef} from 'react';
+import {useCallback, useEffect, useRef} from 'react';
 
 export const MAP_PROVIDER = {
 	googleMaps: 'GoogleMaps',
@@ -33,7 +34,23 @@ const MAP_CONFIG = {
 		CONTROLS.ZOOM,
 	],
 	geolocation: true,
-	position: {location: {lat: 0, lng: 0}},
+	position: {location: {}},
+};
+
+const getMapName = (name) => {
+	const {fieldName, instanceId, portletNamespace, repeatedIndex} = parseName(
+		name
+	);
+
+	return `${portletNamespace}map$$${fieldName}$${instanceId}$${repeatedIndex}`;
+};
+
+const parseJSONValue = (value) => {
+	if (typeof value === 'string') {
+		return JSON.parse(value);
+	}
+
+	return value;
 };
 
 const setupMapOpenStreetMaps = (callback) => {
@@ -90,50 +107,42 @@ export const useGeolocation = ({
 	value,
 	viewMode,
 }) => {
-	const componentInstance = useRef(null);
+	const eventHandlerPositionChanged = useCallback(
+		(event) => {
+			const {
+				newVal: {location},
+			} = event;
 
-	const eventHandlerPositionChanged = (event) => {
-		const {
-			newVal: {location},
-		} = event;
+			onChange(JSON.stringify(location));
+		},
+		[onChange]
+	);
 
-		const newValue = JSON.stringify(location);
-
-		document
-			.getElementById(`input_value_${instanceId}`)
-			.setAttribute('value', newValue);
-
-		onChange(newValue);
-	};
-
-	const registerMapBase = (MapProvide, mapConfig) => {
-		componentInstance.current = new MapProvide(mapConfig);
-
-		componentInstance.current.on(
-			'positionChange',
-			eventHandlerPositionChanged
-		);
-
-		Liferay.MapBase.register(
-			name,
-			componentInstance.current,
-			`#map_${instanceId}`
-		);
-	};
+	const map = useRef(null);
 
 	useEffect(() => {
 		if (!disabled || viewMode) {
-			const mapConfig = {...MAP_CONFIG};
-			mapConfig.boundingBox = `#map_${instanceId}`;
+			const mapConfig = {
+				...MAP_CONFIG,
+				boundingBox: `#map_${instanceId}`,
+			};
 
 			if (value) {
-				if (typeof value === 'string') {
-					mapConfig.position.location = JSON.parse(value);
-				}
-				else {
-					mapConfig.position.location = value;
-				}
+				mapConfig.position.location = parseJSONValue(value);
 			}
+			else {
+				mapConfig.position.location = {lat: 0, lng: 0};
+			}
+
+			const registerMapBase = (MapProvider, mapConfig) => {
+				map.current = new MapProvider(mapConfig);
+
+				Liferay.MapBase.register(
+					getMapName(name),
+					map.current,
+					`#map_${instanceId}`
+				);
+			};
 
 			switch (mapProviderKey) {
 				case MAP_PROVIDER.openStreetMap:
@@ -154,10 +163,34 @@ export const useGeolocation = ({
 		}
 
 		return () => {
-			if (componentInstance.current) {
-				componentInstance.current.dispose();
+			if (map.current) {
+				map.current.dispose();
 			}
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
+
+	useEffect(() => {
+		if (map.current) {
+			map.current.removeAllListeners('positionChange');
+
+			map.current.on('positionChange', eventHandlerPositionChanged);
+		}
+	}, [eventHandlerPositionChanged]);
+
+	useEffect(() => {
+		if (value && map.current) {
+			let _value = value;
+
+			if (typeof _value !== 'string') {
+				_value = JSON.stringify(value);
+			}
+
+			document
+				.getElementById(`input_value_${instanceId}`)
+				.setAttribute('value', _value);
+
+			map.current.setCenter(parseJSONValue(value));
+		}
+	}, [instanceId, value]);
 };
