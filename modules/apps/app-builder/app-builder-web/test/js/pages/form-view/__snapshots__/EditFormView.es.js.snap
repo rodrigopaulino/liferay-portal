@@ -83,6 +83,7 @@ exports[`EditFormView renders 1`] = `
             class="custom-object-field field-type autofit-row autofit-row-center"
             data-field-type-name="Text"
             draggable="true"
+            title="Name"
           >
             <div
               class="pr-2 pl-2 autofit-col"
@@ -176,6 +177,7 @@ exports[`EditFormView renders 1`] = `
             class="custom-object-field field-type autofit-row autofit-row-center"
             data-field-type-name="SelectFromList"
             draggable="true"
+            title="Options"
           >
             <div
               class="pr-2 pl-2 autofit-col"
@@ -276,6 +278,7 @@ exports[`EditFormView renders 1`] = `
                 class="custom-object-field field-type-header field-type autofit-row autofit-row-center"
                 data-field-type-name="Field53354166"
                 draggable="true"
+                title="Address"
               >
                 <div
                   class="pr-2 pl-2 autofit-col"
@@ -367,6 +370,7 @@ exports[`EditFormView renders 1`] = `
                       class="custom-object-field-children field-type autofit-row autofit-row-center"
                       data-field-type-name="Field95700329"
                       draggable="true"
+                      title="Text Field"
                     >
                       <div
                         class="pr-2 pl-2 autofit-col"

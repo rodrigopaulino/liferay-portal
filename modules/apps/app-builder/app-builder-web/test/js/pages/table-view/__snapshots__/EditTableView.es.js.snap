@@ -250,6 +250,7 @@ exports[`EditTableView renders 1`] = `
                   class="field-type autofit-row autofit-row-center"
                   data-field-type-name="Text"
                   draggable="true"
+                  title="Name"
                 >
                   <div
                     class="pl-2 pr-2 autofit-col"
