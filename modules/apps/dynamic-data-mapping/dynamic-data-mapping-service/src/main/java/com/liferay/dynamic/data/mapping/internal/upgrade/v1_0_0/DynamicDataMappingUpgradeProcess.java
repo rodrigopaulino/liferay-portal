@@ -2192,20 +2192,14 @@ public class DynamicDataMappingUpgradeProcess extends UpgradeProcess {
 
 			int parentOffset = ddmFieldsCounter.get(fieldName);
 
-			Map<String, DDMFormField> nestedDDMFormFieldsMap =
-				ddmFormField.getNestedDDMFormFieldsMap();
-
 			String[] ddmFieldsDisplayValues = getDDMFieldsDisplayValues(
 				rootElement, true);
 
-			for (Map.Entry<String, DDMFormField> nestedDDMFormFieldEntry :
-					nestedDDMFormFieldsMap.entrySet()) {
+			List<DDMFormField> nestedDDMFormFields =
+				ddmFormField.getNestedDDMFormFields();
 
-				String nestedDDMFormFieldName =
-					nestedDDMFormFieldEntry.getKey();
-
-				DDMFormField nestedDDMFormField =
-					nestedDDMFormFieldEntry.getValue();
+			for (DDMFormField nestedDDMFormField : nestedDDMFormFields) {
+				String nestedDDMFormFieldName = nestedDDMFormField.getName();
 
 				int repetitions = countDDMFieldRepetitions(
 					ddmFieldsDisplayValues, nestedDDMFormFieldName, fieldName,
