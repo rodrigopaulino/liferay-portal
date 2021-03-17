@@ -41,6 +41,7 @@ const Pages = React.forwardRef(
 			invalidFormMessage,
 			pages,
 			paginationMode,
+			persistDefaultValues,
 			readOnly,
 			viewMode,
 		} = useFormState();
@@ -64,6 +65,13 @@ const Pages = React.forwardRef(
 				className={classNames({sheet: view === 'fieldSets'})}
 				ref={containerElementRef}
 			>
+				<input
+					key={portletNamespace + 'persistDefaultValues'}
+					name={portletNamespace + 'persistDefaultValues'}
+					type="hidden"
+					value={persistDefaultValues}
+				/>
+
 				<div
 					className={classNames(
 						'lfr-ddm-form-container position-relative',

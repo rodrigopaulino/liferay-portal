@@ -463,6 +463,9 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 
 		Value value = new LocalizedValue(defaultLocale);
 
+		boolean persistDefaultValues = ParamUtil.getBoolean(
+			httpServletRequest, "persistDefaultValues", true);
+
 		for (Locale availableLocale : availableLocales) {
 			String fullDDMFormFieldParameterName =
 				_getFullDDMFormFieldParameterName(
@@ -471,11 +474,12 @@ public class DDMFormValuesFactoryImpl implements DDMFormValuesFactory {
 			String parameter = httpServletRequest.getParameter(
 				fullDDMFormFieldParameterName);
 
-			if (GetterUtil.getBoolean(
+			if (persistDefaultValues ||
+				(GetterUtil.getBoolean(
 					httpServletRequest.getParameter(
 						fullDDMFormFieldParameterName + "_edited"),
 					true) &&
-				(parameter != null)) {
+				 (parameter != null))) {
 
 				String ddmFormFieldParameterValue =
 					getDDMFormFieldParameterValue(

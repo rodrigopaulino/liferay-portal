@@ -224,6 +224,12 @@ public class DDMFormTemplateContextFactoryImpl
 		templateContext.put(
 			"paginationMode", ddmFormLayout.getPaginationMode());
 		templateContext.put(
+			"persistDefaultValues",
+			GetterUtil.getBoolean(
+				(Boolean)ddmFormRenderingContext.getProperty(
+					"persistDefaultValues"),
+				true));
+		templateContext.put(
 			"portletNamespace", ddmFormRenderingContext.getPortletNamespace());
 		templateContext.put("readOnly", ddmFormRenderingContext.isReadOnly());
 

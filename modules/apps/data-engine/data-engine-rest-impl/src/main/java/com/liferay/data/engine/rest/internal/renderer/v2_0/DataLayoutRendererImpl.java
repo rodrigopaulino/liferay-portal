@@ -90,6 +90,7 @@ public class DataLayoutRendererImpl implements DataLayoutRenderer {
 				dataLayoutRendererContext.getDefaultLanguageId());
 		}
 
+		ddmFormRenderingContext.addProperty("persistDefaultValues", false);
 		ddmFormRenderingContext.addProperty(
 			"persisted", dataLayoutRendererContext.isPersisted());
 		ddmFormRenderingContext.setContainerId(
