@@ -43,6 +43,7 @@ import com.liferay.portal.kernel.upgrade.UpgradeException;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.LRUMap;
 import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -50,6 +51,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -410,6 +412,10 @@ public class DDMFieldUpgradeProcess extends UpgradeProcess {
 		DDMFormValues ddmFormValues =
 			ddmFormValuesDeserializerDeserializeResponse.getDDMFormValues();
 
+		ddmFormValues.setDDMFormFieldValues(
+			_upgradeDDMFormValuesHierarchy(
+				ddmFormValues.getDDMFormFieldValues()));
+
 		Map<String, DDMFormField> ddmFormFieldsMap =
 			ddmForm.getDDMFormFieldsMap(true);
 
@@ -520,6 +526,49 @@ public class DDMFieldUpgradeProcess extends UpgradeProcess {
 		deleteDDMContentPreparedStatement.setLong(1, contentId);
 
 		deleteDDMContentPreparedStatement.addBatch();
+	}
+
+	private List<DDMFormFieldValue> _upgradeDDMFormValuesHierarchy(
+		List<DDMFormFieldValue> ddmFormFieldValues) {
+
+		List<DDMFormFieldValue> newDDMFormFieldValues = new ArrayList<>();
+
+		for (DDMFormFieldValue ddmFormFieldValue : ddmFormFieldValues) {
+			if (!ListUtil.isEmpty(
+					ddmFormFieldValue.getNestedDDMFormFieldValues()) &&
+				!com.liferay.portal.kernel.util.StringUtil.equals(
+					ddmFormFieldValue.getType(), "fieldset")) {
+
+				DDMFormFieldValue newDDMFormFieldValue =
+					new DDMFormFieldValue() {
+						{
+							setName(ddmFormFieldValue.getName() + "FieldSet");
+							setInstanceId(
+								com.liferay.portal.kernel.util.StringUtil.
+									randomString());
+						}
+					};
+
+				List<DDMFormFieldValue> nestedDDMFormFieldValues =
+					new ArrayList<>(
+						ddmFormFieldValue.getNestedDDMFormFieldValues());
+
+				ddmFormFieldValue.setNestedDDMFormFields(new ArrayList<>());
+
+				newDDMFormFieldValue.setNestedDDMFormFields(
+					_upgradeDDMFormValuesHierarchy(
+						ListUtil.concat(
+							Arrays.asList(ddmFormFieldValue),
+							nestedDDMFormFieldValues)));
+
+				newDDMFormFieldValues.add(newDDMFormFieldValue);
+			}
+			else {
+				newDDMFormFieldValues.add(ddmFormFieldValue);
+			}
+		}
+
+		return newDDMFormFieldValues;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
