@@ -51,7 +51,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -556,9 +555,9 @@ public class DDMFieldUpgradeProcess extends UpgradeProcess {
 				ddmFormFieldValue.setNestedDDMFormFields(new ArrayList<>());
 
 				newDDMFormFieldValue.setNestedDDMFormFields(
-					_upgradeDDMFormValuesHierarchy(
-						ListUtil.concat(
-							Arrays.asList(ddmFormFieldValue),
+					ListUtil.concat(
+						Collections.singletonList(ddmFormFieldValue),
+						_upgradeDDMFormValuesHierarchy(
 							nestedDDMFormFieldValues)));
 
 				newDDMFormFieldValues.add(newDDMFormFieldValue);
