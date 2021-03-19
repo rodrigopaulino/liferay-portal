@@ -66,6 +66,10 @@ public abstract class BaseDataLayoutRendererTag extends com.liferay.taglib.util.
 		return _namespace;
 	}
 
+	public boolean getPersistDefaultValues() {
+		return _persistDefaultValues;
+	}
+
 	public boolean getPersisted() {
 		return _persisted;
 	}
@@ -106,6 +110,10 @@ public abstract class BaseDataLayoutRendererTag extends com.liferay.taglib.util.
 		_namespace = namespace;
 	}
 
+	public void setPersistDefaultValues(boolean persistDefaultValues) {
+		_persistDefaultValues = persistDefaultValues;
+	}
+
 	public void setPersisted(boolean persisted) {
 		_persisted = persisted;
 	}
@@ -133,6 +141,7 @@ public abstract class BaseDataLayoutRendererTag extends com.liferay.taglib.util.
 		_defaultLanguageId = null;
 		_languageId = null;
 		_namespace = null;
+		_persistDefaultValues = false;
 		_persisted = false;
 		_readOnly = false;
 	}
@@ -152,6 +161,7 @@ public abstract class BaseDataLayoutRendererTag extends com.liferay.taglib.util.
 		setNamespacedAttribute(request, "defaultLanguageId", _defaultLanguageId);
 		setNamespacedAttribute(request, "languageId", _languageId);
 		setNamespacedAttribute(request, "namespace", _namespace);
+		setNamespacedAttribute(request, "persistDefaultValues", _persistDefaultValues);
 		setNamespacedAttribute(request, "persisted", _persisted);
 		setNamespacedAttribute(request, "readOnly", _readOnly);
 	}
@@ -169,6 +179,7 @@ public abstract class BaseDataLayoutRendererTag extends com.liferay.taglib.util.
 	private java.lang.String _defaultLanguageId = null;
 	private java.lang.String _languageId = null;
 	private java.lang.String _namespace = null;
+	private boolean _persistDefaultValues = false;
 	private boolean _persisted = false;
 	private boolean _readOnly = false;
 
