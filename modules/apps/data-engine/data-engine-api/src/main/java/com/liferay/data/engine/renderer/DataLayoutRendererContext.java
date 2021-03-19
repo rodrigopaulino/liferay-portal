@@ -52,6 +52,10 @@ public class DataLayoutRendererContext {
 		return _portletNamespace;
 	}
 
+	public boolean isPersistDefaultValues() {
+		return _persistDefaultValues;
+	}
+
 	public boolean isPersisted() {
 		return _persisted;
 	}
@@ -86,6 +90,10 @@ public class DataLayoutRendererContext {
 		_languageId = languageId;
 	}
 
+	public void setPersistDefaultValues(boolean persistDefaultValues) {
+		_persistDefaultValues = persistDefaultValues;
+	}
+
 	public void setPersisted(boolean persisted) {
 		_persisted = persisted;
 	}
@@ -104,6 +112,7 @@ public class DataLayoutRendererContext {
 	private HttpServletRequest _httpServletRequest;
 	private HttpServletResponse _httpServletResponse;
 	private String _languageId;
+	private boolean _persistDefaultValues;
 	private boolean _persisted;
 	private String _portletNamespace;
 	private boolean _readOnly;

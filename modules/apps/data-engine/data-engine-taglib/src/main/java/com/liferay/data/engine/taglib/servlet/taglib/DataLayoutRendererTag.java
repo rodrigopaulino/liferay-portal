@@ -87,6 +87,8 @@ public class DataLayoutRendererTag extends BaseDataLayoutRendererTag {
 						PortalUtil.getLocale(httpServletRequest)));
 			}
 
+			dataLayoutRendererContext.setPersistDefaultValues(
+				getPersistDefaultValues());
 			dataLayoutRendererContext.setPersisted(getPersisted());
 			dataLayoutRendererContext.setPortletNamespace(getNamespace());
 			dataLayoutRendererContext.setReadOnly(getReadOnly());
