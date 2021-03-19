@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.internal.upgrade.v4_1_0;
+package com.liferay.dynamic.data.mapping.internal.upgrade.v4_0_0;
 
 import com.liferay.dynamic.data.mapping.util.DDMDataDefinitionConverter;
 import com.liferay.petra.string.StringBundler;
