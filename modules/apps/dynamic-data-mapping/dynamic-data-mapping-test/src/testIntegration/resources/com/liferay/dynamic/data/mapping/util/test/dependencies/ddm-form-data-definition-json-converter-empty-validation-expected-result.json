@@ -45,15 +45,6 @@
 				"en_US": ""
 			},
 			"type": "text",
-			"validation": {
-				"errorMessage": {
-				},
-				"expression": {
-					"value": ""
-				},
-				"parameter": {
-				}
-			},
 			"visibilityExpression": ""
 		},
 		{
@@ -109,15 +100,6 @@
 				"en_US": ""
 			},
 			"type": "numeric",
-			"validation": {
-				"errorMessage": {
-				},
-				"expression": {
-					"value": ""
-				},
-				"parameter": {
-				}
-			},
 			"visibilityExpression": ""
 		}
 	],
