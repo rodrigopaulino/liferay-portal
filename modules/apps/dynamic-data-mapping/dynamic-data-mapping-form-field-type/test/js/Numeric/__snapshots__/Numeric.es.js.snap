@@ -15,6 +15,11 @@ exports[`Field Numeric has a helptext 1`] = `
       type="text"
       value=""
     />
+    <input
+      name="numericField_edited"
+      type="hidden"
+      value="false"
+    />
     <span
       aria-hidden="true"
       class="form-text"
@@ -47,6 +52,11 @@ exports[`Field Numeric has a key 1`] = `
       type="text"
       value=""
     />
+    <input
+      name="numericField_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -72,6 +82,11 @@ exports[`Field Numeric has a label 1`] = `
       type="text"
       value=""
     />
+    <input
+      name="numericField_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -93,6 +108,11 @@ exports[`Field Numeric has a placeholder 1`] = `
       type="text"
       value=""
     />
+    <input
+      name="numericField_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -112,6 +132,11 @@ exports[`Field Numeric has a value 1`] = `
       predefinedvalue=""
       type="text"
       value="123"
+    />
+    <input
+      name="numericField_edited"
+      type="hidden"
+      value="false"
     />
     
   </div>
@@ -134,6 +159,11 @@ exports[`Field Numeric has an id 1`] = `
       type="text"
       value=""
     />
+    <input
+      name="numericField_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -154,6 +184,11 @@ exports[`Field Numeric is not readOnly 1`] = `
       type="text"
       value=""
     />
+    <input
+      name="numericField_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -173,6 +208,11 @@ exports[`Field Numeric is not required 1`] = `
       predefinedvalue=""
       type="text"
       value=""
+    />
+    <input
+      name="numericField_edited"
+      type="hidden"
+      value="false"
     />
     
   </div>
@@ -199,6 +239,11 @@ exports[`Field Numeric renders Label if showLabel is true 1`] = `
       type="text"
       value=""
     />
+    <input
+      name="numericField_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -218,6 +263,11 @@ exports[`Field Numeric renders the default markup 1`] = `
       predefinedvalue=""
       type="text"
       value=""
+    />
+    <input
+      name="numericField_edited"
+      type="hidden"
+      value="false"
     />
     
   </div>

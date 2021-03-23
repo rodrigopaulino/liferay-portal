@@ -54,6 +54,11 @@ exports[`DatePicker has a predefinedValue 1`] = `
         </div>
       </div>
     </div>
+    <input
+      name="dateField_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>

@@ -56,6 +56,11 @@ exports[`Field Radio has a helptext 1`] = `
         </label>
       </div>
     </div>
+    <input
+      name="radioField_edited"
+      type="hidden"
+      value="false"
+    />
     <span
       aria-hidden="true"
       class="form-text"
@@ -134,6 +139,11 @@ exports[`Field Radio has a label 1`] = `
         </label>
       </div>
     </div>
+    <input
+      name="radioField_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -195,6 +205,11 @@ exports[`Field Radio has a placeholder 1`] = `
         </label>
       </div>
     </div>
+    <input
+      name="radioField_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -256,6 +271,11 @@ exports[`Field Radio has a value 1`] = `
         </label>
       </div>
     </div>
+    <input
+      name="radioField_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -317,6 +337,11 @@ exports[`Field Radio has an id 1`] = `
         </label>
       </div>
     </div>
+    <input
+      name="radioField_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -380,6 +405,11 @@ exports[`Field Radio is not editable 1`] = `
         </label>
       </div>
     </div>
+    <input
+      name="radioField_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -441,6 +471,11 @@ exports[`Field Radio is not required 1`] = `
         </label>
       </div>
     </div>
+    <input
+      name="radioField_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -507,6 +542,11 @@ exports[`Field Radio renders Label if showLabel is true 1`] = `
         </label>
       </div>
     </div>
+    <input
+      name="radioField_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -522,6 +562,11 @@ exports[`Field Radio renders no options when options is empty 1`] = `
   >
     <div
       class="ddm-radio"
+    />
+    <input
+      name="radioField_edited"
+      type="hidden"
+      value="false"
     />
     
   </div>
@@ -584,6 +629,11 @@ exports[`Field Radio renders options 1`] = `
         </label>
       </div>
     </div>
+    <input
+      name="radioField_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>

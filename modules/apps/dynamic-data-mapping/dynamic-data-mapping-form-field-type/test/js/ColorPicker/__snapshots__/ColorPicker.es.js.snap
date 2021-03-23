@@ -54,6 +54,11 @@ exports[`Field Color Picker renders field disabled 1`] = `
         </div>
       </div>
     </div>
+    <input
+      name="colorPicker_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -111,6 +116,11 @@ exports[`Field Color Picker renders field with helptext 1`] = `
         </div>
       </div>
     </div>
+    <input
+      name="colorPicker_edited"
+      type="hidden"
+      value="false"
+    />
     <span
       aria-hidden="true"
       class="form-text"
@@ -185,6 +195,11 @@ exports[`Field Color Picker renders field with label 1`] = `
         </div>
       </div>
     </div>
+    <input
+      name="colorPicker_edited"
+      type="hidden"
+      value="false"
+    />
     <span
       aria-hidden="true"
       class="form-text"

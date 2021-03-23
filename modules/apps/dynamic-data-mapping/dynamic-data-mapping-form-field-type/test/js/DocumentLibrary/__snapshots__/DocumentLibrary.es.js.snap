@@ -49,6 +49,11 @@ exports[`Field DocumentLibrary has a helptext 1`] = `
         value="{}"
       />
     </div>
+    <input
+      name="uploadField_edited"
+      type="hidden"
+      value="false"
+    />
     <span
       aria-hidden="true"
       class="form-text"
@@ -131,6 +136,11 @@ exports[`Field DocumentLibrary has a label 1`] = `
         value="{}"
       />
     </div>
+    <input
+      name="uploadField_edited"
+      type="hidden"
+      value="false"
+    />
     <span
       class="form-feedback-group"
     >
@@ -201,6 +211,11 @@ exports[`Field DocumentLibrary has a placeholder 1`] = `
         value="{}"
       />
     </div>
+    <input
+      name="uploadField_edited"
+      type="hidden"
+      value="false"
+    />
     <span
       class="form-feedback-group"
     >
@@ -270,6 +285,11 @@ exports[`Field DocumentLibrary has a spritemap 1`] = `
         value="{}"
       />
     </div>
+    <input
+      name="uploadField_edited"
+      type="hidden"
+      value="false"
+    />
     <span
       class="form-feedback-group"
     >
@@ -339,6 +359,11 @@ exports[`Field DocumentLibrary has a value 1`] = `
         value="{\\"id\\":\\"123\\"}"
       />
     </div>
+    <input
+      name="uploadField_edited"
+      type="hidden"
+      value="false"
+    />
     <span
       class="form-feedback-group"
     >
@@ -409,6 +434,11 @@ exports[`Field DocumentLibrary has an id 1`] = `
         value="{}"
       />
     </div>
+    <input
+      name="uploadField_edited"
+      type="hidden"
+      value="false"
+    />
     <span
       class="form-feedback-group"
     >
@@ -476,6 +506,11 @@ exports[`Field DocumentLibrary is not readOnly 1`] = `
         value="{}"
       />
     </div>
+    <input
+      name="uploadField_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -530,6 +565,11 @@ exports[`Field DocumentLibrary is not required 1`] = `
         value="{}"
       />
     </div>
+    <input
+      name="uploadField_edited"
+      type="hidden"
+      value="false"
+    />
     <span
       class="form-feedback-group"
     >
@@ -604,6 +644,11 @@ exports[`Field DocumentLibrary renders Label if showLabel is true 1`] = `
         value="{}"
       />
     </div>
+    <input
+      name="uploadField_edited"
+      type="hidden"
+      value="false"
+    />
     <span
       class="form-feedback-group"
     >

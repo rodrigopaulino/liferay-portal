@@ -78,6 +78,11 @@ exports[`Grid has a label 1`] = `
         </table>
       </div>
     </div>
+    <input
+      name="undefined_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -156,6 +161,11 @@ exports[`Grid has a tip 1`] = `
         </table>
       </div>
     </div>
+    <input
+      name="undefined_edited"
+      type="hidden"
+      value="false"
+    />
     <span
       aria-hidden="true"
       class="form-text"
@@ -246,6 +256,11 @@ exports[`Grid has an id 1`] = `
         </table>
       </div>
     </div>
+    <input
+      name="undefined_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -319,6 +334,11 @@ exports[`Grid is not editable 1`] = `
         </table>
       </div>
     </div>
+    <input
+      name="undefined_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -397,6 +417,11 @@ exports[`Grid is not required 1`] = `
         </table>
       </div>
     </div>
+    <input
+      name="undefined_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -480,6 +505,11 @@ exports[`Grid renders Label if showLabel is true 1`] = `
         </table>
       </div>
     </div>
+    <input
+      name="undefined_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -585,6 +615,11 @@ exports[`Grid renders columns 1`] = `
         </table>
       </div>
     </div>
+    <input
+      name="undefined_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -636,6 +671,11 @@ exports[`Grid renders no columns when columns comes empty 1`] = `
         </table>
       </div>
     </div>
+    <input
+      name="undefined_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -675,6 +715,11 @@ exports[`Grid renders no rows when row comes empty 1`] = `
         </table>
       </div>
     </div>
+    <input
+      name="undefined_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
@@ -791,6 +836,11 @@ exports[`Grid renders rows 1`] = `
         </table>
       </div>
     </div>
+    <input
+      name="undefined_edited"
+      type="hidden"
+      value="false"
+    />
     
   </div>
 </div>
