@@ -53,7 +53,7 @@ public interface DDMIndexer {
 		DDMFormValues ddmFormValues);
 
 	public Sort createDDMStructureFieldSort(
-			DDMStructure ddmStructure, String fieldName, Locale locale,
+			DDMStructure ddmStructure, String fieldReference, Locale locale,
 			SortOrder sortOrder)
 		throws PortalException;
 
@@ -62,7 +62,7 @@ public interface DDMIndexer {
 		throws PortalException;
 
 	public QueryFilter createFieldValueQueryFilter(
-			DDMStructure ddmStructure, String fieldName, Locale locale,
+			DDMStructure ddmStructure, String fieldReference, Locale locale,
 			Serializable value)
 		throws Exception;
 
@@ -71,10 +71,10 @@ public interface DDMIndexer {
 			Locale locale)
 		throws Exception;
 
-	public String encodeName(long ddmStructureId, String fieldName);
+	public String encodeName(long ddmStructureId, String fieldReference);
 
 	public String encodeName(
-		long ddmStructureId, String fieldName, Locale locale);
+		long ddmStructureId, String fieldReference, Locale locale);
 
 	public String extractIndexableAttributes(
 		DDMStructure ddmStructure, DDMFormValues ddmFormValues, Locale locale);
