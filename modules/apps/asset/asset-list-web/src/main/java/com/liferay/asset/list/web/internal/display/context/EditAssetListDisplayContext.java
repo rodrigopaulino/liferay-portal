@@ -131,12 +131,12 @@ public class EditAssetListDisplayContext {
 	}
 
 	public String encodeName(
-		long ddmStructureId, String fieldName, Locale locale) {
+		long ddmStructureId, String fieldReference, Locale locale) {
 
 		DDMIndexer ddmIndexer = (DDMIndexer)_httpServletRequest.getAttribute(
 			AssetListWebKeys.DDM_INDEXER);
 
-		return ddmIndexer.encodeName(ddmStructureId, fieldName, locale);
+		return ddmIndexer.encodeName(ddmStructureId, fieldReference, locale);
 	}
 
 	public AssetListEntry getAssetListEntry() {

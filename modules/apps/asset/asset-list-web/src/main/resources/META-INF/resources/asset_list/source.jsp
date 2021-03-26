@@ -260,7 +260,7 @@ List<Map<String, Object>> classTypesList = new ArrayList<>();
 				String orderByColumn2 = editAssetListDisplayContext.getOrderByColumn2();
 
 				for (ClassTypeField classTypeField : classTypeFields) {
-					String value = editAssetListDisplayContext.encodeName(classTypeField.getClassTypeId(), classTypeField.getName(), null);
+					String value = editAssetListDisplayContext.encodeName(classTypeField.getClassTypeId(), classTypeField.getFieldReference(), null);
 					String selectedOrderByColumn1 = StringPool.BLANK;
 					String selectedOrderByColumn2 = StringPool.BLANK;
 
