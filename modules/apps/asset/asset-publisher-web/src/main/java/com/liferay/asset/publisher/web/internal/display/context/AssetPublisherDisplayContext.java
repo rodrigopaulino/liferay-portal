@@ -1987,8 +1987,8 @@ public class AssetPublisherDisplayContext {
 		assetEntryQuery.setAttribute(
 			"ddmStructureFieldName",
 			_assetPublisherWebHelper.encodeName(
-				classTypeField.getClassTypeId(), getDDMStructureFieldName(),
-				locale));
+				classTypeField.getClassTypeId(),
+				classTypeField.getFieldReference(), locale));
 
 		assetEntryQuery.setAttribute(
 			"ddmStructureFieldValue", getDDMStructureFieldValue());

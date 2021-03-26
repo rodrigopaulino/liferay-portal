@@ -194,9 +194,9 @@ public class AssetPublisherWebHelper {
 	}
 
 	public String encodeName(
-		long ddmStructureId, String fieldName, Locale locale) {
+		long ddmStructureId, String fieldReference, Locale locale) {
 
-		return _ddmIndexer.encodeName(ddmStructureId, fieldName, locale);
+		return _ddmIndexer.encodeName(ddmStructureId, fieldReference, locale);
 	}
 
 	public String[] filterAssetTagNames(long groupId, String[] assetTagNames) {
