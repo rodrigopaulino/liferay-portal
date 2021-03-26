@@ -293,6 +293,13 @@ public class DDMStructureWrapper
 	}
 
 	@Override
+	public DDMFormField getDDMFormFieldByFieldReference(String fieldReference)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return model.getDDMFormFieldByFieldReference(fieldReference);
+	}
+
+	@Override
 	public java.util.List<DDMFormField> getDDMFormFields(
 		boolean includeTransientFields) {
 
@@ -433,6 +440,14 @@ public class DDMStructureWrapper
 		throws com.liferay.portal.kernel.exception.PortalException {
 
 		return model.getFieldProperty(fieldName, property);
+	}
+
+	@Override
+	public String getFieldPropertyByFieldReference(
+			String fieldReference, String property)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return model.getFieldPropertyByFieldReference(fieldReference, property);
 	}
 
 	@Override
@@ -792,6 +807,11 @@ public class DDMStructureWrapper
 	@Override
 	public boolean hasField(String fieldName) {
 		return model.hasField(fieldName);
+	}
+
+	@Override
+	public boolean hasFieldByFieldReference(String fieldReference) {
+		return model.hasFieldByFieldReference(fieldReference);
 	}
 
 	@Override

@@ -71,6 +71,9 @@ public interface DDMStructure extends DDMStructureModel, PersistedModel {
 	public DDMFormField getDDMFormField(String fieldName)
 		throws com.liferay.portal.kernel.exception.PortalException;
 
+	public DDMFormField getDDMFormFieldByFieldReference(String fieldReference)
+		throws com.liferay.portal.kernel.exception.PortalException;
+
 	public java.util.List<DDMFormField> getDDMFormFields(
 		boolean includeTransientFields);
 
@@ -91,6 +94,10 @@ public interface DDMStructure extends DDMStructureModel, PersistedModel {
 	public java.util.Set<String> getFieldNames();
 
 	public String getFieldProperty(String fieldName, String property)
+		throws com.liferay.portal.kernel.exception.PortalException;
+
+	public String getFieldPropertyByFieldReference(
+			String fieldReference, String property)
 		throws com.liferay.portal.kernel.exception.PortalException;
 
 	public boolean getFieldRepeatable(String fieldName)
@@ -142,6 +149,8 @@ public interface DDMStructure extends DDMStructureModel, PersistedModel {
 		String webDAVToken);
 
 	public boolean hasField(String fieldName);
+
+	public boolean hasFieldByFieldReference(String fieldReference);
 
 	public boolean isFieldRepeatable(String fieldName)
 		throws com.liferay.portal.kernel.exception.PortalException;
