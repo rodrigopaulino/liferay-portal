@@ -33,9 +33,8 @@ public class DDMStructureField {
 			ddmStructureParts[3], StringPool.UNDERLINE);
 
 		return new DDMStructureField(
-			ddmStructureParts[2], ddmStructureParts[1],
-			ddmFieldParts[1] + "_" + ddmFieldParts[2], ddmFieldParts[0],
-			ddmFieldParts[3]);
+			ddmStructureParts[2], ddmFieldParts[0], ddmStructureParts[1],
+			ddmFieldParts[1] + "_" + ddmFieldParts[2], ddmFieldParts[3]);
 	}
 
 	public static String getNestedFieldName() {
@@ -48,8 +47,8 @@ public class DDMStructureField {
 		return StringBundler.concat(
 			DDMIndexer.DDM_FIELD_PREFIX, _indexType,
 			DDMIndexer.DDM_FIELD_SEPARATOR, _ddmStructureId,
-			DDMIndexer.DDM_FIELD_SEPARATOR, _name, StringPool.UNDERLINE,
-			_locale);
+			DDMIndexer.DDM_FIELD_SEPARATOR, _fieldReference,
+			StringPool.UNDERLINE, _locale);
 	}
 
 	public String getDDMStructureNestedFieldName() {
@@ -74,20 +73,20 @@ public class DDMStructureField {
 	}
 
 	private DDMStructureField(
-		String ddmStructureId, String indexType, String locale, String name,
-		String type) {
+		String ddmStructureId, String fieldReference, String indexType,
+		String locale, String type) {
 
 		_ddmStructureId = ddmStructureId;
+		_fieldReference = fieldReference;
 		_indexType = indexType;
 		_locale = locale;
-		_name = name;
 		_type = type;
 	}
 
 	private final String _ddmStructureId;
+	private final String _fieldReference;
 	private final String _indexType;
 	private final String _locale;
-	private final String _name;
 	private final String _type;
 
 }
