@@ -28,9 +28,9 @@ import org.osgi.service.component.annotations.Reference;
 public class DDMIndexerUtil {
 
 	public static String encodeName(
-		long ddmStructureId, String name, Locale locale) {
+		long ddmStructureId, String fieldReference, Locale locale) {
 
-		return _ddmIndexer.encodeName(ddmStructureId, name, locale);
+		return _ddmIndexer.encodeName(ddmStructureId, fieldReference, locale);
 	}
 
 	@Reference(unbind = "-")

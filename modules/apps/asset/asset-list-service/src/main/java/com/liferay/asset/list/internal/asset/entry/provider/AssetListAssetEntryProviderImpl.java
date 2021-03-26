@@ -319,27 +319,14 @@ public class AssetListAssetEntryProviderImpl
 						"ddmStructureFieldName",
 						DDMIndexerUtil.encodeName(
 							ddmStructure.getStructureId(),
-							ddmStructureFieldName,
+							_getFieldReference(
+								ddmStructure, ddmStructureFieldName),
 							LocaleUtil.getMostRelevantLocale()));
-				}
-				else {
-					assetEntryQuery.setAttribute(
-						"ddmStructureFieldName",
-						DDMIndexerUtil.encodeName(
-							classTypeIds[0], ddmStructureFieldName,
-							LocaleUtil.getMostRelevantLocale()));
-				}
-			}
-			else {
-				assetEntryQuery.setAttribute(
-					"ddmStructureFieldName",
-					DDMIndexerUtil.encodeName(
-						classTypeIds[0], ddmStructureFieldName,
-						LocaleUtil.getMostRelevantLocale()));
-			}
 
-			assetEntryQuery.setAttribute(
-				"ddmStructureFieldValue", ddmStructureFieldValue);
+					assetEntryQuery.setAttribute(
+						"ddmStructureFieldValue", ddmStructureFieldValue);
+				}
+			}
 		}
 
 		String orderByColumn1 = GetterUtil.getString(
@@ -650,6 +637,21 @@ public class AssetListAssetEntryProviderImpl
 		}
 
 		return dynamicAssetEntries;
+	}
+
+	private String _getFieldReference(
+		DDMStructure ddmStructure, String fieldName) {
+
+		try {
+			return ddmStructure.getFieldProperty(fieldName, "fieldReference");
+		}
+		catch (PortalException portalException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(portalException, portalException);
+			}
+
+			return fieldName;
+		}
 	}
 
 	private long _getFirstSegmentsEntryId(
