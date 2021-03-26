@@ -118,6 +118,8 @@ public class DDMIndexerImpl implements DDMIndexer {
 					continue;
 				}
 
+				DDMFormField ddmFormField = ddmStructure.getDDMFormField(
+					field.getName());
 				String name = null;
 				Serializable value = null;
 
@@ -127,8 +129,9 @@ public class DDMIndexerImpl implements DDMIndexer {
 
 					for (Locale locale : locales) {
 						name = encodeName(
-							ddmStructure.getStructureId(), field.getName(),
-							locale, indexType);
+							ddmStructure.getStructureId(),
+							ddmFormField.getFieldReference(), locale,
+							indexType);
 						value = field.getValue(locale);
 
 						if (legacyDDMIndexFieldsEnabled) {
@@ -138,16 +141,15 @@ public class DDMIndexerImpl implements DDMIndexer {
 						else {
 							fieldArray.addField(
 								createField(
-									ddmStructure.getDDMFormField(
-										field.getName()),
-									field, indexType, locale, name, value));
+									ddmFormField, field, indexType, locale,
+									name, value));
 						}
 					}
 				}
 				else {
 					name = encodeName(
-						ddmStructure.getStructureId(), field.getName(), null,
-						indexType);
+						ddmStructure.getStructureId(),
+						ddmFormField.getFieldReference(), null, indexType);
 					value = field.getValue(ddmFormValues.getDefaultLocale());
 
 					if (legacyDDMIndexFieldsEnabled) {
@@ -156,8 +158,8 @@ public class DDMIndexerImpl implements DDMIndexer {
 					else {
 						fieldArray.addField(
 							createField(
-								ddmStructure.getDDMFormField(field.getName()),
-								field, indexType, null, name, value));
+								ddmFormField, field, indexType, null, name,
+								value));
 					}
 				}
 			}
@@ -171,11 +173,12 @@ public class DDMIndexerImpl implements DDMIndexer {
 
 	@Override
 	public Sort createDDMStructureFieldSort(
-			DDMStructure ddmStructure, String fieldName, Locale locale,
+			DDMStructure ddmStructure, String fieldReference, Locale locale,
 			SortOrder sortOrder)
 		throws PortalException {
 
-		DDMFormField ddmFormField = ddmStructure.getDDMFormField(fieldName);
+		DDMFormField ddmFormField =
+			ddmStructure.getDDMFormFieldByFieldReference(fieldReference);
 
 		if (GetterUtil.getBoolean(ddmFormField.getProperty("localizable"))) {
 			if (locale == null) {
@@ -192,14 +195,15 @@ public class DDMIndexerImpl implements DDMIndexer {
 
 		if (isLegacyDDMIndexFieldsEnabled()) {
 			sb.append(
-				encodeName(ddmStructure.getStructureId(), fieldName, locale));
+				encodeName(
+					ddmStructure.getStructureId(), fieldReference, locale));
 		}
 		else {
 			sb.append(DDMIndexer.DDM_FIELD_ARRAY);
 			sb.append(StringPool.PERIOD);
 
-			String indexType = ddmStructure.getFieldProperty(
-				fieldName, "indexType");
+			String indexType = ddmStructure.getFieldPropertyByFieldReference(
+				fieldReference, "indexType");
 
 			sb.append(getValueFieldName(indexType, locale));
 		}
@@ -235,7 +239,8 @@ public class DDMIndexerImpl implements DDMIndexer {
 				StringBundler.concat(
 					DDMIndexer.DDM_FIELD_ARRAY, StringPool.PERIOD,
 					DDMIndexer.DDM_FIELD_NAME),
-				encodeName(ddmStructure.getStructureId(), fieldName, locale)));
+				encodeName(
+					ddmStructure.getStructureId(), fieldReference, locale)));
 
 		fieldSort.setNestedSort(nestedSort);
 
@@ -252,7 +257,7 @@ public class DDMIndexerImpl implements DDMIndexer {
 
 		long ddmStructureId = GetterUtil.getLong(ddmStructureFieldNameParts[2]);
 
-		String fieldName = StringUtil.replaceLast(
+		String fieldReference = StringUtil.replaceLast(
 			ddmStructureFieldNameParts[3],
 			StringPool.UNDERLINE.concat(LocaleUtil.toLanguageId(locale)),
 			StringPool.BLANK);
@@ -261,21 +266,21 @@ public class DDMIndexerImpl implements DDMIndexer {
 			ddmStructureId);
 
 		return createDDMStructureFieldSort(
-			ddmStructure, fieldName, locale, sortOrder);
+			ddmStructure, fieldReference, locale, sortOrder);
 	}
 
 	public QueryFilter createFieldValueQueryFilter(
-			DDMStructure ddmStructure, String fieldName, Locale locale,
+			DDMStructure ddmStructure, String fieldReference, Locale locale,
 			Serializable value)
 		throws Exception {
 
-		String indexType = ddmStructure.getFieldProperty(
-			fieldName, "indexType");
+		String indexType = ddmStructure.getFieldPropertyByFieldReference(
+			fieldReference, "indexType");
 
 		return createFieldValueQueryFilter(
 			ddmStructure,
-			encodeName(ddmStructure.getStructureId(), fieldName, locale), value,
-			fieldName, indexType, locale);
+			encodeName(ddmStructure.getStructureId(), fieldReference, locale),
+			value, fieldReference, indexType, locale);
 	}
 
 	@Override
@@ -290,24 +295,24 @@ public class DDMIndexerImpl implements DDMIndexer {
 		DDMStructure ddmStructure = _ddmStructureLocalService.getStructure(
 			GetterUtil.getLong(ddmStructureFieldNameParts[2]));
 
-		String fieldName = StringUtil.replaceLast(
+		String fieldReference = StringUtil.replaceLast(
 			ddmStructureFieldNameParts[3],
 			StringPool.UNDERLINE.concat(LocaleUtil.toLanguageId(locale)),
 			StringPool.BLANK);
 
 		return createFieldValueQueryFilter(
 			ddmStructure, ddmStructureFieldName, ddmStructureFieldValue,
-			fieldName, ddmStructureFieldNameParts[1], locale);
+			fieldReference, ddmStructureFieldNameParts[1], locale);
 	}
 
 	@Override
-	public String encodeName(long ddmStructureId, String fieldName) {
-		return encodeName(ddmStructureId, fieldName, null);
+	public String encodeName(long ddmStructureId, String fieldReference) {
+		return encodeName(ddmStructureId, fieldReference, null);
 	}
 
 	@Override
 	public String encodeName(
-		long ddmStructureId, String fieldName, Locale locale) {
+		long ddmStructureId, String fieldReference, Locale locale) {
 
 		String indexType = StringPool.BLANK;
 		boolean localizable = true;
@@ -318,27 +323,29 @@ public class DDMIndexerImpl implements DDMIndexer {
 
 			if (ddmStructure != null) {
 				try {
-					indexType = ddmStructure.getFieldProperty(
-						fieldName, "indexType");
+					indexType = ddmStructure.getFieldPropertyByFieldReference(
+						fieldReference, "indexType");
 					localizable = GetterUtil.getBoolean(
-						ddmStructure.getFieldProperty(
-							fieldName, "localizable"));
+						ddmStructure.getFieldPropertyByFieldReference(
+							fieldReference, "localizable"));
 				}
 				catch (PortalException portalException) {
 					throw new IllegalArgumentException(
 						StringBundler.concat(
-							"Unable to obtain index tpe for field ", fieldName,
-							" and DDM structure ID ", ddmStructureId),
+							"Unable to obtain index tpe for field ",
+							fieldReference, " and DDM structure ID ",
+							ddmStructureId),
 						portalException);
 				}
 			}
 		}
 
 		if (localizable) {
-			return encodeName(ddmStructureId, fieldName, locale, indexType);
+			return encodeName(
+				ddmStructureId, fieldReference, locale, indexType);
 		}
 
-		return encodeName(ddmStructureId, fieldName, null, indexType);
+		return encodeName(ddmStructureId, fieldReference, null, indexType);
 	}
 
 	@Override
@@ -647,15 +654,17 @@ public class DDMIndexerImpl implements DDMIndexer {
 
 	protected QueryFilter createFieldValueQueryFilter(
 			DDMStructure ddmStructure, String ddmStructureFieldName,
-			Serializable ddmStructureFieldValue, String fieldName,
+			Serializable ddmStructureFieldValue, String fieldReference,
 			String indexType, Locale locale)
 		throws Exception {
 
 		BooleanQuery booleanQuery = new BooleanQueryImpl();
 
-		if (ddmStructure.hasField(fieldName)) {
+		if (ddmStructure.hasFieldByFieldReference(fieldReference)) {
 			ddmStructureFieldValue = _ddm.getIndexedFieldValue(
-				ddmStructureFieldValue, ddmStructure.getFieldType(fieldName));
+				ddmStructureFieldValue,
+				ddmStructure.getFieldPropertyByFieldReference(
+					fieldReference, "type"));
 		}
 
 		if (ddmStructureFieldValue instanceof String[]) {
@@ -684,7 +693,7 @@ public class DDMIndexerImpl implements DDMIndexer {
 	}
 
 	protected String encodeName(
-		long ddmStructureId, String fieldName, Locale locale,
+		long ddmStructureId, String fieldReference, Locale locale,
 		String indexType) {
 
 		StringBundler sb = new StringBundler(8);
@@ -698,7 +707,7 @@ public class DDMIndexerImpl implements DDMIndexer {
 
 		sb.append(ddmStructureId);
 		sb.append(DDM_FIELD_SEPARATOR);
-		sb.append(fieldName);
+		sb.append(fieldReference);
 
 		if (locale != null) {
 			sb.append(StringPool.UNDERLINE);
