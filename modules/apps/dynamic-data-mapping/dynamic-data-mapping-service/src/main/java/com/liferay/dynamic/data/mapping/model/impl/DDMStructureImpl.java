@@ -30,6 +30,7 @@ import com.liferay.dynamic.data.mapping.service.DDMStructureLayoutLocalServiceUt
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.DDMStructureVersionLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateLocalServiceUtil;
+import com.liferay.petra.function.UnsafeBiFunction;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.bean.BeanPropertiesUtil;
@@ -55,6 +56,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * @author Brian Wing Shun Chan
@@ -131,6 +134,14 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 		throws PortalException {
 
 		return new DDMFormField(_getDDMFormField(fieldName));
+	}
+
+	@Override
+	public DDMFormField getDDMFormFieldByFieldReference(String fieldReference)
+		throws PortalException {
+
+		return new DDMFormField(
+			_getDDMFormFieldByFieldReference(fieldReference));
 	}
 
 	@Override
@@ -214,6 +225,15 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 
 		return BeanPropertiesUtil.getString(
 			_getDDMFormField(fieldName), property);
+	}
+
+	@Override
+	public String getFieldPropertyByFieldReference(
+			String fieldReference, String property)
+		throws PortalException {
+
+		return BeanPropertiesUtil.getString(
+			_getDDMFormFieldByFieldReference(fieldReference), property);
 	}
 
 	@Override
@@ -399,24 +419,15 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 
 	@Override
 	public boolean hasField(String fieldName) {
-		DDMFormField ddmFormField = _fetchDDMFormField(fieldName);
+		return _hasField(
+			this::_fetchDDMFormField, DDMStructure::hasField, fieldName);
+	}
 
-		if (ddmFormField != null) {
-			return true;
-		}
-
-		try {
-			DDMStructure parentDDMStructure = getParentDDMStructure();
-
-			if (parentDDMStructure != null) {
-				return parentDDMStructure.hasField(fieldName);
-			}
-		}
-		catch (PortalException portalException) {
-			_log.error(portalException, portalException);
-		}
-
-		return false;
+	@Override
+	public boolean hasFieldByFieldReference(String fieldReference) {
+		return _hasField(
+			this::_fetchDDMFormFieldByFieldReference,
+			DDMStructure::hasFieldByFieldReference, fieldReference);
 	}
 
 	@Override
@@ -501,18 +512,20 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 			getParentStructureId());
 	}
 
-	private DDMFormField _fetchDDMFormField(String fieldName) {
-		DDMForm ddmForm = _getDDMForm();
+	private DDMFormField _fetchDDMFormField(
+		BiFunction<List<DDMFormField>, String, DDMFormField> biFunction,
+		List<DDMFormField> ddmFormFields,
+		Function<DDMFormField, String> function, String identifier) {
 
-		for (DDMFormField ddmFormField : ddmForm.getDDMFormFields()) {
+		for (DDMFormField ddmFormField : ddmFormFields) {
 			DDMFormField targetDDMFormField = null;
 
-			if (fieldName.equals(ddmFormField.getName())) {
+			if (identifier.equals(function.apply(ddmFormField))) {
 				targetDDMFormField = ddmFormField;
 			}
 			else {
-				targetDDMFormField = _getNestedDDMFormField(
-					ddmFormField, fieldName);
+				targetDDMFormField = biFunction.apply(
+					ddmFormField.getNestedDDMFormFields(), identifier);
 			}
 
 			if (targetDDMFormField != null) {
@@ -521,6 +534,22 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 		}
 
 		return null;
+	}
+
+	private DDMFormField _fetchDDMFormField(
+		List<DDMFormField> ddmFormFields, String fieldName) {
+
+		return _fetchDDMFormField(
+			this::_fetchDDMFormField, ddmFormFields, DDMFormField::getName,
+			fieldName);
+	}
+
+	private DDMFormField _fetchDDMFormFieldByFieldReference(
+		List<DDMFormField> ddmFormFields, String fieldReference) {
+
+		return _fetchDDMFormField(
+			this::_fetchDDMFormFieldByFieldReference, ddmFormFields,
+			DDMFormField::getFieldReference, fieldReference);
 	}
 
 	private DDMForm _getDDMForm() {
@@ -548,10 +577,18 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 		return _ddmForm;
 	}
 
-	private DDMFormField _getDDMFormField(String fieldName)
+	private DDMFormField _getDDMFormField(
+			BiFunction<List<DDMFormField>, String, DDMFormField> biFunction,
+			String identifier,
+			UnsafeBiFunction
+				<DDMStructure, String, DDMFormField, PortalException>
+					unsafeBiFunction)
 		throws PortalException {
 
-		DDMFormField ddmFormField = _fetchDDMFormField(fieldName);
+		DDMForm ddmForm = _getDDMForm();
+
+		DDMFormField ddmFormField = biFunction.apply(
+			ddmForm.getDDMFormFields(), identifier);
 
 		if (ddmFormField != null) {
 			return ddmFormField;
@@ -561,38 +598,57 @@ public class DDMStructureImpl extends DDMStructureBaseImpl {
 			DDMStructure parentDDMStructure = getParentDDMStructure();
 
 			if (parentDDMStructure != null) {
-				return parentDDMStructure.getDDMFormField(fieldName);
+				return unsafeBiFunction.apply(parentDDMStructure, identifier);
 			}
 		}
 		catch (PortalException portalException) {
 			_log.error(portalException, portalException);
 		}
 
-		throw new StructureFieldException("Unable to find field " + fieldName);
+		throw new StructureFieldException("Unable to find field " + identifier);
 	}
 
-	private DDMFormField _getNestedDDMFormField(
-		DDMFormField ddmFormField, String fieldName) {
+	private DDMFormField _getDDMFormField(String fieldName)
+		throws PortalException {
 
-		DDMFormField targetDDMFormField = null;
+		return _getDDMFormField(
+			this::_fetchDDMFormField, fieldName, DDMStructure::getDDMFormField);
+	}
 
-		for (DDMFormField nestedDDMFormField :
-				ddmFormField.getNestedDDMFormFields()) {
+	private DDMFormField _getDDMFormFieldByFieldReference(String fieldReference)
+		throws PortalException {
 
-			if (fieldName.equals(nestedDDMFormField.getName())) {
-				targetDDMFormField = nestedDDMFormField;
-			}
-			else {
-				targetDDMFormField = _getNestedDDMFormField(
-					nestedDDMFormField, fieldName);
-			}
+		return _getDDMFormField(
+			this::_fetchDDMFormFieldByFieldReference, fieldReference,
+			DDMStructure::getDDMFormFieldByFieldReference);
+	}
 
-			if (targetDDMFormField != null) {
-				break;
-			}
+	private boolean _hasField(
+		BiFunction<List<DDMFormField>, String, DDMFormField> biFunction1,
+		BiFunction<DDMStructure, String, Boolean> biFunction2,
+		String identifier) {
+
+		DDMForm ddmForm = _getDDMForm();
+
+		DDMFormField ddmFormField = biFunction1.apply(
+			ddmForm.getDDMFormFields(), identifier);
+
+		if (ddmFormField != null) {
+			return true;
 		}
 
-		return targetDDMFormField;
+		try {
+			DDMStructure parentDDMStructure = getParentDDMStructure();
+
+			if (parentDDMStructure != null) {
+				return biFunction2.apply(parentDDMStructure, identifier);
+			}
+		}
+		catch (PortalException portalException) {
+			_log.error(portalException, portalException);
+		}
+
+		return false;
 	}
 
 	private boolean _isFieldSet(DDMFormField ddmFormField) {
