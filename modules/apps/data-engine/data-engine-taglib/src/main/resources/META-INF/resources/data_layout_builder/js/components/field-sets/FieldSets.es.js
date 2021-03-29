@@ -77,9 +77,11 @@ export default function FieldSets({keywords}) {
 		: appProps.defaultLanguageId;
 
 	const toggleFieldSet = (fieldSet, editingDataDefinition) => {
+		const {contentType} = fieldSet ?? {};
+
 		let childrenAppProps = {
 			availableLanguageIds: [defaultLanguageId],
-			contentType: 'data-engine-fieldset',
+			contentType,
 			context: {},
 			dataDefinitionId: null,
 			dataLayoutId: null,
@@ -131,7 +133,7 @@ export default function FieldSets({keywords}) {
 		setState({
 			childrenAppProps: {
 				...childrenAppProps,
-				contentType: 'data-engine-fieldset',
+				contentType,
 			},
 			defaultLanguageId,
 			editingDataDefinition,
