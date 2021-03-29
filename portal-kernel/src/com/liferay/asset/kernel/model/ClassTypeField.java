@@ -20,6 +20,17 @@ package com.liferay.asset.kernel.model;
 public class ClassTypeField {
 
 	public ClassTypeField(
+		long classTypeId, String fieldReference, String label, String name,
+		String type) {
+
+		_classTypeId = classTypeId;
+		_fieldReference = fieldReference;
+		_label = label;
+		_name = name;
+		_type = type;
+	}
+
+	public ClassTypeField(
 		String label, String name, String type, long classTypeId) {
 
 		_label = label;
@@ -30,6 +41,10 @@ public class ClassTypeField {
 
 	public long getClassTypeId() {
 		return _classTypeId;
+	}
+
+	public String getFieldReference() {
+		return _fieldReference;
 	}
 
 	public String getLabel() {
@@ -45,6 +60,7 @@ public class ClassTypeField {
 	}
 
 	private final long _classTypeId;
+	private String _fieldReference;
 	private final String _label;
 	private final String _name;
 	private final String _type;

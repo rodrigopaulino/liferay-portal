@@ -108,9 +108,10 @@ public class DDMStructureClassType implements ClassType {
 
 			classTypeFields.add(
 				new ClassTypeField(
+					ddmStructure.getStructureId(),
+					ddmFormField.getFieldReference(),
 					label.getString(LocaleUtil.fromLanguageId(_languageId)),
-					ddmFormField.getName(), type,
-					ddmStructure.getStructureId()));
+					ddmFormField.getName(), type));
 		}
 
 		return classTypeFields;
