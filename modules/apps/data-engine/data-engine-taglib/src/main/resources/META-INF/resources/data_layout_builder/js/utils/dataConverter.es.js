@@ -54,7 +54,8 @@ export function getDataDefinitionFieldSet({
 
 export function getDDMFormField({
 	dataDefinition,
-	editingLanguageId = themeDisplay.getDefaultLanguageId(),
+	defaultLanguageId = themeDisplay.getDefaultLanguageId(),
+	editingLanguageId = defaultLanguageId,
 	fieldName,
 	fieldTypes,
 }) {
@@ -69,7 +70,7 @@ export function getDDMFormField({
 
 	const settingsContext = getDDMFormFieldSettingsContext({
 		dataDefinitionField,
-		defaultLanguageId: dataDefinition.defaultLanguageId,
+		defaultLanguageId,
 		editingLanguageId,
 		fieldTypes,
 	});
@@ -99,6 +100,7 @@ export function getDDMFormField({
 			(nestedField) =>
 				getDDMFormField({
 					dataDefinition,
+					defaultLanguageId,
 					editingLanguageId,
 					fieldName: nestedField.name,
 					fieldTypes,
@@ -168,6 +170,8 @@ export function getDDMFormFieldSettingsContext({
 
 			return {
 				...field,
+				defaultLanguageId,
+				locale: defaultLanguageId,
 				localizedValue,
 				multiple,
 				options,
@@ -383,6 +387,7 @@ export function getFieldSetDDMForm({
 	return _getDDMForm({
 		dataDefinition: newDataDefinition,
 		dataLayout: fieldSetDataLayout,
+		defaultLanguageId,
 		editingLanguageId,
 		fieldTypes,
 	});
@@ -495,6 +500,7 @@ function _getDataDefinitionFieldPropertyValue(
 function _getDDMForm({
 	dataDefinition,
 	dataLayout = getDefaultDataLayout(dataDefinition),
+	defaultLanguageId: fieldSetDefaultLanguageId,
 	editingLanguageId,
 	fieldTypes,
 }) {
@@ -512,6 +518,7 @@ function _getDDMForm({
 						fields: fieldNames.map((fieldName) =>
 							getDDMFormField({
 								dataDefinition,
+								defaultLanguageId: fieldSetDefaultLanguageId,
 								editingLanguageId,
 								fieldName,
 								fieldTypes,
