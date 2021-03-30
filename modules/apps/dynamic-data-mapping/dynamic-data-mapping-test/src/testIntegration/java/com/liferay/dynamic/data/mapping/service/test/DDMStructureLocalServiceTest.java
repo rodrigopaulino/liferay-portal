@@ -502,7 +502,6 @@ public class DDMStructureLocalServiceTest extends BaseDDMServiceTestCase {
 	}
 
 	@Ignore
-	@Override
 	@Test
 	public void testSearchByKeywords1() throws Exception {
 		DDMStructure structure = addStructure(_classNameId, "Events");
