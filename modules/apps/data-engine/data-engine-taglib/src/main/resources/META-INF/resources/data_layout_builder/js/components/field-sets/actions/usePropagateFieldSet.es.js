@@ -205,9 +205,6 @@ export default () => {
 								{dataLayouts.length > 0 && (
 									<ClayPanel
 										className="remove-object-field-panel"
-										displayTitle={Liferay.Language.get(
-											'form-views'
-										)}
 										displayType="secondary"
 									>
 										<ClayPanel.Body>
