@@ -209,14 +209,14 @@ export default function FieldSets({keywords}) {
 														),
 														allowReferencedDataDefinitionDeletion,
 														fieldSetMessage: Liferay.Language.get(
-															'the-fieldset-will-be-deleted-permanently-from'
+															'to-delete,-you-first-need-to-remove-it-from-the-following-structures'
 														),
 														headerMessage: Liferay.Language.get(
 															'delete'
 														),
 														status: 'danger',
 														warningMessage: Liferay.Language.get(
-															'this-action-may-erase-data-permanently'
+															'the-structure-cannot-be-deleted-because-it-is-being-used-by-one-or-more-structure-links'
 														),
 													},
 													onPropagate: deleteFieldSet,
