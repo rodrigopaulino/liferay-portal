@@ -114,7 +114,7 @@ const isDroppingFieldIntoFieldAndSameGroup = (
 	sourceParentField?.fieldName === targetParentField?.fieldName &&
 	targetParentField.nestedFields.length === 2;
 
-const isDroppingFieldIntoFieldset = (targetField, sourceField) =>
+const isDroppingFieldIntoFieldset = (sourceField, targetField) =>
 	sourceField.fieldName !== targetField?.fieldName &&
 	targetField?.type === 'fieldset' &&
 	!!targetField?.ddmStructureId;
@@ -148,7 +148,7 @@ export const useDrop = ({
 		canDrop: (item) =>
 			!isSameField(field, item.data) &&
 			!isDroppingFieldGroupIntoField(field, item.data) &&
-			!isDroppingFieldIntoFieldset(field, item.data) &&
+			!isDroppingFieldIntoFieldset(item.data, field) &&
 			!isFieldGroupMovingIntoItself({
 				sourceIndexes: item.sourceIndexes,
 				sourceParentField: item.sourceParentField,
