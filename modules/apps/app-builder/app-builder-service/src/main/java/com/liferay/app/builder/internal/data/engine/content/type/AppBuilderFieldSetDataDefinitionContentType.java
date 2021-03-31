@@ -46,6 +46,11 @@ public class AppBuilderFieldSetDataDefinitionContentType
 	}
 
 	@Override
+	public boolean allowReferencedDataDefinitionDeletion() {
+		return true;
+	}
+
+	@Override
 	public long getClassNameId() {
 		return _portal.getClassNameId(AppBuilderFieldSet.class);
 	}
