@@ -193,7 +193,13 @@ export default function FieldSets({keywords}) {
 											name: Liferay.Language.get('edit'),
 										},
 										{
-											action: () =>
+											action: () => {
+												const {
+													contentTypeConfig: {
+														allowReferencedDataDefinitionDeletion,
+													},
+												} = dataLayoutBuilder.props;
+
 												propagateFieldSet({
 													fieldSet,
 													isDeleteAction: true,
@@ -201,6 +207,7 @@ export default function FieldSets({keywords}) {
 														actionMessage: Liferay.Language.get(
 															'delete'
 														),
+														allowReferencedDataDefinitionDeletion,
 														fieldSetMessage: Liferay.Language.get(
 															'the-fieldset-will-be-deleted-permanently-from'
 														),
@@ -213,7 +220,8 @@ export default function FieldSets({keywords}) {
 														),
 													},
 													onPropagate: deleteFieldSet,
-												}),
+												});
+											},
 											name: Liferay.Language.get(
 												'delete'
 											),

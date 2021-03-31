@@ -125,6 +125,7 @@ export default () => {
 			return new Promise((resolve) => {
 				const {
 					actionMessage,
+					allowReferencedDataDefinitionDeletion,
 					fieldSetMessage,
 					headerMessage,
 					warningMessage,
@@ -256,6 +257,10 @@ export default () => {
 									{Liferay.Language.get('cancel')}
 								</ClayButton>
 								<ClayButton
+									disabled={
+										!allowReferencedDataDefinitionDeletion &&
+										!!items.length
+									}
 									key={2}
 									onClick={() => {
 										onPropagate(fieldSet);
