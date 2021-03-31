@@ -167,10 +167,25 @@ public class DataDefinitionResourceImpl
 			PermissionThreadLocal.getPermissionChecker(), dataDefinitionId,
 			ActionKeys.DELETE);
 
+		List<DEDataDefinitionFieldLink> deDataDefinitionFieldLinks =
+			_deDataDefinitionFieldLinkLocalService.
+				getDEDataDefinitionFieldLinks(dataDefinitionId);
+
+		DDMStructure ddmStructure = _ddmStructureLocalService.getDDMStructure(
+			dataDefinitionId);
+
+		DataDefinitionContentType dataDefinitionContentType =
+			_dataDefinitionContentTypeTracker.getDataDefinitionContentType(
+				ddmStructure.getClassNameId());
+
 		List<DDMStructureLink> ddmStructureLinks =
 			_ddmStructureLinkLocalService.getStructureLinks(dataDefinitionId);
 
-		if (ddmStructureLinks.size() > 1) {
+		if ((ddmStructureLinks.size() > 1) ||
+			(!dataDefinitionContentType.
+				allowReferencedDataDefinitionDeletion() &&
+			 (deDataDefinitionFieldLinks.size() > 1))) {
+
 			throw new RequiredStructureException.
 				MustNotDeleteStructureReferencedByStructureLinks(
 					dataDefinitionId);
@@ -200,8 +215,7 @@ public class DataDefinitionResourceImpl
 			_portal.getClassNameId(DDMStructure.class), dataDefinitionId);
 
 		for (DEDataDefinitionFieldLink deDataDefinitionFieldLink :
-				_deDataDefinitionFieldLinkLocalService.
-					getDEDataDefinitionFieldLinks(dataDefinitionId)) {
+				deDataDefinitionFieldLinks) {
 
 			_deDataDefinitionFieldLinkLocalService.
 				deleteDEDataDefinitionFieldLink(deDataDefinitionFieldLink);
