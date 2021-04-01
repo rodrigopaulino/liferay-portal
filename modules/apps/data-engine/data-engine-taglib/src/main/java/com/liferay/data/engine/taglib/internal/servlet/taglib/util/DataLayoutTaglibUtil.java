@@ -130,8 +130,11 @@ public class DataLayoutTaglibUtil {
 
 		return JSONUtil.put(
 			"allowInvalidAvailableLocalesForProperty",
-			dataDefinitionContentType.
-				allowInvalidAvailableLocalesForProperty());
+			dataDefinitionContentType.allowInvalidAvailableLocalesForProperty()
+		).put(
+			"allowReferencedDataDefinitionDeletion",
+			dataDefinitionContentType.allowReferencedDataDefinitionDeletion()
+		);
 	}
 
 	public static DataDefinition getDataDefinition(
