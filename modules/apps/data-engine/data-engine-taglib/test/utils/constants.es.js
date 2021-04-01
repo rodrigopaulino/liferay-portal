@@ -521,7 +521,10 @@ export const dataLayoutBuilderConfig = {
 			'visibilityExpression',
 		],
 	},
-	contentTypeConfig: {allowInvalidAvailableLocalesForProperty: false},
+	contentTypeConfig: {
+		allowInvalidAvailableLocalesForProperty: false,
+		allowReferencedDataDefinitionDeletion: true,
+	},
 	context: {},
 	dataLayoutBuilderId:
 		'_com_liferay_journal_web_portlet_JournalPortlet_dataLayoutBuilder',
