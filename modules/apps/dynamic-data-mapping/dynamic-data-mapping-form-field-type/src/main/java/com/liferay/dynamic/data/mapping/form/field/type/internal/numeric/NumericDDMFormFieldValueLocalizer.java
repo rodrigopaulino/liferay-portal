@@ -17,6 +17,7 @@ package com.liferay.dynamic.data.mapping.form.field.type.internal.numeric;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueEditingAware;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueLocalizer;
 import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
+import com.liferay.dynamic.data.mapping.util.NumberUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -72,6 +73,15 @@ public class NumericDDMFormFieldValueLocalizer
 					 lastChar.equals(StringPool.PERIOD))) {
 
 					formattedNumber = formattedNumber.concat(lastChar);
+				}
+				else if (!NumberUtil.hasDecimalSeparator(
+							locale, formattedNumber) &&
+						 NumberUtil.hasDecimalSeparator(locale, value)) {
+
+					formattedNumber = formattedNumber.concat(
+						value.substring(
+							NumberUtil.getDecimalSeparatorIndex(
+								locale, value)));
 				}
 			}
 

@@ -105,10 +105,25 @@ public class FieldConstants {
 				numberFormat.setMinimumFractionDigits(1);
 			}
 
-			try {
-				Number number = numberFormat.parse(GetterUtil.getString(value));
+			value = GetterUtil.getString(value);
 
-				serializable = getSerializable(type, number.toString());
+			try {
+				String formattedValue = String.valueOf(
+					numberFormat.parse(GetterUtil.getString(value)));
+
+				if ((numberFormat instanceof DecimalFormat) &&
+					!NumberUtil.hasDecimalSeparator(
+						LocaleUtil.ROOT, formattedValue) &&
+					NumberUtil.hasDecimalSeparator(locale, value)) {
+
+					formattedValue = StringBundler.concat(
+						formattedValue, StringPool.PERIOD,
+						value.substring(
+							NumberUtil.getDecimalSeparatorIndex(locale, value) +
+								1));
+				}
+
+				serializable = getSerializable(type, formattedValue);
 			}
 			catch (ParseException parseException) {
 				if (_log.isDebugEnabled()) {
