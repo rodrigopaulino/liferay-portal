@@ -14,17 +14,20 @@
 
 package com.liferay.dynamic.data.mapping.storage.constants;
 
+import com.liferay.dynamic.data.mapping.util.NumberUtil;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.io.Serializable;
 
 import java.math.BigDecimal;
 
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
@@ -209,9 +212,17 @@ public class FieldConstants {
 				return new BigDecimal(value.trim());
 			}
 
+			if (!NumberUtil.hasDecimalSeparator(LocaleUtil.ROOT, value)) {
+				return GetterUtil.getInteger(value);
+			}
+
 			return GetterUtil.getDouble(value);
 		}
 		else if (type.equals(FLOAT)) {
+			if (!NumberUtil.hasDecimalSeparator(LocaleUtil.ROOT, value)) {
+				return GetterUtil.getInteger(value);
+			}
+
 			return GetterUtil.getFloat(value);
 		}
 		else if (type.equals(INTEGER)) {
