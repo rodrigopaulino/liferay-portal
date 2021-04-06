@@ -112,7 +112,7 @@ public class FieldConstants {
 
 			try {
 				String formattedValue = String.valueOf(
-					numberFormat.parse(GetterUtil.getString(value)));
+					numberFormat.parse(value));
 
 				if ((numberFormat instanceof DecimalFormat) &&
 					!NumberUtil.hasDecimalSeparator(
