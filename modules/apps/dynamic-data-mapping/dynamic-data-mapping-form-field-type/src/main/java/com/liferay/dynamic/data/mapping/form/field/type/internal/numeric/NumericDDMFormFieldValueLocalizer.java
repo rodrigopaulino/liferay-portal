@@ -23,6 +23,7 @@ import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
@@ -65,18 +66,14 @@ public class NumericDDMFormFieldValueLocalizer
 
 				formattedNumber = decimalFormat.format(number);
 
-				String lastChar = String.valueOf(
-					value.charAt(value.length() - 1));
-
-				if (isEditingFieldValue() &&
-					(lastChar.equals(StringPool.COMMA) ||
-					 lastChar.equals(StringPool.PERIOD))) {
-
-					formattedNumber = formattedNumber.concat(lastChar);
+				if (isEditingFieldValue() && _endsWithDecimalSeparator(value)) {
+					formattedNumber = formattedNumber.concat(
+						String.valueOf(value.charAt(value.length() - 1)));
 				}
 				else if (!NumberUtil.hasDecimalSeparator(
-							locale, formattedNumber) &&
-						 NumberUtil.hasDecimalSeparator(locale, value)) {
+							LocaleUtil.US, formattedNumber) &&
+						 NumberUtil.hasDecimalSeparator(locale, value) &&
+						 !_endsWithDecimalSeparator(value)) {
 
 					formattedNumber = formattedNumber.concat(
 						value.substring(
@@ -101,6 +98,16 @@ public class NumericDDMFormFieldValueLocalizer
 	@Override
 	public void setEditingFieldValue(boolean editingFieldValue) {
 		_editingFieldValue = editingFieldValue;
+	}
+
+	private final boolean _endsWithDecimalSeparator(String value) {
+		if (StringUtil.endsWith(value, StringPool.COMMA) ||
+			StringUtil.endsWith(value, StringPool.PERIOD)) {
+
+			return true;
+		}
+
+		return false;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
