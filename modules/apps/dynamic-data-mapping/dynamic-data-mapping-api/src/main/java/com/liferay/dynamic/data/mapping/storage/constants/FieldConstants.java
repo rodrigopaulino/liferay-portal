@@ -219,7 +219,9 @@ public class FieldConstants {
 			return GetterUtil.getDouble(value);
 		}
 		else if (type.equals(FLOAT)) {
-			if (!NumberUtil.hasDecimalSeparator(LocaleUtil.ROOT, value)) {
+			if ((value != null) &&
+				!NumberUtil.hasDecimalSeparator(LocaleUtil.ROOT, value)) {
+
 				return GetterUtil.getInteger(value);
 			}
 
