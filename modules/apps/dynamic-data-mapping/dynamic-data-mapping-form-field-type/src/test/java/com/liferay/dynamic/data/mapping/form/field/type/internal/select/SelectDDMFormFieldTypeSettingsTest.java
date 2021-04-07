@@ -178,8 +178,10 @@ public class SelectDDMFormFieldTypeSettingsTest
 		Assert.assertTrue(
 			actions.toString(),
 			actions.contains(
-				"setVisible('options', contains(getValue('dataSourceType'), " +
-					"\"manual\"))"));
+				StringBundler.concat(
+					"setVisible('options', ",
+					"isEmpty(getValue('dataSourceType')) OR ",
+					"contains(getValue('dataSourceType'), \"manual\"))")));
 		Assert.assertTrue(
 			actions.toString(),
 			actions.contains(
