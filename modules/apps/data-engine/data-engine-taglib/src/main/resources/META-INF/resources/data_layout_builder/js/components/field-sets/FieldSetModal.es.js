@@ -117,6 +117,7 @@ const ModalContent = ({
 				fieldSet,
 				modal: {
 					actionMessage: Liferay.Language.get('propagate'),
+					allowReferencedDataDefinitionDeletion: true,
 					fieldSetMessage: Liferay.Language.get(
 						'do-you-want-to-propagate-the-changes-to-other-objects-views-using-this-fieldset'
 					),
