@@ -99,7 +99,7 @@ public class UpgradeDDMFormDocumentLibraryFields extends UpgradeProcess {
 
 	@Override
 	protected void doUpgrade() throws Exception {
-		StringBundler sb = new StringBundler(7);
+		StringBundler sb = new StringBundler(8);
 
 		sb.append("select DDMContent.contentId, DDMContent.data_, ");
 		sb.append("DDMStructureVersion.structureVersionId, ");
@@ -107,7 +107,8 @@ public class UpgradeDDMFormDocumentLibraryFields extends UpgradeProcess {
 		sb.append("DDMStorageLink on DDMContent.contentId = ");
 		sb.append("DDMStorageLink.classPK inner join DDMStructureVersion on ");
 		sb.append("DDMStorageLink.structureVersionId = ");
-		sb.append("DDMStructureVersion.structureVersionId");
+		sb.append("DDMStructureVersion.structureVersionId ");
+		sb.append("where DDMStructureVersion.definition like '%ddm-documentlibrary%'");
 
 		try (PreparedStatement preparedStatement1 = connection.prepareStatement(
 				sb.toString());
