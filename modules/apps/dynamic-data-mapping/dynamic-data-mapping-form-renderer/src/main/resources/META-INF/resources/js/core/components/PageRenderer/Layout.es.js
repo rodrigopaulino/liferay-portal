@@ -12,7 +12,7 @@
  * details.
  */
 
-import React, {useContext} from 'react';
+import React, {useCallback, useContext} from 'react';
 
 import {getFormId, getFormNode} from '../../../util/formId.es';
 import {useConfig} from '../../hooks/useConfig.es';
@@ -33,6 +33,15 @@ export const Layout = ({components, editable, rows}) => {
 
 	const createFieldChange = useEvaluate(fieldChange);
 	const dispatch = useForm();
+	const onChange = useCallback(
+		(properties) =>
+			dispatch(
+				createFieldChange({
+					properties,
+				})
+			),
+		[createFieldChange, dispatch]
+	);
 
 	const variants = useContext(VariantsContext);
 
@@ -84,13 +93,7 @@ export const Layout = ({components, editable, rows}) => {
 											})
 										)
 									}
-									onChange={(properties) =>
-										dispatch(
-											createFieldChange({
-												properties,
-											})
-										)
-									}
+									onChange={onChange}
 									onFocus={(event) =>
 										dispatch(
 											fieldFocus({
