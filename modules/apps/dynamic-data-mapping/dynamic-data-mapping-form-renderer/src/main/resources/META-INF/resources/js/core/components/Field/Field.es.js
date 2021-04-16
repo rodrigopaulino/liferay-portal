@@ -110,6 +110,25 @@ class FieldEventStruct {
 	}
 }
 
+/**
+ * This only assembles the expected structure of the Forms field
+ * event, creates a makeup to maintain compatibility with the
+ * mechanism, the fields in React do not need to assemble this
+ * structure, they must only provide a native event or value in
+ * the case of an onChange
+ */
+const mountStruct = (event, field, value, key) => {
+
+	// A field event struct may have been declared before, for cases of nested
+	// fields with the FieldSet field.
+
+	if (event instanceof FieldEventStruct) {
+		return event;
+	}
+
+	return new FieldEventStruct(event, field, value, key);
+};
+
 const FieldLazy = ({
 	field,
 	fieldTypes,
@@ -119,24 +138,6 @@ const FieldLazy = ({
 	...otherProps
 }) => {
 	const {editable} = usePage();
-
-	/**
-	 * This only assembles the expected structure of the Forms field
-	 * event, creates a makeup to maintain compatibility with the
-	 * mechanism, the fields in React do not need to assemble this
-	 * structure, they must only provide a native event or value in
-	 * the case of an onChange
-	 */
-	const mountStruct = useCallback((event, field, value) => {
-		// A field event struct may have been declared before, for cases of nested
-		// fields with the FieldSet field.
-
-		if (event instanceof FieldEventStruct) {
-			return event;
-		}
-
-		return new FieldEventStruct(event, field, value);
-	}, []);
 
 	const focusDurationRef = useRef({end: null, start: null});
 

@@ -12,7 +12,7 @@
  * details.
  */
 
-import {useCallback, useRef, useEffect} from 'react';
+import {useCallback} from 'react';
 
 import {useConfig} from './useConfig.es';
 import {useFormState} from './useForm.es';
@@ -26,45 +26,7 @@ export const useEvaluate = (thunk) => {
 	const {groupId, portletNamespace, viewMode} = useConfig();
 	const {defaultLanguageId, editingLanguageId, pages, rules} = useFormState();
 
-	const usePrevious = (value, initialValue) => {
-		const ref = useRef(initialValue);
-		console.log("[useEvaluation] usePrev -> ref.current 1: ", (ref.current.length === 0) ? ref.current : ref.current[3][0].rows[0].columns[0].fields[0].localizedValue);
-		useEffect(() => {
-			ref.current = value;
-			console.log("[useEvaluation] usePrev -> useEff -> value: ", value[3][0].rows[0].columns[0].fields[0].localizedValue);
-			console.log("[useEvaluation] usePrev -> useEff -> ref.current: ", ref.current[3][0].rows[0].columns[0].fields[0].localizedValue);
-		});
-		console.log("[useEvaluation] usePrev -> ref.current 2: ", (ref.current.length === 0) ? ref.current : ref.current[3][0].rows[0].columns[0].fields[0].localizedValue);
-		return ref.current;
-	};
-
-	const useCallbackDebugger = (effectHook, dependencies, dependencyNames = []) => {
-		const previousDeps = usePrevious(dependencies, []);
-
-		const changedDeps = dependencies.reduce((accum, dependency, index) => {
-			if (dependency !== previousDeps[index]) {
-				const keyName = dependencyNames[index] || index;
-				return {
-					...accum,
-					[keyName]: {
-						before: previousDeps[index],
-						after: dependency
-					}
-				};
-			}
-
-			return accum;
-		}, {});
-
-		if (Object.keys(changedDeps).length) {
-			console.log('[useEvaluation] [use-callback-debugger] ', changedDeps);
-		}
-
-		return useCallback(effectHook, dependencies);
-	};
-
-	console.log("[useEvaluation] useEva -> pages: ", pages[0].rows[0].columns[0].fields[0].localizedValue);
-	return useCallbackDebugger(
+	return useCallback(
 		(args) =>
 			thunk({
 				defaultLanguageId,
