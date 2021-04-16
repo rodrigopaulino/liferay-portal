@@ -13,7 +13,7 @@
  */
 
 import {ClassicEditor} from 'frontend-editor-ckeditor-web';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 
 import {FieldBase} from '../FieldBase/ReactFieldBase.es';
 import {useSyncValue} from '../hooks/useSyncValue.es';
@@ -38,18 +38,42 @@ const RichText = ({
 
 	const editorRef = useRef();
 
-	useEffect(() => {
-		const editor = editorRef.current?.editor;
+	const afterSetDataListener = useCallback(
+		({data}) => {
+			const {dataValue} = data;
 
-		if (editor) {
-			editor.config.contentsLangDirection =
-				Liferay.Language.direction[editingLanguageId];
+			setCurrentValue(dataValue);
 
-			editor.config.contentsLanguage = editingLanguageId;
+			onChange({}, dataValue);
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[editingLanguageId, editorRef]
+	);
 
-			editor.setData(editor.getData());
-		}
-	}, [editingLanguageId, editorRef]);
+	useEffect(
+		() => {
+			const editor = editorRef.current?.editor;
+
+			if (editor) {
+				editor.config.contentsLangDirection =
+					Liferay.Language.direction[editingLanguageId];
+
+				editor.config.contentsLanguage = editingLanguageId;
+
+				editor.setData(editor.getData());
+
+				if (editor.mode === 'source') {
+					editor.on('afterSetData', afterSetDataListener);
+				}
+
+				return () => {
+					editor.removeListener('afterSetData', afterSetDataListener);
+				};
+			}
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[afterSetDataListener]
+	);
 
 	return (
 		<FieldBase
@@ -78,16 +102,13 @@ const RichText = ({
 				}}
 				onMode={({editor}) => {
 					if (editor.mode === 'source') {
-						editor.on('afterSetData', ({data}) => {
-							const {dataValue} = data;
-
-							setCurrentValue(dataValue);
-
-							onChange({}, dataValue);
-						});
+						editor.on('afterSetData', afterSetDataListener);
 					}
 					else {
-						editor.removeListener('afterSetData');
+						editor.removeListener(
+							'afterSetData',
+							afterSetDataListener
+						);
 					}
 				}}
 				readOnly={readOnly}
