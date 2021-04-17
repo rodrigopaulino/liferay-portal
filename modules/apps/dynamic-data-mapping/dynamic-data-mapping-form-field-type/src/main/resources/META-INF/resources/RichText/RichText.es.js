@@ -13,7 +13,7 @@
  */
 
 import {ClassicEditor} from 'frontend-editor-ckeditor-web';
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 
 import {FieldBase} from '../FieldBase/ReactFieldBase.es';
 import {useSyncValue} from '../hooks/useSyncValue.es';
@@ -51,6 +51,39 @@ const RichText = ({
 		}
 	}, [editingLanguageId, editorRef]);
 
+	useEffect(() => {
+		return () => {
+			editorRef.current.editor.removeAllListeners('afterSetData');
+
+			if (editorRef.current.editor.mode === 'source') {
+				editorRef.current.editor.on('afterSetData', ({data}) => {
+					const {dataValue} = data;
+
+					setCurrentValue(dataValue);
+
+					onChange({}, dataValue);
+				});
+			}
+		};
+	}, [onChange]);
+
+	const onModeCallback = useCallback(
+		({editor}) => {
+			editor.removeAllListeners('afterSetData');
+
+			if (editor.mode === 'source') {
+				editor.on('afterSetData', ({data}) => {
+					const {dataValue} = data;
+
+					setCurrentValue(dataValue);
+
+					onChange({}, dataValue);
+				});
+			}
+		},
+		[onChange]
+	);
+
 	return (
 		<FieldBase
 			{...otherProps}
@@ -76,20 +109,7 @@ const RichText = ({
 						CKEDITOR.instances[name].resetUndo();
 					}
 				}}
-				onMode={({editor}) => {
-					if (editor.mode === 'source') {
-						editor.on('afterSetData', ({data}) => {
-							const {dataValue} = data;
-
-							setCurrentValue(dataValue);
-
-							onChange({}, dataValue);
-						});
-					}
-					else {
-						editor.removeListener('afterSetData');
-					}
-				}}
+				onMode={onModeCallback}
 				readOnly={readOnly}
 				ref={editorRef}
 			/>
