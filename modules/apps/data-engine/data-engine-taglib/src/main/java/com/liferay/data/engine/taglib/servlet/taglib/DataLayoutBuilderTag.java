@@ -127,12 +127,12 @@ public class DataLayoutBuilderTag extends BaseDataLayoutBuilderTag {
 	}
 
 	private String _getDefaultLanguageId() {
-		long dataDefinitionId = getDataDefinitionId();
+		Long dataDefinitionId = getDataDefinitionId();
 
 		String languageId = LocaleUtil.toLanguageId(
 			LocaleUtil.getSiteDefault());
 
-		if (dataDefinitionId <= 0) {
+		if ((dataDefinitionId == null) || (dataDefinitionId <= 0)) {
 			return languageId;
 		}
 
