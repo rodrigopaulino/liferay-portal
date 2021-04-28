@@ -33,7 +33,15 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 	rules = {
 		@DDMFormRule(
 			actions = "call('getDataProviderInstanceOutputParameters', 'dataProviderInstanceId=ddmDataProviderInstanceId', 'ddmDataProviderInstanceOutput=outputParameterNames')",
-			condition = "not(equals(getValue('ddmDataProviderInstanceId'), ''))"
+			condition = "not(equals(getValue('ddmDataProviderInstanceId'), '')) and not(getValue('autoInput'))"
+		),
+		@DDMFormRule(
+			actions = {
+				"call('getDataProviderInstanceInputParameters', 'dataProviderInstanceId=ddmDataProviderInstanceId', 'ddmDataProviderInstanceInput=inputParameterNames')",
+				"call('getDataProviderInstanceOutputParameters', 'dataProviderInstanceId=ddmDataProviderInstanceId', 'ddmDataProviderInstanceOutputLabel=outputParameterNames')",
+				"call('getDataProviderInstanceOutputParameters', 'dataProviderInstanceId=ddmDataProviderInstanceId', 'ddmDataProviderInstanceOutputKey=outputParameterNames')"
+			},
+			condition = "not(equals(getValue('ddmDataProviderInstanceId'), '')) and getValue('autoInput')"
 		),
 		@DDMFormRule(
 			actions = {
@@ -54,16 +62,24 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 				"setVisible('confirmationLabel', getValue('requireConfirmation'))",
 				"setVisible('dataSourceType', getValue('autocomplete'))",
 				"setVisible('ddmDataProviderInstanceId', equals(getValue('dataSourceType'), \"data-provider\") and getValue('autocomplete'))",
-				"setVisible('ddmDataProviderInstanceOutput', equals(getValue('dataSourceType'), \"data-provider\") and getValue('autocomplete'))",
+				"setVisible('ddmDataProviderInstanceOutput', equals(getValue('dataSourceType'), \"data-provider\") and getValue('autocomplete') and not(getValue('autoInput')))",
 				"setVisible('direction', getValue('requireConfirmation'))",
-				"setVisible('options', contains(getValue('dataSourceType'), \"manual\") and getValue('autocomplete'))"
+				"setVisible('options', contains(getValue('dataSourceType'), \"manual\") and getValue('autocomplete'))",
+				"setVisible('autoInput', equals(getValue('dataSourceType'), \"data-provider\") and getValue('autocomplete'))",
+				"setVisible('ddmDataProviderInstanceInput', equals(getValue('dataSourceType'), \"data-provider\") and getValue('autocomplete') and getValue('autoInput'))",
+				"setVisible('ddmDataProviderInstanceOutputLabel', equals(getValue('dataSourceType'), \"data-provider\") and getValue('autocomplete') and getValue('autoInput'))",
+				"setVisible('ddmDataProviderInstanceOutputKey', equals(getValue('dataSourceType'), \"data-provider\") and getValue('autocomplete') and getValue('autoInput'))"
 			},
 			condition = "TRUE"
 		),
 		@DDMFormRule(
 			actions = {
 				"setValue('ddmDataProviderInstanceId', '')",
-				"setValue('ddmDataProviderInstanceOutput', '')"
+				"setValue('ddmDataProviderInstanceOutput', '')",
+				"setValue('ddmDataProviderInstanceInput', '')",
+				"setValue('ddmDataProviderInstanceOutputLabel', '')",
+				"setValue('ddmDataProviderInstanceOutputKey', '')",
+				"setValue('autoInput', FALSE)"
 			},
 			condition = "not(equals(getValue('dataSourceType'), \"data-provider\")) or not(getValue('autocomplete'))"
 		)
@@ -118,9 +134,12 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 						@DDMFormLayoutColumn(
 							size = 12,
 							value = {
-								"autocomplete", "dataSourceType",
+								"autocomplete", "dataSourceType", "autoInput",
 								"ddmDataProviderInstanceId",
-								"ddmDataProviderInstanceOutput", "options"
+								"ddmDataProviderInstanceOutput", "options",
+								"ddmDataProviderInstanceInput",
+								"ddmDataProviderInstanceOutputLabel",
+								"ddmDataProviderInstanceOutputKey"
 							}
 						)
 					}
@@ -134,6 +153,9 @@ public interface TextDDMFormFieldTypeSettings
 
 	@DDMFormField(label = "%autocomplete", properties = "showAsSwitcher=true")
 	public boolean autocomplete();
+
+	@DDMFormField(label = "%auto-input", properties = "showAsSwitcher=true")
+	public boolean autoInput();
 
 	@DDMFormField(
 		dataType = "string", label = "%error-message",
@@ -166,12 +188,21 @@ public interface TextDDMFormFieldTypeSettings
 	)
 	public long ddmDataProviderInstanceId();
 
-	@DDMFormField(
-		label = "%choose-an-output-parameter",
-		properties = "tooltip=%choose-an-output-parameter-for-a-data-provider-previously-created",
-		type = "select"
-	)
+	@DDMFormField(label = "%choose-an-input-parameter", type = "select")
+	public String ddmDataProviderInstanceInput();
+
+	@DDMFormField(label = "%choose-an-output-parameter", type = "select")
 	public String ddmDataProviderInstanceOutput();
+
+	@DDMFormField(
+		label = "%choose-an-output-parameter-for-key", type = "select"
+	)
+	public String ddmDataProviderInstanceOutputKey();
+
+	@DDMFormField(
+		label = "%choose-an-output-parameter-for-label", type = "select"
+	)
+	public String ddmDataProviderInstanceOutputLabel();
 
 	@DDMFormField(
 		label = "%direction", optionLabels = {"%horizontal", "%vertical"},
