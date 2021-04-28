@@ -149,8 +149,8 @@ public interface TextDDMFormFieldTypeSettings
 
 	@DDMFormField(
 		label = "%create-list",
-		optionLabels = {"%manually", "%from-data-provider"},
-		optionValues = {"manual", "data-provider"},
+		optionLabels = {"%manually", "%from-data-provider", "%from-autofill"},
+		optionValues = {"manual", "data-provider", "from-autofill"},
 		predefinedValue = "[\"manual\"]", properties = "showLabel=false",
 		type = "radio"
 	)

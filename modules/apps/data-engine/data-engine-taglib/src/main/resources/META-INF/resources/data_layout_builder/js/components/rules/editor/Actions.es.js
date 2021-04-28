@@ -83,7 +83,7 @@ const ActionCalculate = ({children}) => (
 );
 
 const AUTOFILL_PARAMETER_TYPE = {
-	list: ['checkbox_multiple', 'radio', 'select'],
+	list: ['checkbox_multiple', 'radio', 'select', 'text'],
 	number: ['numeric'],
 	text: ['checkbox_multiple', 'date', 'numeric', 'radio', 'select', 'text'],
 };
