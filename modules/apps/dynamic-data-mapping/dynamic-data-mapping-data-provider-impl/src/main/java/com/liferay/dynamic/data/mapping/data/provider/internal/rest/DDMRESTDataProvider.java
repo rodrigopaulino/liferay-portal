@@ -160,8 +160,18 @@ public class DDMRESTDataProvider implements DDMDataProvider {
 			String path = outputParameterSettings.outputParameterPath();
 
 			if (Objects.equals(type, "text")) {
-				String value = documentContext.read(
-					normalizePath(path), String.class);
+				String value;
+
+				if (path.contains("[?")) {
+					List<String> values = documentContext.read(
+						normalizePath(path), List.class);
+
+					value = values.get(0);
+				}
+				else {
+					value = documentContext.read(
+						normalizePath(path), String.class);
+				}
 
 				builder = builder.withOutput(id, value);
 			}
