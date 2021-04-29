@@ -173,15 +173,17 @@ const Autocomplete = ({
 	const inputRef = useRef(null);
 	const itemListRef = useRef(null);
 
+	const realValue = value.split("#")[0];
+
 	const escapeChars = (string) =>
 		string.replace(/[.*+\-?^${}()|[\]\\]/g, '\\$&');
 
 	const filteredItems = options.filter(
-		(item) => item && item.match(escapeChars(value))
+		(item) => item.label && item.label.match(escapeChars(realValue))
 	);
 
 	useEffect(() => {
-		if (filteredItems.length === 1 && filteredItems.includes(value)) {
+		if (filteredItems.length === 1 && filteredItems.includes(realValue)) {
 			setVisible(false);
 		}
 		else {
@@ -196,10 +198,10 @@ const Autocomplete = ({
 				setVisible(false);
 			}
 			else {
-				setVisible(!!value);
+				setVisible(!!realValue);
 			}
 		}
-	}, [filteredItems, value]);
+	}, [filteredItems, realValue]);
 
 	const handleFocus = (event, direction) => {
 		const target = event.target;
@@ -263,7 +265,7 @@ const Autocomplete = ({
 				}}
 				placeholder={placeholder}
 				ref={inputRef}
-				value={value}
+				value={realValue}
 			/>
 
 			<ClayAutocomplete.DropDown
@@ -294,15 +296,15 @@ const Autocomplete = ({
 							{Liferay.Language.get('no-results-were-found')}
 						</ClayDropDown.Item>
 					)}
-					{filteredItems.map((label) => (
+					{filteredItems.map((item) => (
 						<ClayAutocomplete.Item
-							key={label}
-							match={value}
+							key={item.label}
+							match={realValue}
 							onClick={() => {
-								setValue(label);
-								onChange({target: {value: label}});
+								setValue(item.label + "#" + item.value);
+								onChange({target: {value: item.label + "#" + item.value}});
 							}}
-							value={label}
+							value={item.label}
 						/>
 					))}
 				</ul>
@@ -340,9 +342,6 @@ const Main = ({
 	value,
 	...otherProps
 }) => {
-	const optionsMemo = useMemo(() => options.map((option) => option.label), [
-		options,
-	]);
 	const Component =
 		DISPLAY_STYLE[
 			autocomplete || autocompleteEnabled
@@ -372,7 +371,7 @@ const Main = ({
 				onBlur={onBlur}
 				onChange={onChange}
 				onFocus={onFocus}
-				options={optionsMemo}
+				options={options}
 				placeholder={placeholder}
 				shouldUpdateValue={shouldUpdateValue}
 				syncDelay={syncDelay}

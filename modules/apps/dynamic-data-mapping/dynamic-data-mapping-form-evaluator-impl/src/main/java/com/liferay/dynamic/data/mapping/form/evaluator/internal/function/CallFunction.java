@@ -90,8 +90,14 @@ public class CallFunction
 					continue;
 				}
 
+				String value = entry.getValue();
+
+				if (value != null && value.contains("#")) {
+					value = value.split("#")[1];
+				}
+
 				builder = builder.withParameter(
-					entry.getKey(), entry.getValue());
+					entry.getKey(), value);
 			}
 
 			DDMDataProviderRequest ddmDataProviderRequest = builder.build();
