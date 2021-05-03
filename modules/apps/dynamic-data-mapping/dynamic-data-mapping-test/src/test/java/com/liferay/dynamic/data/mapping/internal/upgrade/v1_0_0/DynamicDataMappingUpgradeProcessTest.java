@@ -31,6 +31,7 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormValuesTestUtil;
+import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.json.JSONFactoryImpl;
@@ -46,6 +47,7 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.LocalizationUtil;
+import com.liferay.portal.kernel.util.ProxyFactory;
 import com.liferay.portal.kernel.util.ProxyUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -857,6 +859,14 @@ public class DynamicDataMappingUpgradeProcessTest extends PowerMockito {
 
 	protected void setUpDDMFormValuesJSONDeserializer() throws Exception {
 		field(
+			DDMFormValuesJSONDeserializer.class,
+			"_ddmFormFieldValueJSONDeserializersServiceTrackerMap"
+		).set(
+			_ddmFormValuesDeserializer,
+			ProxyFactory.newDummyInstance(ServiceTrackerMap.class)
+		);
+
+		field(
 			DDMFormValuesJSONDeserializer.class, "_jsonFactory"
 		).set(
 			_ddmFormValuesDeserializer, new JSONFactoryImpl()
@@ -864,6 +874,14 @@ public class DynamicDataMappingUpgradeProcessTest extends PowerMockito {
 	}
 
 	protected void setUpDDMFormValuesJSONSerializer() throws Exception {
+		field(
+			DDMFormValuesJSONSerializer.class,
+			"_ddmFormFieldValueJSONSerializersServiceTrackerMap"
+		).set(
+			_ddmFormValuesSerializer,
+			ProxyFactory.newDummyInstance(ServiceTrackerMap.class)
+		);
+
 		field(
 			DDMFormValuesJSONSerializer.class, "_jsonFactory"
 		).set(
