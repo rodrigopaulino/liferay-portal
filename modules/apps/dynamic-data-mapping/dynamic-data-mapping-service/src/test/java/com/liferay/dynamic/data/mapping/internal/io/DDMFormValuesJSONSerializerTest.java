@@ -334,8 +334,7 @@ public class DDMFormValuesJSONSerializerTest extends BaseDDMTestCase {
 
 	protected void setUpDDMFormValuesJSONSerializer() throws Exception {
 		field(
-			DDMFormValuesJSONSerializer.class,
-			"_ddmFormFieldValueJSONSerializersServiceTrackerMap"
+			DDMFormValuesJSONSerializer.class, "_serviceTrackerMap"
 		).set(
 			_ddmFormValuesJSONSerializer,
 			ProxyFactory.newDummyInstance(ServiceTrackerMap.class)

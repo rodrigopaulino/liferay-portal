@@ -90,15 +90,14 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 
 	@Activate
 	protected void activate(BundleContext bundleContext) {
-		_ddmFormFieldValueValidatorsServiceTrackerMap =
-			ServiceTrackerMapFactory.openSingleValueMap(
-				bundleContext, DDMFormFieldValueValidator.class,
-				"ddm.form.field.type.name");
+		_serviceTrackerMap = ServiceTrackerMapFactory.openSingleValueMap(
+			bundleContext, DDMFormFieldValueValidator.class,
+			"ddm.form.field.type.name");
 	}
 
 	@Deactivate
 	protected void deactivate() {
-		_ddmFormFieldValueValidatorsServiceTrackerMap.close();
+		_serviceTrackerMap.close();
 	}
 
 	protected boolean evaluateValidationExpression(
@@ -195,8 +194,7 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 		throws DDMFormValuesValidationException {
 
 		DDMFormFieldValueValidator ddmFormFieldValueValidator =
-			_ddmFormFieldValueValidatorsServiceTrackerMap.getService(
-				ddmFormField.getType());
+			_serviceTrackerMap.getService(ddmFormField.getType());
 
 		if (ddmFormFieldValueValidator == null) {
 			return;
@@ -409,11 +407,11 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 
 	private DDMExpressionFactory _ddmExpressionFactory;
 	private DDMFormFieldTypeServicesTracker _ddmFormFieldTypeServicesTracker;
-	private ServiceTrackerMap<String, DDMFormFieldValueValidator>
-		_ddmFormFieldValueValidatorsServiceTrackerMap;
 	private final DDMFormFieldValueAccessor<String>
 		_defaultDDMFormFieldValueAccessor =
 			new DefaultDDMFormFieldValueAccessor();
 	private JSONFactory _jsonFactory;
+	private ServiceTrackerMap<String, DDMFormFieldValueValidator>
+		_serviceTrackerMap;
 
 }

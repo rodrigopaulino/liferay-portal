@@ -102,15 +102,14 @@ public class DDMFormValuesJSONDeserializer
 
 	@Activate
 	protected void activate(BundleContext bundleContext) {
-		_ddmFormFieldValueJSONDeserializersServiceTrackerMap =
-			ServiceTrackerMapFactory.openSingleValueMap(
-				bundleContext, DDMFormFieldValueJSONDeserializer.class,
-				"ddm.form.field.type.name");
+		_serviceTrackerMap = ServiceTrackerMapFactory.openSingleValueMap(
+			bundleContext, DDMFormFieldValueJSONDeserializer.class,
+			"ddm.form.field.type.name");
 	}
 
 	@Deactivate
 	protected void deactivate() {
-		_ddmFormFieldValueJSONDeserializersServiceTrackerMap.close();
+		_serviceTrackerMap.close();
 	}
 
 	protected Set<Locale> getAvailableLocales(JSONArray jsonArray) {
@@ -158,8 +157,7 @@ public class DDMFormValuesJSONDeserializer
 			return null;
 		}
 
-		return _ddmFormFieldValueJSONDeserializersServiceTrackerMap.getService(
-			ddmFormField.getType());
+		return _serviceTrackerMap.getService(ddmFormField.getType());
 	}
 
 	protected List<DDMFormFieldValue> getDDMFormFieldValues(
@@ -331,8 +329,8 @@ public class DDMFormValuesJSONDeserializer
 	private static final Log _log = LogFactoryUtil.getLog(
 		DDMFormValuesJSONDeserializer.class);
 
-	private ServiceTrackerMap<String, DDMFormFieldValueJSONDeserializer>
-		_ddmFormFieldValueJSONDeserializersServiceTrackerMap;
 	private JSONFactory _jsonFactory;
+	private ServiceTrackerMap<String, DDMFormFieldValueJSONDeserializer>
+		_serviceTrackerMap;
 
 }
