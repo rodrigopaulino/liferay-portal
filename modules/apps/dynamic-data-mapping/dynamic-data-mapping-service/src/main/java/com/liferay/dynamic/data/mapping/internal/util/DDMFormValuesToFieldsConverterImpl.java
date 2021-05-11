@@ -221,8 +221,9 @@ public class DDMFormValuesToFieldsConverterImpl
 			boolean repeatableAncestor)
 		throws PortalException {
 
-		if (!StringUtil.equals(ddmFormField.getType(), "fieldset") &&
-			(ddmFormField.isRepeatable() || repeatableAncestor)) {
+		if (ddmFormField.isLocalizable() &&
+			(ddmFormField.isRepeatable() || repeatableAncestor) &&
+			!StringUtil.equals(ddmFormField.getType(), "fieldset")) {
 
 			availableLocales.forEach(
 				availableLocale -> {
