@@ -1047,8 +1047,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 		ddmFormFieldValidation.setDDMFormFieldValidationExpression(
 			new DDMFormFieldValidationExpression() {
 				{
-					setName("equals");
-					setValue("field0=={parameter}");
+					setName("neq");
+					setValue("field0!={parameter}");
 				}
 			});
 		ddmFormFieldValidation.setErrorMessageLocalizedValue(
@@ -1153,8 +1153,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 		ddmFormFieldValidation.setDDMFormFieldValidationExpression(
 			new DDMFormFieldValidationExpression() {
 				{
-					setName("gt");
-					setValue("field0>{parameter}");
+					setName("lteq");
+					setValue("field0<={parameter}");
 				}
 			});
 		ddmFormFieldValidation.setParameterLocalizedValue(
@@ -1207,8 +1207,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 		ddmFormFieldValidation.setDDMFormFieldValidationExpression(
 			new DDMFormFieldValidationExpression() {
 				{
-					setName("neq");
-					setValue("field0!={parameter}");
+					setName("eq");
+					setValue("field0=={parameter}");
 				}
 			});
 		ddmFormFieldValidation.setErrorMessageLocalizedValue(
@@ -1261,7 +1261,7 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 			new DDMFormFieldValidationExpression() {
 				{
 					setName("contains");
-					setValue("NOT(contains(field0, \"{parameter}\"))");
+					setValue("contains(field0, \"{parameter}\")");
 				}
 			});
 		ddmFormFieldValidation.setErrorMessageLocalizedValue(
