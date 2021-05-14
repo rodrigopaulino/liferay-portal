@@ -155,7 +155,7 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 					ddmFormFieldName, value.getString(locale));
 			}
 
-			return ddmExpression.evaluate();
+			return !ddmExpression.evaluate();
 		}
 		catch (DDMExpressionException ddmExpressionException) {
 			throw new DDMFormValuesValidationException(ddmExpressionException);

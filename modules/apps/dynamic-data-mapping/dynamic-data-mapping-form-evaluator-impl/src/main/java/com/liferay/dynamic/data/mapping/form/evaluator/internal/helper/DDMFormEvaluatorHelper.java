@@ -755,7 +755,7 @@ public class DDMFormEvaluatorHelper {
 				_getFieldPropertyResponseValue(
 					ddmFormEvaluatorFieldContextKey, "value"));
 
-			valid = ddmExpression.evaluate();
+			valid = !ddmExpression.evaluate();
 		}
 		catch (DDMExpressionException ddmExpressionException) {
 			if (_log.isDebugEnabled()) {
