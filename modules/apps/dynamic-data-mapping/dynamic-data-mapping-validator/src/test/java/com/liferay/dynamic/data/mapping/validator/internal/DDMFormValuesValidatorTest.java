@@ -87,8 +87,8 @@ public class DDMFormValuesValidatorTest {
 		ddmFormFieldValidation.setDDMFormFieldValidationExpression(
 			new DDMFormFieldValidationExpression() {
 				{
-					setName("lteq");
-					setValue("Height<={parameter}");
+					setName("gteq");
+					setValue("Height >= {parameter}");
 				}
 			});
 		ddmFormFieldValidation.setErrorMessageLocalizedValue(
@@ -127,8 +127,8 @@ public class DDMFormValuesValidatorTest {
 		ddmFormFieldValidation.setDDMFormFieldValidationExpression(
 			new DDMFormFieldValidationExpression() {
 				{
-					setName("gt");
-					setValue("Age>{parameter}");
+					setName("lteq");
+					setValue("Age <= {parameter}");
 				}
 			});
 		ddmFormFieldValidation.setErrorMessageLocalizedValue(
@@ -741,8 +741,8 @@ public class DDMFormValuesValidatorTest {
 		ddmFormFieldValidation.setDDMFormFieldValidationExpression(
 			new DDMFormFieldValidationExpression() {
 				{
-					setName("gt");
-					setValue("Age>{parameter}");
+					setName("lteq");
+					setValue("Age <= {parameter}");
 				}
 			});
 		ddmFormFieldValidation.setErrorMessageLocalizedValue(

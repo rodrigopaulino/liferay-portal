@@ -327,7 +327,7 @@ public class DDMRESTDataProviderSettingsTest {
 			ddmFormFieldValidation.getDDMFormFieldValidationExpression();
 
 		Assert.assertEquals(
-			"(timeout >= 1000) && (timeout <= 30000)",
+			"(timeout < 1000) || (timeout > 30000)",
 			ddmFormFieldValidationExpression.getValue());
 
 		Assert.assertEquals("numeric", ddmFormField.getType());

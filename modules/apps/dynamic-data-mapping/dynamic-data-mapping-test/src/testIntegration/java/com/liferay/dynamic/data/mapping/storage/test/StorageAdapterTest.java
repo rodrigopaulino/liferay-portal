@@ -148,7 +148,7 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 		ddmFormFieldValidation.setDDMFormFieldValidationExpression(
 			new DDMFormFieldValidationExpression() {
 				{
-					setValue("contains(text, \"{parameter}\")");
+					setValue("NOT(contains(text, \"{parameter}\"))");
 				}
 			});
 		ddmFormFieldValidation.setErrorMessageLocalizedValue(
@@ -213,7 +213,7 @@ public class StorageAdapterTest extends BaseDDMServiceTestCase {
 		ddmFormFieldValidation.setDDMFormFieldValidationExpression(
 			new DDMFormFieldValidationExpression() {
 				{
-					setValue("NOT(equals(text, \"{parameter}\"))");
+					setValue("equals(text, \"{parameter}\")");
 				}
 			});
 		ddmFormFieldValidation.setErrorMessageLocalizedValue(

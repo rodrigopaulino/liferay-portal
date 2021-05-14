@@ -369,19 +369,19 @@ public class DDMFormTemplateContextFactoryTest {
 			).put(
 				"gt",
 				_getValidation(
-					"/^(.+)<(\\d+\\.?\\d*)?$/", "{name} < {parameter}")
+					"/^(.+)>(\\d+\\.?\\d*)?$/", "{name} > {parameter}")
 			).put(
 				"gteq",
 				_getValidation(
-					"/^(.+)<=(\\d+\\.?\\d*)?$/", "{name} <= {parameter}")
+					"/^(.+)>=(\\d+\\.?\\d*)?$/", "{name} >= {parameter}")
 			).put(
 				"lt",
 				_getValidation(
-					"/^(.+)>(\\d+\\.?\\d*)?$/", "{name} > {parameter}")
+					"/^(.+)<(\\d+\\.?\\d*)?$/", "{name} < {parameter}")
 			).put(
 				"lteq",
 				_getValidation(
-					"/^(.+)>=(\\d+\\.?\\d*)?$/", "{name} >= {parameter}")
+					"/^(.+)<=(\\d+\\.?\\d*)?$/", "{name} <= {parameter}")
 			).put(
 				"neq",
 				_getValidation(
@@ -396,21 +396,24 @@ public class DDMFormTemplateContextFactoryTest {
 					"/^contains\\((.+), \"(.*)\"\\)$/",
 					"contains({name}, \"{parameter}\")")
 			).put(
-				"email",
-				_getValidation(
-					"/^isEmailAddress\\((.+)\\)$/", "isEmailAddress({name})")
-			).put(
-				"notContains",
+				"doesNotContain",
 				_getValidation(
 					"/^NOT\\(contains\\((.+), \"(.*)\"\\)\\)$/",
 					"NOT(contains({name}, \"{parameter}\"))")
 			).put(
-				"regularExpression",
+				"doesNotMatch",
 				_getValidation(
-					"/^match\\((.+), \"(.*)\"\\)$/",
-					"match({name}, \"{parameter}\")")
+					"/^NOT\\(match\\((.+), \"(.*)\"\\)\\)$/",
+					"NOT(match({name}, \"{parameter}\"))")
 			).put(
-				"url", _getValidation("/^isURL\\((.+)\\)$/", "isURL({name})")
+				"isNotEmail",
+				_getValidation(
+					"/^NOT\\(isEmailAddress\\((.+)\\)\\)$/",
+					"NOT(isEmailAddress({name}))")
+			).put(
+				"isNotURL",
+				_getValidation(
+					"/^NOT\\(isURL\\((.+)\\)\\)$/", "NOT(isURL({name}))")
 			).build());
 	}
 
