@@ -34,6 +34,7 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 			actions = {
 				"setOptions('predefinedValue', getValue('options'))",
 				"setRequired('options', true)",
+				"setVisible('requiredErrorMessage', getValue('required'))",
 				"setVisible('validation', false)"
 			},
 			condition = "TRUE"
@@ -50,7 +51,10 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 					{
 						@DDMFormLayoutColumn(
 							size = 12,
-							value = {"label", "tip", "required", "options"}
+							value = {
+								"label", "tip", "required",
+								"requiredErrorMessage", "options"
+							}
 						)
 					}
 				)

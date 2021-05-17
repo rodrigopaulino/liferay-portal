@@ -128,6 +128,17 @@ public interface DefaultDDMFormFieldTypeSettings
 	public boolean required();
 
 	@DDMFormField(
+		label = "%error-message",
+		properties = {
+			"placeholder=%this-field-is-required", "visualProperty=true"
+		},
+		type = "text"
+	)
+	public default LocalizedValue requiredErrorMessage() {
+		return new LocalizedValue();
+	}
+
+	@DDMFormField(
 		label = "%show-label", predefinedValue = "true",
 		properties = {"showAsSwitcher=true", "visualProperty=true"}
 	)

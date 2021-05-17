@@ -27,7 +27,17 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 /**
  * @author Carlos Lancha
  */
-@DDMForm(rules = @DDMFormRule(actions = "setVisible('dataType', FALSE)"))
+@DDMForm(
+	rules = {
+		@DDMFormRule(
+			actions = {
+				"setVisible('dataType', FALSE)",
+				"setVisible('requiredErrorMessage', getValue('required'))"
+			},
+			condition = "TRUE"
+		)
+	}
+)
 @DDMFormLayout(
 	paginationMode = com.liferay.dynamic.data.mapping.model.DDMFormLayout.TABBED_MODE,
 	value = {
@@ -37,7 +47,11 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 				@DDMFormLayoutRow(
 					{
 						@DDMFormLayoutColumn(
-							size = 12, value = {"label", "tip", "required"}
+							size = 12,
+							value = {
+								"label", "tip", "required",
+								"requiredErrorMessage"
+							}
 						)
 					}
 				)
