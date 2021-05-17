@@ -32,7 +32,7 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 		@DDMFormRule(
 			actions = {
 				"setVisible('dataType', FALSE)",
-				"setVisible('requiredErrorMessage', getValue('required'))"
+				"setVisible('requiredErrorMessage', false)"
 			},
 			condition = "TRUE"
 		)

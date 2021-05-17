@@ -36,7 +36,7 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 				"setVisible('indexType', false)",
 				"setVisible('predefinedValue', false)",
 				"setVisible('repeatable', false)",
-				"setVisible('requiredErrorMessage', getValue('required'))",
+				"setVisible('requiredErrorMessage', false)",
 				"setVisible('validation', false)"
 			},
 			condition = "TRUE"
