@@ -323,6 +323,10 @@ public class DDMFormField implements Serializable {
 		return _properties.get(name);
 	}
 
+	public LocalizedValue getRequiredErrorMessage() {
+		return (LocalizedValue)_properties.get("requiredErrorMessage");
+	}
+
 	public LocalizedValue getStyle() {
 		return (LocalizedValue)_properties.get("style");
 	}
@@ -481,6 +485,10 @@ public class DDMFormField implements Serializable {
 
 	public void setRequired(boolean required) {
 		_properties.put("required", required);
+	}
+
+	public void setRequiredErrorMessage(LocalizedValue requiredErrorMessage) {
+		_properties.put("requiredErrorMessage", requiredErrorMessage);
 	}
 
 	public void setShowLabel(boolean showLabel) {
