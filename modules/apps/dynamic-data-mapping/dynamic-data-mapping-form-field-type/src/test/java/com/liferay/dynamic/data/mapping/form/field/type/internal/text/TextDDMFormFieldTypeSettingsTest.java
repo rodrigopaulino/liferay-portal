@@ -235,7 +235,7 @@ public class TextDDMFormFieldTypeSettingsTest
 
 		actions = ddmFormRule2.getActions();
 
-		Assert.assertEquals(actions.toString(), 11, actions.size());
+		Assert.assertEquals(actions.toString(), 12, actions.size());
 		Assert.assertTrue(
 			actions.toString(),
 			actions.contains(
