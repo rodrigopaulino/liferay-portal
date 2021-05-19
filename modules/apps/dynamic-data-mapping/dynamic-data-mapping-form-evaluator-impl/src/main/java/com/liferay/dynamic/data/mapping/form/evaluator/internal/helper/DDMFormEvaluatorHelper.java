@@ -609,9 +609,31 @@ public class DDMFormEvaluatorHelper {
 		).filter(
 			this::isFieldEmpty
 		).forEach(
-			ddmFormEvaluatorFieldContextKey -> setFieldAsInvalid(
-				ddmFormEvaluatorFieldContextKey,
-				LanguageUtil.get(_resourceBundle, "this-field-is-required"))
+			ddmFormEvaluatorFieldContextKey -> {
+				String requiredErrorMessage = LanguageUtil.get(
+					_resourceBundle, "this-field-is-required");
+
+				DDMFormField ddmFormField = _ddmFormFieldsMap.get(
+					ddmFormEvaluatorFieldContextKey.getName());
+
+				LocalizedValue localizedValue =
+					ddmFormField.getRequiredErrorMessage();
+
+				if (localizedValue != null) {
+					HashMap<Locale, String> values =
+						(HashMap<Locale, String>)localizedValue.getValues();
+
+					String value = values.get(
+						_ddmFormEvaluatorEvaluateRequest.getLocale());
+
+					if (Validator.isNotNull(value)) {
+						requiredErrorMessage = value;
+					}
+				}
+
+				setFieldAsInvalid(
+					ddmFormEvaluatorFieldContextKey, requiredErrorMessage);
+			}
 		);
 	}
 
