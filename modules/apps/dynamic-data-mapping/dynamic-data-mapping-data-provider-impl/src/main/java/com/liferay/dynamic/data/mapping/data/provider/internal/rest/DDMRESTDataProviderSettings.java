@@ -135,14 +135,14 @@ public interface DDMRESTDataProviderSettings
 		},
 		required = true, type = "numeric",
 		validationErrorMessage = "%please-enter-an-integer-between-1000-and-30000-milliseconds",
-		validationExpression = "(timeout >= 1000) && (timeout <= 30000)"
+		validationExpression = "(timeout < 1000) || (timeout > 30000)"
 	)
 	public String timeout();
 
 	@DDMFormField(
 		label = "%url", properties = "placeholder=%enter-the-rest-service-url",
 		required = true, validationErrorMessage = "%please-enter-a-valid-url",
-		validationExpression = "isURL(url)"
+		validationExpression = "NOT(isURL(url))"
 	)
 	public String url();
 
