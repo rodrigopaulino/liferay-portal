@@ -26,7 +26,10 @@ import org.osgi.service.component.annotations.Component;
  * @author Marcela Cunha
  */
 @Component(
-	immediate = true, property = "ddm.validation.data.type=string",
+	immediate = true,
+	property = {
+		"ddm.validation.data.type=string", "ddm.validation.ranking:Float=2"
+	},
 	service = DDMValidation.class
 )
 public class DoesNotContainDDMValidation implements DDMValidation {
@@ -41,7 +44,7 @@ public class DoesNotContainDDMValidation implements DDMValidation {
 
 	@Override
 	public String getName() {
-		return "notContains";
+		return "doesNotContain";
 	}
 
 	@Override

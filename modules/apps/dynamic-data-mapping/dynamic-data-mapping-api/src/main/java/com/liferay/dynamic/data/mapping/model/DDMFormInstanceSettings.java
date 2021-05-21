@@ -104,7 +104,7 @@ public interface DDMFormInstanceSettings {
 	@DDMFormField(
 		label = "%from-address",
 		validationErrorMessage = "%please-enter-a-valid-email-address",
-		validationExpression = "isEmailAddress(emailFromAddress)"
+		validationExpression = "NOT(isEmailAddress(emailFromAddress))"
 	)
 	public String emailFromAddress();
 
@@ -117,7 +117,7 @@ public interface DDMFormInstanceSettings {
 	@DDMFormField(
 		label = "%to-address",
 		validationErrorMessage = "%please-enter-valid-email-addresses-separated-by-commas",
-		validationExpression = "isEmailAddress(emailToAddress)"
+		validationExpression = "NOT(isEmailAddress(emailToAddress))"
 	)
 	public String emailToAddress();
 
@@ -128,7 +128,7 @@ public interface DDMFormInstanceSettings {
 		label = "%redirect-url-on-success",
 		properties = "placeholder=%enter-a-valid-url",
 		validationErrorMessage = "%please-enter-a-valid-url",
-		validationExpression = "isEmpty(redirectURL) OR isURL(redirectURL)"
+		validationExpression = "NOT(isEmpty(redirectURL)) AND NOT(isURL(redirectURL))"
 	)
 	public String redirectURL();
 
