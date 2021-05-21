@@ -26,7 +26,8 @@ import org.osgi.service.component.annotations.Component;
  * @author Marcela Cunha
  */
 @Component(
-	immediate = true, property = "ddm.validation.data.type=numeric",
+	immediate = true,
+	property = {"ddm.validation.data.type=numeric", "ddm.validation.ranking:Float=1"},
 	service = DDMValidation.class
 )
 public class IsEqualToDDMValidation implements DDMValidation {

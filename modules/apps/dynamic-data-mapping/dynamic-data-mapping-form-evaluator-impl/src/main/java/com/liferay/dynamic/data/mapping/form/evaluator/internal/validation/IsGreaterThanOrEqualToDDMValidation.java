@@ -26,7 +26,8 @@ import org.osgi.service.component.annotations.Component;
  * @author Marcela Cunha
  */
 @Component(
-	immediate = true, property = "ddm.validation.data.type=numeric",
+	immediate = true,
+	property = {"ddm.validation.data.type=numeric", "ddm.validation.ranking:Float=2"},
 	service = DDMValidation.class
 )
 public class IsGreaterThanOrEqualToDDMValidation implements DDMValidation {
@@ -54,12 +55,12 @@ public class IsGreaterThanOrEqualToDDMValidation implements DDMValidation {
 
 	@Override
 	public String getRegex() {
-		return "/^(.+)<=(\\d+\\.?\\d*)?$/";
+		return "/^(.+)>=(\\d+\\.?\\d*)?$/";
 	}
 
 	@Override
 	public String getTemplate() {
-		return "{name} <= {parameter}";
+		return "{name} >= {parameter}";
 	}
 
 }

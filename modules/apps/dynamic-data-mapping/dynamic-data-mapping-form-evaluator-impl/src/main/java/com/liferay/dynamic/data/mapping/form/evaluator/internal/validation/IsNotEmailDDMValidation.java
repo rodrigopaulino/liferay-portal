@@ -15,6 +15,7 @@
 package com.liferay.dynamic.data.mapping.form.evaluator.internal.validation;
 
 import com.liferay.dynamic.data.mapping.form.validation.DDMValidation;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 
@@ -26,40 +27,38 @@ import org.osgi.service.component.annotations.Component;
  * @author Marcela Cunha
  */
 @Component(
-	immediate = true, property = "ddm.validation.data.type=string",
+	immediate = true,
+	property = {"ddm.validation.data.type=string", "ddm.validation.ranking:Float=4"},
 	service = DDMValidation.class
 )
-public class MatchDDMValidation implements DDMValidation {
+public class IsNotEmailDDMValidation implements DDMValidation {
 
 	@Override
 	public String getLabel(Locale locale) {
 		return LanguageUtil.get(
 			ResourceBundleUtil.getModuleAndPortalResourceBundle(
 				locale, getClass()),
-			"match");
+			"is-not-email");
 	}
 
 	@Override
 	public String getName() {
-		return "regularExpression";
+		return "isNotEmail";
 	}
 
 	@Override
 	public String getParameterMessage(Locale locale) {
-		return LanguageUtil.get(
-			ResourceBundleUtil.getModuleAndPortalResourceBundle(
-				locale, getClass()),
-			"regular-expression");
+		return StringPool.BLANK;
 	}
 
 	@Override
 	public String getRegex() {
-		return "/^match\\((.+), \"(.*)\"\\)$/";
+		return "/^NOT\\(isEmailAddress\\((.+)\\)\\)$/";
 	}
 
 	@Override
 	public String getTemplate() {
-		return "match({name}, \"{parameter}\")";
+		return "NOT(isEmailAddress({name}))";
 	}
 
 }
