@@ -26,22 +26,25 @@ import org.osgi.service.component.annotations.Component;
  * @author Marcela Cunha
  */
 @Component(
-	immediate = true, property = "ddm.validation.data.type=string",
+	immediate = true,
+	property = {
+		"ddm.validation.data.type=string", "ddm.validation.ranking:Float=5"
+	},
 	service = DDMValidation.class
 )
-public class MatchDDMValidation implements DDMValidation {
+public class DoesNotMatchDDMValidation implements DDMValidation {
 
 	@Override
 	public String getLabel(Locale locale) {
 		return LanguageUtil.get(
 			ResourceBundleUtil.getModuleAndPortalResourceBundle(
 				locale, getClass()),
-			"match");
+			"does-not-match");
 	}
 
 	@Override
 	public String getName() {
-		return "regularExpression";
+		return "doesNotMatch";
 	}
 
 	@Override
@@ -54,12 +57,12 @@ public class MatchDDMValidation implements DDMValidation {
 
 	@Override
 	public String getRegex() {
-		return "/^match\\((.+), \"(.*)\"\\)$/";
+		return "/^NOT\\(match\\((.+), \"(.*)\"\\)\\)$/";
 	}
 
 	@Override
 	public String getTemplate() {
-		return "match({name}, \"{parameter}\")";
+		return "NOT(match({name}, \"{parameter}\"))";
 	}
 
 }
