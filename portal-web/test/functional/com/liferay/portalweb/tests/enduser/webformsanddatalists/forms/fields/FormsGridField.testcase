@@ -50,7 +50,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-132453 CanBeDeleted pending implementation
-
 	}
 
 	@description = "Verify that a Grid can be duplicated"
@@ -61,7 +60,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-132455 CanBeDuplicated pending implementation
-
 	}
 
 	@description = "Verify that a Grid can be edited"
@@ -72,7 +70,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-132452 CanBeEdited pending implementation
-
 	}
 
 	@description = "Verify that a Grid can be required"
@@ -83,7 +80,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-132454 CanBeRequired pending implementation
-
 	}
 
 	@description = "Verify that a Form can be submitted with the Grid Field"
@@ -94,7 +90,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-132463 CanBeSubmitted pending implementation
-
 	}
 
 	@description = "Verify that edits to the Field can be canceled"
@@ -105,7 +100,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-132458 ChangesCanBeCanceled pending implementation
-
 	}
 
 	@description = "Verify that an option's Field References can be edited"
@@ -116,7 +110,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-132467 FieldReferencesOfOptionsCanBeEdited pending implementation
-
 	}
 
 	@description = "Verify that a help text can be added"
@@ -127,7 +120,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-132461 HelpTextCanBeAdded pending implementation
-
 	}
 
 	@description = "Veriy that the Field Label can be edited"
@@ -138,7 +130,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-132456 LabelCanBeEdited pending implementation
-
 	}
 
 	@description = "Verify that the Field Label can be hidden"
@@ -149,7 +140,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-132459 LabelCanBeHidden pending implementation
-
 	}
 
 	@description = "Verify that options can be added"
@@ -160,7 +150,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-132464 OptionsCanBeAdded pending implementation
-
 	}
 
 	@description = "Verify that option can be deleted"
@@ -171,7 +160,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-132465 OptionsCanBeDeleted pending implementation
-
 	}
 
 	@description = "Verify that options can be rearranged"
@@ -182,7 +170,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-132466 OptionsCanBeRearranged pending implementation
-
 	}
 
 	@description = "Verify that the Field Reference can be edited"
@@ -193,7 +180,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-132462 ReferenceCanBeEdited pending implementation
-
 	}
 
 	@description = "Verify that the Field Type can be changed"
@@ -204,7 +190,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-132457 TypeCanBeChanged pending implementation
-
 	}
 
 }

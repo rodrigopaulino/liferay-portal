@@ -52,7 +52,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-98081 DeleteSeparatorOnBuilder pending implementation
-
 	}
 
 	@description = "This is a test for LPS-98081. As a Developer, I want to use separators"
@@ -62,7 +61,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-98081 DuplicateSeparatorOnBuilder pending implementation
-
 	}
 
 	@description = "This is a test for LPS-98081. As a Developer, I want to use separators"
@@ -72,7 +70,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-98081 EditHelpTextOfSeparator pending implementation
-
 	}
 
 	@description = "This is a test for LPS-98081. As a Developer, I want to use separators"
@@ -82,7 +79,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-98081 EditLabelOfSeparator pending implementation
-
 	}
 
 	@description = "This is a test for LPS-98081. As a Developer, I want to use separators"
@@ -160,7 +156,6 @@ definition {
 		property portal.acceptance = "false";
 
 		// TODO LPS-98081 RepeatSeparatorOnUpload pending implementation
-
 	}
 
 	@description = "This is a test for LPS-98081. As a Developer, I want to use separators"
