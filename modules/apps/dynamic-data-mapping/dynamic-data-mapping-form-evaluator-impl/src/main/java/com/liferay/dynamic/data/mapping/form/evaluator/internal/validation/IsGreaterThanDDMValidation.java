@@ -56,11 +56,6 @@ public class IsGreaterThanDDMValidation implements DDMValidation {
 	}
 
 	@Override
-	public String getRegex() {
-		return "/^(.+)>(\\d+\\.?\\d*)?$/";
-	}
-
-	@Override
 	public String getTemplate() {
 		return "{name} > {parameter}";
 	}

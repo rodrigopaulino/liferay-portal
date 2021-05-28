@@ -56,11 +56,6 @@ public class ContainsDDMValidation implements DDMValidation {
 	}
 
 	@Override
-	public String getRegex() {
-		return "/^contains\\((.+), \"(.*)\"\\)$/";
-	}
-
-	@Override
 	public String getTemplate() {
 		return "contains({name}, \"{parameter}\")";
 	}

@@ -54,11 +54,6 @@ public class IsEmailDDMValidation implements DDMValidation {
 	}
 
 	@Override
-	public String getRegex() {
-		return "/^isEmailAddress\\((.+)\\)$/";
-	}
-
-	@Override
 	public String getTemplate() {
 		return "isEmailAddress({name})";
 	}

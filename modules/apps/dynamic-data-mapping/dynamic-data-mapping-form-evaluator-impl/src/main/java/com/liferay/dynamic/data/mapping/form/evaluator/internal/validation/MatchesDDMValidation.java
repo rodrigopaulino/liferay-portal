@@ -56,11 +56,6 @@ public class MatchesDDMValidation implements DDMValidation {
 	}
 
 	@Override
-	public String getRegex() {
-		return "/^match\\((.+), \"(.*)\"\\)$/";
-	}
-
-	@Override
 	public String getTemplate() {
 		return "match({name}, \"{parameter}\")";
 	}

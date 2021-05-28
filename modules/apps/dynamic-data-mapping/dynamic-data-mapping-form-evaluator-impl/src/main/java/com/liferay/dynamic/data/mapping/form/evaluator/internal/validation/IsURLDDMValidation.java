@@ -54,11 +54,6 @@ public class IsURLDDMValidation implements DDMValidation {
 	}
 
 	@Override
-	public String getRegex() {
-		return "/^isURL\\((.+)\\)$/";
-	}
-
-	@Override
 	public String getTemplate() {
 		return "isURL({name})";
 	}

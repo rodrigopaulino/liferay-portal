@@ -27,8 +27,6 @@ public interface DDMValidation {
 
 	public String getParameterMessage(Locale locale);
 
-	public String getRegex();
-
 	public String getTemplate();
 
 }

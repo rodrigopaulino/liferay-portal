@@ -56,11 +56,6 @@ public class DoesNotContainDDMValidation implements DDMValidation {
 	}
 
 	@Override
-	public String getRegex() {
-		return "/^NOT\\(contains\\((.+), \"(.*)\"\\)\\)$/";
-	}
-
-	@Override
 	public String getTemplate() {
 		return "NOT(contains({name}, \"{parameter}\"))";
 	}
