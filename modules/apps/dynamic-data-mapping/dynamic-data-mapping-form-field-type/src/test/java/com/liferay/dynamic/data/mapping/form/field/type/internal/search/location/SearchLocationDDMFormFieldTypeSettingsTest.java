@@ -94,11 +94,11 @@ public class SearchLocationDDMFormFieldTypeSettingsTest
 
 		Assert.assertEquals(ddmFormRules.toString(), 1, ddmFormRules.size());
 
-		DDMFormRule ddmFormRule0 = ddmFormRules.get(0);
+		DDMFormRule ddmFormRule = ddmFormRules.get(0);
 
-		Assert.assertEquals("TRUE", ddmFormRule0.getCondition());
+		Assert.assertEquals("TRUE", ddmFormRule.getCondition());
 
-		List<String> actions = ddmFormRule0.getActions();
+		List<String> actions = ddmFormRule.getActions();
 
 		Assert.assertEquals(actions.toString(), 3, actions.size());
 		Assert.assertEquals("setVisible('dataType', false)", actions.get(0));
