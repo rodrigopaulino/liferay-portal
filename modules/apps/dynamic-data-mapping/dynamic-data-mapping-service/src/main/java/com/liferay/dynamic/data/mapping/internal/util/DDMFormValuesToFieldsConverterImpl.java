@@ -264,6 +264,9 @@ public class DDMFormValuesToFieldsConverterImpl
 		Stream<DDMFormFieldValue> stream = ddmFormFieldValues.stream();
 
 		return stream.filter(
+			ddmFormFieldValue -> ddmFormFieldsMap.containsKey(
+				ddmFormFieldValue.getName())
+		).peek(
 			ddmFormFieldValue -> {
 				List<DDMFormFieldValue> nestedDDMFormFieldValues =
 					ddmFormFieldValue.getNestedDDMFormFieldValues();
@@ -273,9 +276,6 @@ public class DDMFormValuesToFieldsConverterImpl
 						_filterDDMFormFieldValues(
 							ddmFormFieldsMap, nestedDDMFormFieldValues));
 				}
-
-				return ddmFormFieldsMap.containsKey(
-					ddmFormFieldValue.getName());
 			}
 		).collect(
 			Collectors.toList()
