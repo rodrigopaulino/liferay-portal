@@ -111,7 +111,7 @@ public interface SearchLocationDDMFormFieldTypeSettings
 		},
 		optionValues = {"address", "city", "state", "postal-code", "country"},
 		predefinedValue = "[\"address\",\"city\",\"state\",\"postal-code\",\"country\"]",
-		properties = "multiple=true", type = "select"
+		properties = "multiple=true", type = "visible_fields"
 	)
 	public LocalizedValue visibleFields();
 
