@@ -67,4 +67,6 @@ public class DDMFormFieldTypeConstants {
 
 	public static final String VALIDATION = "validation";
 
+	public static final String VISIBLE_FIELDS = "visible_fields";
+
 }
