@@ -106,18 +106,25 @@ function normalizeValue({
  * needs to be prepared in case of
  * multiple selected values(when the value state is an array).
  */
-function assertOptionParameters({multiple, option, valueArray}) {
+function assertOptionParameters({
+	editingLanguageId,
+	multiple,
+	option,
+	valueArray,
+}) {
 	const included = valueArray.includes(option.value);
 
 	return {
 		...option,
 		active: !multiple && included,
 		checked: multiple && included,
+		label: option.label[editingLanguageId] ?? option.label,
 		type: multiple ? 'checkbox' : 'item',
 	};
 }
 
 function normalizeOptions({
+	editingLanguageId,
 	fixedOptions,
 	multiple,
 	options,
@@ -126,14 +133,24 @@ function normalizeOptions({
 }) {
 	const newOptions = [
 		...options.map((option, index) => ({
-			...assertOptionParameters({multiple, option, valueArray}),
+			...assertOptionParameters({
+				editingLanguageId,
+				multiple,
+				option,
+				valueArray,
+			}),
 			separator:
 				Array.isArray(fixedOptions) &&
 				fixedOptions.length > 0 &&
 				index === options.length - 1,
 		})),
 		...fixedOptions.map((option) =>
-			assertOptionParameters({multiple, option, valueArray})
+			assertOptionParameters({
+				editingLanguageId,
+				multiple,
+				option,
+				valueArray,
+			})
 		),
 	].filter(({value}) => value !== '');
 
@@ -552,6 +569,7 @@ const Select = ({
 };
 
 const Main = ({
+	editingLanguageId,
 	fixedOptions = [],
 	label,
 	localizedValue = {},
@@ -573,12 +591,14 @@ const Main = ({
 	const normalizedOptions = useMemo(
 		() =>
 			normalizeOptions({
+				editingLanguageId,
 				fixedOptions,
 				multiple,
 				options,
 				showEmptyOption,
 				valueArray,
 			}),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 		[fixedOptions, multiple, options, showEmptyOption, valueArray]
 	);
 
