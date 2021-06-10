@@ -87,7 +87,8 @@ public class SearchLocationDDMFormFieldTypeSettingsTest
 
 		Assert.assertNotNull(visibleFieldsDDMFormField);
 		Assert.assertNotNull(visibleFieldsDDMFormField.getLabel());
-		Assert.assertEquals("select", visibleFieldsDDMFormField.getType());
+		Assert.assertEquals(
+			"visible_fields", visibleFieldsDDMFormField.getType());
 		Assert.assertNotNull(visibleFieldsDDMFormField.getPredefinedValue());
 
 		List<DDMFormRule> ddmFormRules = ddmForm.getDDMFormRules();
