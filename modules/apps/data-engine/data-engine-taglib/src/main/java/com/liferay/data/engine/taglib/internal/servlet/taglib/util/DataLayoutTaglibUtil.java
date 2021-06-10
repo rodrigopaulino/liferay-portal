@@ -86,9 +86,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.Spliterator;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -234,11 +237,12 @@ public class DataLayoutTaglibUtil {
 	}
 
 	public static JSONArray getFieldTypesJSONArray(
-			HttpServletRequest httpServletRequest, Set<String> scopes)
+			HttpServletRequest httpServletRequest, Set<String> scopes,
+			boolean searchableFieldsDisabled)
 		throws Exception {
 
 		return _dataLayoutTaglibUtil._getFieldTypesJSONArray(
-			httpServletRequest, scopes);
+			httpServletRequest, scopes, searchableFieldsDisabled);
 	}
 
 	public static String renderDataLayout(
@@ -510,7 +514,8 @@ public class DataLayoutTaglibUtil {
 	}
 
 	private JSONArray _getFieldTypesJSONArray(
-			HttpServletRequest httpServletRequest, Set<String> scopes)
+			HttpServletRequest httpServletRequest, Set<String> scopes,
+			boolean searchableFieldsDisabled)
 		throws Exception {
 
 		JSONArray fieldTypesJSONArray = _jsonFactory.createJSONArray();
@@ -546,6 +551,11 @@ public class DataLayoutTaglibUtil {
 
 				if (anyMatch) {
 					fieldTypesJSONArray.put(jsonObject);
+
+					if (searchableFieldsDisabled) {
+						_setFieldIndexTypeNone(
+							jsonObject.getJSONObject("settingsContext"));
+					}
 				}
 			}
 
@@ -570,6 +580,10 @@ public class DataLayoutTaglibUtil {
 
 	private String _getFunctionsURL() {
 		return _ddmFormBuilderSettingsRetrieverHelper.getDDMFunctionsURL();
+	}
+
+	private Spliterator<JSONObject> _getSpliterator(JSONArray jsonArray) {
+		return jsonArray.spliterator();
 	}
 
 	private boolean _hasJavascriptModule(String name) {
@@ -609,6 +623,42 @@ public class DataLayoutTaglibUtil {
 		}
 
 		return _npmResolver.resolveModuleName(ddmFormFieldType.getModuleName());
+	}
+
+	private void _setFieldIndexTypeNone(JSONObject jsonObject) {
+		_stream(
+			StreamSupport.stream(
+				_getSpliterator(jsonObject.getJSONArray("pages")), true),
+			"rows",
+			rowJSONObject -> _stream(
+				StreamSupport.stream(
+					_getSpliterator(rowJSONObject.getJSONArray("columns")),
+					true),
+				"fields", null)
+		).filter(
+			fieldJSONObject -> Objects.equals(
+				fieldJSONObject.getString("fieldName"), "indexType")
+		).findFirst(
+		).ifPresent(
+			fieldJSONObject -> fieldJSONObject.put("value", "none")
+		);
+	}
+
+	private Stream<JSONObject> _stream(
+		Stream<JSONObject> stream, String key,
+		Function<JSONObject, Stream<JSONObject>> nestedMapper) {
+
+		return stream.flatMap(
+			jsonObject -> {
+				Stream<JSONObject> nestedStream = StreamSupport.stream(
+					_getSpliterator(jsonObject.getJSONArray(key)), true);
+
+				if (nestedMapper == null) {
+					return nestedStream;
+				}
+
+				return nestedStream.flatMap(nestedMapper);
+			});
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

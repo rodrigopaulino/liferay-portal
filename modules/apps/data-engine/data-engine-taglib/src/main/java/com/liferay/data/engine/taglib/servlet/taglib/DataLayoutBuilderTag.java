@@ -71,7 +71,8 @@ public class DataLayoutBuilderTag extends BaseDataLayoutBuilderTag {
 			setNamespacedAttribute(
 				httpServletRequest, "fieldTypes",
 				DataLayoutTaglibUtil.getFieldTypesJSONArray(
-					httpServletRequest, getScopes()));
+					httpServletRequest, getScopes(),
+					getSearchableFieldsDisabled()));
 			setNamespacedAttribute(
 				httpServletRequest, "fieldTypesModules",
 				DataLayoutTaglibUtil.resolveFieldTypesModules());
