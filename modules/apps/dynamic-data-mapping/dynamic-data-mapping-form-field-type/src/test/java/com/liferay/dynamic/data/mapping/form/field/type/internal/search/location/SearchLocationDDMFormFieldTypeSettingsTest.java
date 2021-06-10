@@ -74,6 +74,8 @@ public class SearchLocationDDMFormFieldTypeSettingsTest
 		Assert.assertNotNull(layoutDDMFormField.getLabel());
 		Assert.assertEquals("select", layoutDDMFormField.getType());
 		Assert.assertNotNull(layoutDDMFormField.getPredefinedValue());
+		Assert.assertEquals(
+			"false", layoutDDMFormField.getProperty("showEmptyOption"));
 
 		DDMFormField placeholderDDMFormField = ddmFormFieldsMap.get(
 			"placeholder");
