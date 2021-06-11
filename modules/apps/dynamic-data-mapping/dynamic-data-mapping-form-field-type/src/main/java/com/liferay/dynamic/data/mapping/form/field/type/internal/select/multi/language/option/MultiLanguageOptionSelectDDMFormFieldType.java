@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.form.field.type.internal.visible.fields;
+package com.liferay.dynamic.data.mapping.form.field.type.internal.select.multi.language.option;
 
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
@@ -26,16 +26,17 @@ import org.osgi.service.component.annotations.Component;
 @Component(
 	immediate = true,
 	property = {
-		"ddm.form.field.type.name=" + DDMFormFieldTypeConstants.VISIBLE_FIELDS,
+		"ddm.form.field.type.name=" + DDMFormFieldTypeConstants.MULTI_LANGUAGE_OPTION_SELECT,
 		"ddm.form.field.type.system=true"
 	},
 	service = DDMFormFieldType.class
 )
-public class VisibleFieldsDDMFormFieldType extends SelectDDMFormFieldType {
+public class MultiLanguageOptionSelectDDMFormFieldType
+	extends SelectDDMFormFieldType {
 
 	@Override
 	public String getName() {
-		return DDMFormFieldTypeConstants.VISIBLE_FIELDS;
+		return DDMFormFieldTypeConstants.MULTI_LANGUAGE_OPTION_SELECT;
 	}
 
 }

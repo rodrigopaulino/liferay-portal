@@ -22,6 +22,7 @@ import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutPage;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutRow;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormRule;
 import com.liferay.dynamic.data.mapping.form.field.type.DefaultDDMFormFieldTypeSettings;
+import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 
 /**
@@ -111,7 +112,8 @@ public interface SearchLocationDDMFormFieldTypeSettings
 		},
 		optionValues = {"address", "city", "state", "postal-code", "country"},
 		predefinedValue = "[\"address\",\"city\",\"state\",\"postal-code\",\"country\"]",
-		properties = "multiple=true", type = "visible_fields"
+		properties = "multiple=true",
+		type = DDMFormFieldTypeConstants.MULTI_LANGUAGE_OPTION_SELECT
 	)
 	public LocalizedValue visibleFields();
 

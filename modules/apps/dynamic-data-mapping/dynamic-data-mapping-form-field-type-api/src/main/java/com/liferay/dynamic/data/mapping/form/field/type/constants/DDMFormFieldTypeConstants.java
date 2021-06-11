@@ -45,6 +45,9 @@ public class DDMFormFieldTypeConstants {
 
 	public static final String LOCALIZABLE_TEXT = "localizable_text";
 
+	public static final String MULTI_LANGUAGE_OPTION_SELECT =
+		"multi_language_option_select";
+
 	public static final String NUMERIC = "numeric";
 
 	public static final String OPTIONS = "options";
@@ -66,7 +69,5 @@ public class DDMFormFieldTypeConstants {
 	public static final String TEXT = "text";
 
 	public static final String VALIDATION = "validation";
-
-	public static final String VISIBLE_FIELDS = "visible_fields";
 
 }
