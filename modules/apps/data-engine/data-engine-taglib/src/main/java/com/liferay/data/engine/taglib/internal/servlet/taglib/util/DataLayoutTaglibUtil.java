@@ -627,14 +627,14 @@ public class DataLayoutTaglibUtil {
 
 	private void _setFieldIndexTypeNone(JSONObject jsonObject) {
 		_stream(
-			StreamSupport.stream(
-				_getSpliterator(jsonObject.getJSONArray("pages")), true),
 			"rows",
 			rowJSONObject -> _stream(
+				"fields", null,
 				StreamSupport.stream(
 					_getSpliterator(rowJSONObject.getJSONArray("columns")),
-					true),
-				"fields", null)
+					true)),
+			StreamSupport.stream(
+				_getSpliterator(jsonObject.getJSONArray("pages")), true)
 		).filter(
 			fieldJSONObject -> Objects.equals(
 				fieldJSONObject.getString("fieldName"), "indexType")
@@ -645,19 +645,19 @@ public class DataLayoutTaglibUtil {
 	}
 
 	private Stream<JSONObject> _stream(
-		Stream<JSONObject> stream, String key,
-		Function<JSONObject, Stream<JSONObject>> nestedMapper) {
+		String key, Function<JSONObject, Stream<JSONObject>> mapper,
+		Stream<JSONObject> stream) {
 
 		return stream.flatMap(
 			jsonObject -> {
 				Stream<JSONObject> nestedStream = StreamSupport.stream(
 					_getSpliterator(jsonObject.getJSONArray(key)), true);
 
-				if (nestedMapper == null) {
+				if (mapper == null) {
 					return nestedStream;
 				}
 
-				return nestedStream.flatMap(nestedMapper);
+				return nestedStream.flatMap(mapper);
 			});
 	}
 
