@@ -49,6 +49,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
+ * TODO
+ * "ddm-documentlibrary" types can have titles if they were created after 6.2.x
+ * therefore it's necessary to check only those without title already.
+ * "document_library" types are new types after the migration and are already fixed.
+ */
+
+/**
  * @author István András Dézsi
  */
 public class UpgradeDDMFormDocumentLibraryFields extends UpgradeProcess {
