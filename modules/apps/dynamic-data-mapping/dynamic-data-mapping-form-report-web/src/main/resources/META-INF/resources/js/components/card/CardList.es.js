@@ -79,6 +79,12 @@ const chartFactory = ({
 			);
 		case 'color':
 		case 'date':
+		case 'place':
+		case 'address':
+		case 'city':
+		case 'country':
+		case 'state':
+		case 'postal-code':
 		case 'text': {
 			if (Array.isArray(values)) {
 				return (
@@ -94,7 +100,6 @@ const chartFactory = ({
 				return '';
 			}
 		}
-
 		default:
 			return null;
 	}
