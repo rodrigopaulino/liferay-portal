@@ -13,13 +13,26 @@
  */
 
 export default {
+	address: {
+		icon: 'geolocation',
+		title: Liferay.Language.get('text-field-type-label'),
+	},
 	checkbox_multiple: {
 		icon: 'check-circle',
 		title: Liferay.Language.get('checkbox-multiple-field-type-label'),
 	},
+	city: {
+		icon: 'geolocation',
+		title: Liferay.Language.get('text-field-type-label'),
+	},
+
 	color: {
 		icon: 'color-picker',
 		title: Liferay.Language.get('color-field-type-label'),
+	},
+	country: {
+		icon: 'geolocation',
+		title: Liferay.Language.get('text-field-type-label'),
 	},
 	date: {
 		icon: 'calendar',
@@ -33,6 +46,14 @@ export default {
 		icon: 'integer',
 		title: Liferay.Language.get('numeric-field-type-label'),
 	},
+	place: {
+		icon: 'geolocation',
+		title: Liferay.Language.get('text-field-type-label'),
+	},
+	['postal-code']: {
+		icon: 'geolocation',
+		title: Liferay.Language.get('text-field-type-label'),
+	},
 	radio: {
 		icon: 'radio-button',
 		title: Liferay.Language.get('radio-field-type-label'),
@@ -40,6 +61,10 @@ export default {
 	select: {
 		icon: 'list',
 		title: Liferay.Language.get('select-field-type-label'),
+	},
+	state: {
+		icon: 'geolocation',
+		title: Liferay.Language.get('text-field-type-label'),
 	},
 	text: {
 		icon: 'text',
