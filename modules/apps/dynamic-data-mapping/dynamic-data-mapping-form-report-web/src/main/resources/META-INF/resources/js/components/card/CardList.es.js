@@ -77,14 +77,14 @@ const chartFactory = ({
 					totalEntries={sumTotalValues}
 				/>
 			);
-		case 'color':
-		case 'date':
-		case 'place':
 		case 'address':
 		case 'city':
+		case 'color':
 		case 'country':
-		case 'state':
+		case 'date':
+		case 'place':
 		case 'postal-code':
+		case 'state':
 		case 'text': {
 			if (Array.isArray(values)) {
 				return (
