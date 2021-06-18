@@ -22,6 +22,7 @@ import PieChart from '../chart/pie/PieChart.es';
 import EmptyState from '../empty-state/EmptyState.es';
 import List from '../list/List.es';
 import Card from './Card.es';
+import {transformSearchLocationValues} from '../../utils/searchLocation.es';
 
 const chartFactory = ({
 	field,
@@ -136,6 +137,17 @@ export default ({data, fields}) => {
 		else {
 			hasCards = true;
 		}
+
+		if (field.type === 'search_location') {
+			const {data: newData, fields: newFields} = transformSearchLocationValues(
+				fields,
+				data
+			);
+		}
+		const {data: newData, fields: newFields} = transformSearchLocationValues(
+			fields,
+			data
+		);
 
 		return (
 			<Card

@@ -18,7 +18,6 @@ import CardShortcut from './components/card-shortcut/CardShortcut.es';
 import CardList from './components/card/CardList.es';
 import Sidebar from './components/sidebar/Sidebar.es';
 import {SidebarContextProvider} from './components/sidebar/SidebarContext.es';
-import {transformSearchLocationValues} from './utils/searchLocation.es';
 
 export default ({
 	data,
@@ -26,22 +25,17 @@ export default ({
 	formReportRecordsFieldValuesURL,
 	portletNamespace,
 }) => {
-	const {data: newData, fields: newFields} = transformSearchLocationValues(
-		fields,
-		data
-	);
-
 	return (
 		<SidebarContextProvider
 			formReportRecordsFieldValuesURL={formReportRecordsFieldValuesURL}
 			portletNamespace={portletNamespace}
 		>
 			<div className="report-cards-area" key="report-cards">
-				<CardList data={newData} fields={newFields} />
+				<CardList data={data} fields={fields} />
 			</div>
 
 			<div className="report-cards-shortcut" key="report-cards-shortcut">
-				<CardShortcut fields={newFields} />
+				<CardShortcut fields={data} />
 			</div>
 
 			<Sidebar />
