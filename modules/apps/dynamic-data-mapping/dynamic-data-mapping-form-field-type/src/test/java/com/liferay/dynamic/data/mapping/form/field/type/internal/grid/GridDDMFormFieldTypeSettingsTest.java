@@ -17,8 +17,11 @@ package com.liferay.dynamic.data.mapping.form.field.type.internal.grid;
 import com.liferay.dynamic.data.mapping.form.field.type.BaseDDMFormFieldTypeSettingsTestCase;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.model.DDMFormRule;
+import com.liferay.dynamic.data.mapping.test.util.DDMFormLayoutTestUtil;
 import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
+import com.liferay.dynamic.data.mapping.util.DDMFormLayoutFactory;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.Portal;
@@ -121,6 +124,22 @@ public class GridDDMFormFieldTypeSettingsTest
 		Assert.assertEquals(
 			"setVisible('requiredErrorMessage', false)", actions.get(3));
 		Assert.assertEquals("setVisible('validation', false)", actions.get(4));
+	}
+
+	@Test
+	public void testCreateGridDDMFormFieldTypeSettingsDDMFormLayout() {
+		assertDDMFormLayout(
+			DDMFormLayoutFactory.create(GridDDMFormFieldTypeSettings.class),
+			DDMFormLayoutTestUtil.createDDMFormLayout(
+				DDMFormLayout.TABBED_MODE,
+				DDMFormLayoutTestUtil.createDDMFormLayoutPage(
+					"label", "tip", "required", "requiredErrorMessage",
+					"predefinedValue", "rows", "columns"),
+				DDMFormLayoutTestUtil.createDDMFormLayoutPage(
+					"name", "fieldReference", "visibilityExpression",
+					"showLabel", "repeatable", "fieldNamespace", "indexType",
+					"localizable", "readOnly", "dataType", "type",
+					"validation")));
 	}
 
 	@Override

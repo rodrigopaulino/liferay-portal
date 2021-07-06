@@ -260,6 +260,24 @@ public class DDMFormTemplateContextProcessorTest extends PowerMockito {
 	}
 
 	@Test
+	public void testGetDDMFormSearchLocationField() {
+		DDMFormField ddmFormField =
+			_ddmFormTemplateContextProcessor.getDDMFormField(
+				JSONUtil.put(
+					"layout", "[\"one-column\"]"
+				).put(
+					"visibleFields", "[\"city\", \"country\"]"
+				));
+
+		Assert.assertEquals(
+			_getLocalizedValue("[\"one-column\"]"),
+			ddmFormField.getProperty("layout"));
+		Assert.assertEquals(
+			_getLocalizedValue("[\"city\", \"country\"]"),
+			ddmFormField.getProperty("visibleFields"));
+	}
+
+	@Test
 	public void testGetDDMFormTextField() {
 		DDMFormField ddmFormField =
 			_ddmFormTemplateContextProcessor.getDDMFormField(
