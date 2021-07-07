@@ -20,13 +20,13 @@ import com.liferay.dynamic.data.mapping.form.field.type.internal.util.DDMFormFie
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.render.DDMFormFieldRenderingContext;
 import com.liferay.petra.portlet.url.builder.PortletURLBuilder;
-import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.kernel.util.StringUtil;
+import com.liferay.portal.kernel.util.ResourceBundleUtil;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -52,14 +52,17 @@ public class RedirectButtonDDMFormFieldTemplateContextContributor
 
 		return HashMapBuilder.<String, Object>put(
 			"buttonLabel",
-			DDMFormFieldTypeUtil.getPropertyValue(
+			DDMFormFieldTypeUtil.getPropertyValues(
 				ddmFormField, ddmFormFieldRenderingContext.getLocale(),
-				"buttonLabel")
+				"buttonLabel")[0]
 		).put(
 			"message",
-			DDMFormFieldTypeUtil.getPropertyValue(
-				ddmFormField, ddmFormFieldRenderingContext.getLocale(),
-				"message")
+			LanguageUtil.format(
+				ResourceBundleUtil.getBundle(
+					ddmFormFieldRenderingContext.getLocale(), getClass()),
+				GetterUtil.getString(
+					((Object[])ddmFormField.getProperty("message"))[0]),
+				(Object[])ddmFormField.getProperty("messageArguments"))
 		).put(
 			"redirectURL",
 			() -> {
@@ -70,24 +73,21 @@ public class RedirectButtonDDMFormFieldTemplateContextContributor
 				return PortletURLBuilder.create(
 					requestBackedPortletURLFactory.createActionURL(
 						GetterUtil.getString(
-							(String)ddmFormField.getProperty("portletId")))
+							((Object[])ddmFormField.getProperty("portletId"))
+								[0]))
 				).setParameters(
 					HashMapBuilder.put(
 						"mvcRenderCommandName",
 						new String[] {
 							GetterUtil.getString(
-								(String)ddmFormField.getProperty(
-									"mvcRenderCommandName"))
+								((Object[])ddmFormField.getProperty(
+									"mvcRenderCommandName"))[0])
 						}
 					).putAll(
 						Stream.of(
-							StringUtil.split(
-								StringUtil.removeChars(
-									GetterUtil.getString(
-										(String)ddmFormField.getProperty(
-											"parameters")),
-									CharPool.CLOSE_BRACKET,
-									CharPool.OPEN_BRACKET))
+							(Object[])ddmFormField.getProperty("parameters")
+						).map(
+							String.class::cast
 						).map(
 							parameter -> parameter.split(StringPool.EQUAL)
 						).collect(
@@ -100,8 +100,9 @@ public class RedirectButtonDDMFormFieldTemplateContextContributor
 			}
 		).put(
 			"title",
-			DDMFormFieldTypeUtil.getPropertyValue(
+			DDMFormFieldTypeUtil.getPropertyValues(
 				ddmFormField, ddmFormFieldRenderingContext.getLocale(), "title")
+				[0]
 		).build();
 	}
 

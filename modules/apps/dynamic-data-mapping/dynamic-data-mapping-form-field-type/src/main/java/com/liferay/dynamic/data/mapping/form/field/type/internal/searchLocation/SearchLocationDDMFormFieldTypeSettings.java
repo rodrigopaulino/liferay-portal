@@ -17,6 +17,7 @@ package com.liferay.dynamic.data.mapping.form.field.type.internal.searchLocation
 import com.liferay.configuration.admin.constants.ConfigurationAdminPortletKeys;
 import com.liferay.dynamic.data.mapping.annotations.DDMForm;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormField;
+import com.liferay.dynamic.data.mapping.annotations.DDMFormFieldProperty;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutColumn;
 import com.liferay.dynamic.data.mapping.annotations.DDMFormLayoutPage;
@@ -109,13 +110,32 @@ public interface SearchLocationDDMFormFieldTypeSettings
 
 	@DDMFormField(
 		dataType = "",
-		properties = {
-			"buttonLabel=%third-party-applications",
-			"message=%a-google-places-api-key-is-required-to-use-this-field",
-			"mvcRenderCommandName=/configuration_admin/view_configuration_screen",
-			"parameters=[configurationScreenKey=third-party-applications-places]",
-			"portletId=" + ConfigurationAdminPortletKeys.SITE_SETTINGS,
-			"title=%the-google-places-api-key-is-not-set"
+		ddmFormFieldProperties = {
+			@DDMFormFieldProperty(
+				name = "buttonLabel", value = "%third-party-applications"
+			),
+			@DDMFormFieldProperty(
+				name = "message",
+				value = "a-google-places-api-key-is-required-to-use-this-field"
+			),
+			@DDMFormFieldProperty(
+				name = "messageArguments", value = {"<strong>", "</strong>"}
+			),
+			@DDMFormFieldProperty(
+				name = "mvcRenderCommandName",
+				value = "/configuration_admin/view_configuration_screen"
+			),
+			@DDMFormFieldProperty(
+				name = "parameters",
+				value = "configurationScreenKey=third-party-applications-places"
+			),
+			@DDMFormFieldProperty(
+				name = "portletId",
+				value = ConfigurationAdminPortletKeys.SITE_SETTINGS
+			),
+			@DDMFormFieldProperty(
+				name = "title", value = "%the-google-places-api-key-is-not-set"
+			)
 		},
 		type = DDMFormFieldTypeConstants.REDIRECT_BUTTON
 	)
