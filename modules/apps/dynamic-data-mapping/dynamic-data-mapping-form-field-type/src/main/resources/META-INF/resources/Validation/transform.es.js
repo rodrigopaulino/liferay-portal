@@ -12,8 +12,6 @@
  * details.
  */
 
-import VALIDATIONS from '../util/validations.es';
-
 const getValidationFromExpression = (validations, validation) => {
 	return function transformValidationFromExpression(expression) {
 		let mutValidation;
@@ -34,9 +32,8 @@ const getValidationFromExpression = (validations, validation) => {
 
 const transformValidations = (initialValidations, initialDataType) => {
 	const dataType = initialDataType !== 'string' ? 'numeric' : initialDataType;
-	const validations = initialValidations ? initialValidations : VALIDATIONS;
 
-	return validations[dataType].map((validation) => {
+	return initialValidations[dataType].map((validation) => {
 		return {
 			...validation,
 			checked: false,
