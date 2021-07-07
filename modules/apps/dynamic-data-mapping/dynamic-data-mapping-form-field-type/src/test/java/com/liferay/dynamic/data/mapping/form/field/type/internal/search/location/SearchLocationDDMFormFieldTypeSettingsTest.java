@@ -93,13 +93,15 @@ public class SearchLocationDDMFormFieldTypeSettingsTest
 			"redirect_button", redirectButtonDDMFormField.getType());
 		Assert.assertEquals(
 			"/configuration_admin/view_configuration_screen",
-			redirectButtonDDMFormField.getProperty("mvcRenderCommandName"));
+			((Object[])redirectButtonDDMFormField.getProperty(
+				"mvcRenderCommandName"))[0]);
 		Assert.assertEquals(
-			"[configurationScreenKey=third-party-applications-places]",
-			redirectButtonDDMFormField.getProperty("parameters"));
+			"configurationScreenKey=third-party-applications-places",
+			((Object[])redirectButtonDDMFormField.getProperty("parameters"))
+				[0]);
 		Assert.assertEquals(
 			ConfigurationAdminPortletKeys.SITE_SETTINGS,
-			redirectButtonDDMFormField.getProperty("portletId"));
+			((Object[])redirectButtonDDMFormField.getProperty("portletId"))[0]);
 
 		DDMFormField visibleFieldsDDMFormField = ddmFormFieldsMap.get(
 			"visibleFields");
