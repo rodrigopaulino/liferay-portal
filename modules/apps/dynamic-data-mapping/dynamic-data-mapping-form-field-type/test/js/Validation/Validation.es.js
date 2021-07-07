@@ -13,7 +13,7 @@
  */
 
 import {act, cleanup, fireEvent, render} from '@testing-library/react';
-import {PageProvider} from 'data-engine-js-components-web';
+import {FormProvider} from 'data-engine-js-components-web';
 import React from 'react';
 
 import Validation from '../../../src/main/resources/META-INF/resources/Validation/Validation.es';
@@ -28,10 +28,10 @@ const defaultValue = {
 	parameter: {},
 };
 
-const ValidationWithProvider = (props) => (
-	<PageProvider value={{editingLanguageId: 'en_US'}}>
+const ValidationWithProvider = ({validations, ...props}) => (
+	<FormProvider initialState={{validations}}>
 		<Validation {...props} />
-	</PageProvider>
+	</FormProvider>
 );
 
 describe('Validation', () => {
@@ -76,6 +76,16 @@ describe('Validation', () => {
 				name="validation"
 				onChange={onChange}
 				spritemap={spritemap}
+				validations={{
+					string: [
+						{
+							label: '',
+							name: '',
+							parameterMessage: '',
+							template: '',
+						},
+					],
+				}}
 				value={defaultValue}
 			/>
 		);
@@ -102,6 +112,16 @@ describe('Validation', () => {
 				validation={{
 					dataType: 'string',
 					fieldName: 'textfield',
+				}}
+				validations={{
+					string: [
+						{
+							label: '',
+							name: 'contains',
+							parameterMessage: '',
+							template: 'contains({name}, "{parameter}")',
+						},
+					],
 				}}
 				value={defaultValue}
 			/>
@@ -146,6 +166,16 @@ describe('Validation', () => {
 				validation={{
 					dataType: 'integer',
 					fieldName: 'numericfield',
+				}}
+				validations={{
+					numeric: [
+						{
+							label: '',
+							name: 'eq',
+							parameterMessage: '',
+							template: '{name}=={parameter}',
+						},
+					],
 				}}
 				value={defaultValue}
 			/>
