@@ -211,6 +211,8 @@ public class DDMFormReportDisplayContext {
 								visibleFields.getDefaultLocale())),
 						CharPool.CLOSE_BRACKET, CharPool.OPEN_BRACKET,
 						CharPool.QUOTE))
+			).map(
+				String::trim
 			).forEach(
 				visibleField -> jsonObject.put(
 					visibleField,

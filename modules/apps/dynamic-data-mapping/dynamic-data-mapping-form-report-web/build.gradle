@@ -13,4 +13,7 @@ dependencies {
 	compileOnly project(":apps:frontend-taglib:frontend-taglib-soy")
 	compileOnly project(":core:petra:petra-function")
 	compileOnly project(":core:petra:petra-string")
+
+	testCompile group: "org.skyscreamer", name: "jsonassert", version: "1.2.3"
+	testCompile project(":apps:dynamic-data-mapping:dynamic-data-mapping-test-util")
 }
