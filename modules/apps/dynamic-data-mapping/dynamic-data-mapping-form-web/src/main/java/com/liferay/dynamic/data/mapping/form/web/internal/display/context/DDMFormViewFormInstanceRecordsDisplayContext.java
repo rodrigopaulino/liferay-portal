@@ -468,12 +468,17 @@ public class DDMFormViewFormInstanceRecordsDisplayContext {
 		LocalizedValue visibleFields = (LocalizedValue)ddmFormField.getProperty(
 			"visibleFields");
 
-		return ListUtil.fromArray(
+		return Stream.of(
 			StringUtil.split(
 				StringUtil.removeChars(
 					visibleFields.getString(_renderRequest.getLocale()),
 					CharPool.CLOSE_BRACKET, CharPool.OPEN_BRACKET,
-					CharPool.QUOTE)));
+					CharPool.QUOTE))
+		).map(
+			String::trim
+		).collect(
+			Collectors.toList()
+		);
 	}
 
 	public boolean isDisabledManagementBar() {
