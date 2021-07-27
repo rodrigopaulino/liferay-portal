@@ -22,6 +22,7 @@ import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.servlet.SessionErrors;
@@ -33,6 +34,7 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portal.upload.UploadPortletRequestImpl;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
@@ -63,7 +65,7 @@ public class ImportDataDefinitionMVCActionCommand extends BaseMVCActionCommand {
 				(ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
 			UploadPortletRequest uploadPortletRequest =
-				_portal.getUploadPortletRequest(actionRequest);
+				_getUploadPortletRequest(actionRequest);
 
 			JSONObject jsonObject = _jsonFactory.createJSONObject(
 				FileUtil.read(uploadPortletRequest.getFile("jsonFile")));
@@ -107,6 +109,20 @@ public class ImportDataDefinitionMVCActionCommand extends BaseMVCActionCommand {
 		}
 
 		sendRedirect(actionRequest, actionResponse);
+	}
+
+	private UploadPortletRequest _getUploadPortletRequest(
+		ActionRequest actionRequest) {
+
+		LiferayPortletRequest liferayPortletRequest =
+			_portal.getLiferayPortletRequest(actionRequest);
+
+		return new UploadPortletRequestImpl(
+			_portal.getUploadServletRequest(
+				liferayPortletRequest.getHttpServletRequest()),
+			liferayPortletRequest,
+			_portal.getPortletNamespace(
+				liferayPortletRequest.getPortletName()));
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
