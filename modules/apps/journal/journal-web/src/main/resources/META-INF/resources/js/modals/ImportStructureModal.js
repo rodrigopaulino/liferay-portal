@@ -19,18 +19,45 @@ import ClayModal, {useModal} from '@clayui/modal';
 import PropTypes from 'prop-types';
 import React, {useRef, useState} from 'react';
 
-const ImportStructureModal = ({namespace, onClose: onCloseProp}) => {
-	const {observer, onClose} = useModal({
-		onClose: onCloseProp,
-	});
+const ImportStructureModal = ({portletNamespace}) => {
+	const [visible, setVisible] = useState(false);
 	const inputFileRef = useRef();
-	const nameInputId = `${namespace}_name`;
-	const jsonFileInputId = `${namespace}_jsonFile`;
-	const [inputFile, setInputFile] = useState();
-	const [fileName, setFileName] = useState('');
 	const [structureName, setStructureName] = useState('');
+	const importStructureModalComponentId = `${portletNamespace}importStructureModal`;
+	const jsonFileInputId = `${portletNamespace}jsonFile`;
+	const nameInputId = `${portletNamespace}name`;
+	const [{fileName, inputFile, inputFileValue}, setFile] = useState({
+		fileName: '',
+		inputFile: null,
+		inputFileValue: '',
+	});
+	const {observer, onClose} = useModal({
+		onClose: () => {
+			setVisible(false);
+			setFile({
+				fileName: '',
+				inputFile: null,
+				inputFileValue: '',
+			});
+			setStructureName('');
+		},
+	});
 
-	return (
+	if (!Liferay.component(importStructureModalComponentId)) {
+		Liferay.component(
+			importStructureModalComponentId,
+			{
+				open: () => {
+					setVisible(true);
+				},
+			},
+			{
+				destroyOnNavigate: true,
+			}
+		);
+	}
+
+	return visible ? (
 		<ClayModal observer={observer} size="md">
 			<ClayModal.Header>
 				{Liferay.Language.get('import-structure')}
@@ -82,8 +109,11 @@ const ImportStructureModal = ({namespace, onClose: onCloseProp}) => {
 								<ClayButton
 									displayType="secondary"
 									onClick={() => {
-										setFileName('');
-										setInputFile(null);
+										setFile({
+											fileName: '',
+											inputFile: null,
+											inputFileValue: '',
+										});
 									}}
 								>
 									{Liferay.Language.get('clear')}
@@ -95,13 +125,17 @@ const ImportStructureModal = ({namespace, onClose: onCloseProp}) => {
 				<input
 					className="d-none"
 					name={jsonFileInputId}
-					onChange={(event) => {
-						const [file] = event.target.files;
-						setInputFile(file);
-						setFileName(file.name);
+					onChange={({target}) => {
+						const [file] = target.files;
+						setFile({
+							fileName: file.name,
+							inputFile: file,
+							inputFileValue: target.value,
+						});
 					}}
 					ref={inputFileRef}
 					type="file"
+					value={inputFileValue}
 				/>
 			</ClayModal.Body>
 			<ClayModal.Footer
@@ -120,12 +154,11 @@ const ImportStructureModal = ({namespace, onClose: onCloseProp}) => {
 				}
 			/>
 		</ClayModal>
-	);
+	) : null;
 };
 
 ImportStructureModal.propTypes = {
-	namespace: PropTypes.string,
-	onClose: PropTypes.func.isRequired,
+	portletNamespace: PropTypes.string,
 };
 
 export default ImportStructureModal;
