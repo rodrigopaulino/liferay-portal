@@ -22,7 +22,7 @@ import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.portlet.bridges.mvc.BaseTransactionalMVCActionCommand;
+import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.servlet.SessionErrors;
 import com.liferay.portal.kernel.servlet.SessionMessages;
@@ -36,7 +36,6 @@ import com.liferay.portal.kernel.util.WebKeys;
 
 import javax.portlet.ActionRequest;
 import javax.portlet.ActionResponse;
-import javax.portlet.PortletException;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -52,72 +51,62 @@ import org.osgi.service.component.annotations.Reference;
 	},
 	service = MVCActionCommand.class
 )
-public class ImportDataDefinitionMVCActionCommand
-	extends BaseTransactionalMVCActionCommand {
+public class ImportDataDefinitionMVCActionCommand extends BaseMVCActionCommand {
 
 	@Override
-	public boolean processAction(
-			ActionRequest actionRequest, ActionResponse actionResponse)
-		throws PortletException {
-
-		try {
-			return super.processAction(actionRequest, actionResponse);
-		}
-		catch (PortletException portletException) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(portletException, portletException);
-			}
-
-			SessionMessages.add(
-				actionRequest,
-				_portal.getPortletId(actionRequest) +
-					SessionMessages.KEY_SUFFIX_HIDE_DEFAULT_ERROR_MESSAGE);
-
-			SessionErrors.add(
-				actionRequest, "importDataDefinitionErrorMessage");
-		}
-
-		return false;
-	}
-
-	@Override
-	protected void doTransactionalCommand(
+	protected void doProcessAction(
 			ActionRequest actionRequest, ActionResponse actionResponse)
 		throws Exception {
 
-		ThemeDisplay themeDisplay = (ThemeDisplay)actionRequest.getAttribute(
-			WebKeys.THEME_DISPLAY);
+		try {
+			ThemeDisplay themeDisplay =
+				(ThemeDisplay)actionRequest.getAttribute(WebKeys.THEME_DISPLAY);
 
-		UploadPortletRequest uploadPortletRequest =
-			_portal.getUploadPortletRequest(actionRequest);
+			UploadPortletRequest uploadPortletRequest =
+				_portal.getUploadPortletRequest(actionRequest);
 
-		JSONObject jsonObject = _jsonFactory.createJSONObject(
-			FileUtil.read(uploadPortletRequest.getFile("jsonFile")));
+			JSONObject jsonObject = _jsonFactory.createJSONObject(
+				FileUtil.read(uploadPortletRequest.getFile("jsonFile")));
 
-		DataDefinition dataDefinition = DataDefinition.toDTO(
-			jsonObject.getString("dataDefinition"));
+			DataDefinition dataDefinition = DataDefinition.toDTO(
+				jsonObject.getString("dataDefinition"));
 
-		dataDefinition.setDefaultDataLayout(
-			DataLayout.toDTO(jsonObject.getString("dataLayout")));
-		dataDefinition.setName(
-			HashMapBuilder.<String, Object>put(
-				String.valueOf(themeDisplay.getSiteDefaultLocale()),
-				ParamUtil.getString(actionRequest, "name")
-			).build());
+			dataDefinition.setDefaultDataLayout(
+				DataLayout.toDTO(jsonObject.getString("dataLayout")));
+			dataDefinition.setName(
+				HashMapBuilder.<String, Object>put(
+					String.valueOf(themeDisplay.getSiteDefaultLocale()),
+					ParamUtil.getString(actionRequest, "name")
+				).build());
 
-		DataDefinitionResource.Builder dataDefinitionResourcedBuilder =
-			_dataDefinitionResourceFactory.create();
+			DataDefinitionResource.Builder dataDefinitionResourcedBuilder =
+				_dataDefinitionResourceFactory.create();
 
-		DataDefinitionResource dataDefinitionResource =
-			dataDefinitionResourcedBuilder.user(
-				themeDisplay.getUser()
-			).build();
+			DataDefinitionResource dataDefinitionResource =
+				dataDefinitionResourcedBuilder.user(
+					themeDisplay.getUser()
+				).build();
 
-		dataDefinitionResource.postSiteDataDefinitionByContentType(
-			themeDisplay.getScopeGroupId(), "journal", dataDefinition);
+			dataDefinitionResource.postSiteDataDefinitionByContentType(
+				themeDisplay.getScopeGroupId(), "journal", dataDefinition);
 
-		SessionMessages.add(
-			actionRequest, "importDataDefinitionSuccessMessage");
+			SessionMessages.add(
+				actionRequest, "importDataDefinitionSuccessMessage");
+
+			hideDefaultSuccessMessage(actionRequest);
+		}
+		catch (Exception exception) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(exception, exception);
+			}
+
+			SessionErrors.add(
+				actionRequest, "importDataDefinitionErrorMessage");
+
+			hideDefaultErrorMessage(actionRequest);
+		}
+
+		sendRedirect(actionRequest, actionResponse);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
