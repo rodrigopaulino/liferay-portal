@@ -162,6 +162,7 @@ const Popover = ({tooltip}) => {
 };
 
 function FieldBase({
+	accessible = true,
 	children,
 	displayErrors,
 	errorMessage,
@@ -395,7 +396,7 @@ function FieldBase({
 				</span>
 			)}
 
-			{fieldDetails && (
+			{accessible && fieldDetails && (
 				<span
 					className="sr-only"
 					dangerouslySetInnerHTML={{
