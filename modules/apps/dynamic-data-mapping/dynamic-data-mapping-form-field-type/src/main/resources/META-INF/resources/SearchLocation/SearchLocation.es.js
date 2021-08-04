@@ -64,6 +64,7 @@ const Field = ({
 			readOnly={readOnly}
 			repeatable={repeatable}
 			showLabel={showLabel}
+			valid={!!parsedValue[visibleField]}
 		>
 			<ClayInput
 				className="ddm-field-text"
@@ -161,6 +162,8 @@ const Main = ({
 	return (
 		<FieldBase
 			{...otherProps}
+			accessible={false}
+			displayErrors={false}
 			name={name}
 			placeholder=""
 			readOnly={readOnly}
