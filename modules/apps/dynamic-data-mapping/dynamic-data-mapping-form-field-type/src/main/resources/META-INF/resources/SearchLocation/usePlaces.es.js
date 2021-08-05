@@ -15,8 +15,23 @@
 import {useEffect, useRef, useState} from 'react';
 
 const loadScript = (readOnly, elementId, googlePlacesAPIKey, callback) => {
-	const script = document.createElement('script');
-	script.setAttribute('type', 'text/javascript');
+	let script = document.getElementById('googleMapsScript');
+
+	if (!script) {
+		script = document.createElement('script');
+
+		script.setAttribute('id', 'googleMapsScript');
+		script.setAttribute('type', 'text/javascript');
+
+		let url = 'https://maps.googleapis.com/maps/api/js?libraries=places';
+
+		if (googlePlacesAPIKey) {
+			url += '&key=' + googlePlacesAPIKey;
+		}
+
+		script.setAttribute('src', url);
+	}
+
 	const scriptReadyState = script.getAttribute('readyState');
 
 	if (scriptReadyState) {
@@ -31,16 +46,9 @@ const loadScript = (readOnly, elementId, googlePlacesAPIKey, callback) => {
 		});
 	}
 	else {
-		script.onload = () => callback();
+		script.addEventListener('load', callback);
 	}
 
-	let url = 'https://maps.googleapis.com/maps/api/js?libraries=places';
-
-	if (googlePlacesAPIKey) {
-		url += '&key=' + googlePlacesAPIKey;
-	}
-
-	script.setAttribute('src', url);
 	const element = document.getElementById(elementId);
 	/* eslint-disable-next-line no-unused-expressions */
 	element && !readOnly ? element.appendChild(script) : null;
