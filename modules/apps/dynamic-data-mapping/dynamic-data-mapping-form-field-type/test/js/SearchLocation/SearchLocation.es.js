@@ -43,6 +43,7 @@ const defaultConfig = {
 	name: 'test_search_location_field',
 	onChange: jest.fn(),
 	readOnly: false,
+	viewMode: true,
 	visibleFields: ['address', 'city', 'country', 'postal-code', 'state'],
 };
 
