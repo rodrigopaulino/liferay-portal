@@ -45,6 +45,10 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 				"setVisible('visibleFields', hasGooglePlacesAPIKey())"
 			},
 			condition = "TRUE"
+		),
+		@DDMFormRule(
+			actions = "jumpPage(0, 2)",
+			condition = "NOT(hasGooglePlacesAPIKey())"
 		)
 	}
 )
@@ -77,8 +81,7 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 							size = 12,
 							value = {
 								"dataType", "name", "fieldReference",
-								"showLabel", "repeatable", "readOnly",
-								"redirectButton"
+								"showLabel", "repeatable", "readOnly"
 							}
 						)
 					}
