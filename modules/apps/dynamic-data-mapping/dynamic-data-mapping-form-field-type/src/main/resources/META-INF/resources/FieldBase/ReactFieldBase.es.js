@@ -168,6 +168,7 @@ function FieldBase({
 	errorMessage,
 	fieldName,
 	hideField,
+	hideEditedFlag,
 	id,
 	label,
 	localizedValue = {},
@@ -373,7 +374,7 @@ function FieldBase({
 					/>
 				))}
 
-			{type !== 'captcha' && (
+			{!hideEditedFlag && (
 				<input
 					key={inputEditedName}
 					name={inputEditedName}

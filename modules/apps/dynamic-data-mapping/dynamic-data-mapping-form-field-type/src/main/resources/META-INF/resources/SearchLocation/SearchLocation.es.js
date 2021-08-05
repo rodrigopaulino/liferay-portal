@@ -59,7 +59,9 @@ const Field = ({
 	return (
 		<FieldBase
 			{...otherProps}
+			hideEditedFlag
 			label={label[editingLanguageId] ?? label}
+			localizedValue={{}}
 			name={name}
 			readOnly={readOnly}
 			repeatable={repeatable}
