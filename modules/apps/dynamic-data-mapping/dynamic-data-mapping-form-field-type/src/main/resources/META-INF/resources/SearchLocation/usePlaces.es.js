@@ -95,24 +95,32 @@ async function handlePlaceSelect(autoComplete, setValue) {
 	});
 }
 
-const usePlaces = ({elementId, googlePlacesAPIKey, isReadOnly, onChange}) => {
+const usePlaces = ({
+	elementId,
+	googlePlacesAPIKey,
+	isReadOnly,
+	onChange,
+	viewMode,
+}) => {
 	const autoComplete = useRef();
 	const [listener, setListener] = useState();
 	const [value, setValue] = useState();
 
 	useEffect(() => {
-		loadScript(isReadOnly, elementId, googlePlacesAPIKey, () =>
-			handleScriptLoad(autoComplete, elementId, setListener, setValue)
-		);
+		if (viewMode) {
+			loadScript(isReadOnly, elementId, googlePlacesAPIKey, () =>
+				handleScriptLoad(autoComplete, elementId, setListener, setValue)
+			);
 
-		return () => {
-			window.google.maps.event.removeListener(listener);
-		};
+			return () => {
+				window.google.maps.event.removeListener(listener);
+			};
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 
 	useEffect(() => {
-		if (value) {
+		if (viewMode && value) {
 			onChange(value);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps

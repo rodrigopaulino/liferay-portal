@@ -112,6 +112,7 @@ const Main = ({
 	settingsContext,
 	showLabel,
 	value,
+	viewMode,
 	visibleFields,
 	...otherProps
 }) => {
@@ -120,6 +121,7 @@ const Main = ({
 		googlePlacesAPIKey,
 		isReadOnly: readOnly,
 		onChange,
+		viewMode,
 	});
 
 	const [availableLabels, setAvailableLabels] = useState();
