@@ -118,7 +118,7 @@ public class SearchLocationDDMFormFieldTypeSettingsTest
 
 		List<DDMFormRule> ddmFormRules = ddmForm.getDDMFormRules();
 
-		Assert.assertEquals(ddmFormRules.toString(), 1, ddmFormRules.size());
+		Assert.assertEquals(ddmFormRules.toString(), 2, ddmFormRules.size());
 
 		DDMFormRule ddmFormRule = ddmFormRules.get(0);
 
@@ -160,6 +160,16 @@ public class SearchLocationDDMFormFieldTypeSettingsTest
 		Assert.assertEquals(
 			"setVisible('visibleFields', hasGooglePlacesAPIKey())",
 			actions.get(8));
+
+		ddmFormRule = ddmFormRules.get(1);
+
+		Assert.assertEquals(
+			"NOT(hasGooglePlacesAPIKey())", ddmFormRule.getCondition());
+
+		actions = ddmFormRule.getActions();
+
+		Assert.assertEquals(actions.toString(), 1, actions.size());
+		Assert.assertEquals("jumpPage(0, 2)", actions.get(0));
 	}
 
 	@Test
@@ -175,7 +185,7 @@ public class SearchLocationDDMFormFieldTypeSettingsTest
 					"redirectButton"),
 				DDMFormLayoutTestUtil.createDDMFormLayoutPage(
 					"dataType", "name", "fieldReference", "showLabel",
-					"repeatable", "readOnly", "redirectButton")));
+					"repeatable", "readOnly")));
 	}
 
 	@Override
