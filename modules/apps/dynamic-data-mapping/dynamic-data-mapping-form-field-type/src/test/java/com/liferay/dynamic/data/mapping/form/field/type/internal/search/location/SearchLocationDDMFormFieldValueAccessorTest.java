@@ -14,7 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.form.field.type.internal.search.location;
 
-import com.liferay.dynamic.data.mapping.form.field.type.internal.searchLocation.SearchLocationDDMFormFieldValueAccessor;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
