@@ -36,6 +36,8 @@
 				).setRedirect(
 					currentURL
 				).buildString()
+			).put(
+				"nameMaxLength", ModelHintsConstants.TEXT_MAX_LENGTH
 			).build()
 		%>'
 	/>

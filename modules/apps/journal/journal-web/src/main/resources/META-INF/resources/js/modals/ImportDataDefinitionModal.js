@@ -21,6 +21,7 @@ import React, {useEffect, useRef, useState} from 'react';
 
 const ImportDataDefinitionModal = ({
 	importDataDefinitionURL,
+	nameMaxLength,
 	portletNamespace,
 }) => {
 	const [visible, setVisible] = useState(false);
@@ -90,6 +91,7 @@ const ImportDataDefinitionModal = ({
 						</label>
 						<ClayInput
 							id={nameInputId}
+							maxLength={nameMaxLength}
 							name={nameInputId}
 							onChange={(event) => setName(event.target.value)}
 							type="text"
@@ -174,6 +176,7 @@ const ImportDataDefinitionModal = ({
 
 ImportDataDefinitionModal.propTypes = {
 	importDataDefinitionURL: PropTypes.string,
+	nameMaxLength: PropTypes.string,
 	portletNamespace: PropTypes.string,
 };
 
