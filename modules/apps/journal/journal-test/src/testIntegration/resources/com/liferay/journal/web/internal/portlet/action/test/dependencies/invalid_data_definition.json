@@ -1,93 +1,63 @@
 {
-	"dataDefinition": {
-		"availableLanguageIds": [
-			"en_US"
-		],
-		"defaultLanguageId": "en_US",
-		"description": {
-			"en_US": ""
-		},
-		"fields": [
-			{
-				"customProperties": {
-					"autocomplete": false,
-					"confirmationErrorMessage": {
-						"en_US": ""
-					},
-					"confirmationLabel": {
-						"en_US": ""
-					},
-					"dataSourceType": "manual",
-					"dataType": "string",
-					"ddmDataProviderInstanceId": [
-					],
-					"ddmDataProviderInstanceOutput": [
-					],
-					"direction": [
-						"vertical"
-					],
-					"displayStyle": "singleline",
-					"fieldNamespace": "",
-					"fieldReference": "Text87716774",
-					"hideField": false,
-					"labelAtStructureLevel": true,
-					"nativeField": false,
-					"objectFieldName": "",
-					"options": {
-						"en_US": [
-							{
-								"label": "Option",
-								"reference": "Option97021790",
-								"value": "Option97021790"
-							}
-						]
-					},
-					"placeholder": {
-						"en_US": ""
-					},
-					"requireConfirmation": false,
-					"requiredErrorMessage": {
-						"en_US": ""
-					},
-					"tooltip": {
-						"en_US": ""
-					},
-					"validation": {
-						"errorMessage": {
-						},
-						"expression": {
-						},
-						"parameter": {
-						}
-					},
-					"visibilityExpression": ""
-				},
-				"defaultValue": {
+	"availableLanguageIds": [
+		"en_US"
+	],
+	"contentType": "journal",
+	"dataDefinitionFields": [
+		{
+			"customProperties": {
+				"confirmationErrorMessage": {
 					"en_US": ""
 				},
-				"fieldType": "text",
-				"indexType": "keyword",
-				"label": {
-					"en_US": "Text"
-				},
-				"localizable": true,
-				"name": "Text87716774",
-				"nestedDataDefinitionFields": [
-				],
-				"readOnly": false,
-				"repeatable": false,
-				"required": false,
-				"showLabel": true,
-				"tip": {
+				"confirmationLabel": {
 					"en_US": ""
-				}
+				},
+				"dataType": "string",
+				"direction": "[vertical]",
+				"displayStyle": "singleline",
+				"fieldNamespace": "",
+				"fieldReference": "Text32861154",
+				"hideField": false,
+				"labelAtStructureLevel": true,
+				"nativeField": false,
+				"objectFieldName": "",
+				"options": {
+				},
+				"placeholder": {
+					"en_US": ""
+				},
+				"requireConfirmation": false,
+				"requiredErrorMessage": {
+					"en_US": ""
+				},
+				"tooltip": {
+					"en_US": ""
+				},
+				"visibilityExpression": ""
+			},
+			"defaultValue": {
+				"en_US": ""
+			},
+			"fieldType": "text",
+			"indexType": "keyword",
+			"indexable": true,
+			"label": {
+				"en_US": "Text"
+			},
+			"localizable": true,
+			"name": "Text32861154",
+			"nestedDataDefinitionFields": [
+			],
+			"readOnly": false,
+			"repeatable": false,
+			"required": false,
+			"showLabel": true,
+			"tip": {
+				"en_US": ""
 			}
-		],
-		"name": {
-			"en_US": "test"
 		}
-	},
-	"dataLayout": {
+	],
+	"defaultDataLayout": {
 		"dataLayoutFields": {
 		},
 		"dataLayoutPages": [
@@ -96,9 +66,9 @@
 					{
 						"dataLayoutColumns": [
 							{
-								"columnSize": 12,
+								"columnSize": 6,
 								"fieldNames": [
-									"Text87716774"
+									"Text32861154"
 								]
 							}
 						]
@@ -115,11 +85,17 @@
 		"dataRules": [
 		],
 		"description": {
-			"en_US": ""
 		},
 		"name": {
-			"en_US": "test"
+			"en_US": "Exported Structure"
 		},
 		"paginationMode": "single-page"
-	}
+	},
+	"defaultLanguageId": "en_US",
+	"description": {
+	},
+	"name": {
+		"en_US": "Exported Structure"
+	},
+	"storageType": "default"
 }
