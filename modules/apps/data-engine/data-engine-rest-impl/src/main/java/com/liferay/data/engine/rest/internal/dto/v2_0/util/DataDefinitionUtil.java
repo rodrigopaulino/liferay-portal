@@ -35,6 +35,7 @@ import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -269,7 +270,7 @@ public class DataDefinitionUtil {
 		);
 	}
 
-	private static Map<String, List<Map<String, String>>> _toMap(
+	private static Map<String, List<JSONObject>> _toMap(
 		DDMFormFieldOptions ddmFormFieldOptions) {
 
 		Set<String> optionsValues = ddmFormFieldOptions.getOptionsValues();
@@ -278,7 +279,7 @@ public class DataDefinitionUtil {
 			return Collections.emptyMap();
 		}
 
-		Map<String, List<Map<String, String>>> options = new HashMap<>();
+		Map<String, List<JSONObject>> options = new HashMap<>();
 
 		for (String optionValue : optionsValues) {
 			LocalizedValue localizedValue = ddmFormFieldOptions.getOptionLabels(
@@ -288,23 +289,23 @@ public class DataDefinitionUtil {
 				String languageId = LanguageUtil.getLanguageId(locale);
 
 				if (options.containsKey(languageId)) {
-					List<Map<String, String>> values = options.get(languageId);
+					List<JSONObject> values = options.get(languageId);
 
 					values.add(
-						HashMapBuilder.put(
+						JSONUtil.put(
 							"label", localizedValue.getString(locale)
 						).put(
 							"reference",
 							ddmFormFieldOptions.getOptionReference(optionValue)
 						).put(
 							"value", optionValue
-						).build());
+						));
 				}
 				else {
 					options.put(
 						languageId,
 						ListUtil.toList(
-							HashMapBuilder.put(
+							JSONUtil.put(
 								"label", localizedValue.getString(locale)
 							).put(
 								"reference",
@@ -312,7 +313,7 @@ public class DataDefinitionUtil {
 									optionValue)
 							).put(
 								"value", optionValue
-							).build()));
+							)));
 				}
 			}
 		}
