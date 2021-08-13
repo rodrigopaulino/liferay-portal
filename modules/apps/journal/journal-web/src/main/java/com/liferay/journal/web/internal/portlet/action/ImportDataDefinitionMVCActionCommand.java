@@ -15,11 +15,8 @@
 package com.liferay.journal.web.internal.portlet.action;
 
 import com.liferay.data.engine.rest.dto.v2_0.DataDefinition;
-import com.liferay.data.engine.rest.dto.v2_0.DataLayout;
 import com.liferay.data.engine.rest.resource.v2_0.DataDefinitionResource;
 import com.liferay.journal.constants.JournalPortletKeys;
-import com.liferay.portal.kernel.json.JSONFactory;
-import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
@@ -67,14 +64,9 @@ public class ImportDataDefinitionMVCActionCommand extends BaseMVCActionCommand {
 			UploadPortletRequest uploadPortletRequest =
 				_getUploadPortletRequest(actionRequest);
 
-			JSONObject jsonObject = _jsonFactory.createJSONObject(
+			DataDefinition dataDefinition = DataDefinition.toDTO(
 				FileUtil.read(uploadPortletRequest.getFile("jsonFile")));
 
-			DataDefinition dataDefinition = DataDefinition.toDTO(
-				jsonObject.getString("dataDefinition"));
-
-			dataDefinition.setDefaultDataLayout(
-				DataLayout.toDTO(jsonObject.getString("dataLayout")));
 			dataDefinition.setName(
 				HashMapBuilder.<String, Object>put(
 					String.valueOf(themeDisplay.getSiteDefaultLocale()),
@@ -130,9 +122,6 @@ public class ImportDataDefinitionMVCActionCommand extends BaseMVCActionCommand {
 
 	@Reference
 	private DataDefinitionResource.Factory _dataDefinitionResourceFactory;
-
-	@Reference
-	private JSONFactory _jsonFactory;
 
 	@Reference
 	private Portal _portal;
