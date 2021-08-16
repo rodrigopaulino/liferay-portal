@@ -15,6 +15,9 @@
 package com.liferay.data.engine.field.type.util;
 
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
+import com.liferay.portal.json.JSONFactoryImpl;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.language.Language;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
@@ -37,6 +40,8 @@ import org.mockito.runners.MockitoJUnitRunner;
 
 import org.powermock.api.mockito.PowerMockito;
 
+import org.skyscreamer.jsonassert.JSONAssert;
+
 /**
  * @author Mateus Santana
  */
@@ -50,6 +55,7 @@ public class LocalizedValueUtilTest extends PowerMockito {
 
 	@Before
 	public void setUp() {
+		_setUpJSONFactoryUtil();
 		_setUpLanguageUtil();
 	}
 
@@ -100,7 +106,43 @@ public class LocalizedValueUtilTest extends PowerMockito {
 	}
 
 	@Test
-	public void testToLocalizedValuesMapValidLocalizedValue() {
+	public void testToLocalizedValuesMapWithJSONArrayValues() throws Exception {
+		Map<String, Object> map = LocalizedValueUtil.toLocalizedValuesMap(
+			new LocalizedValue() {
+				{
+					addString(LocaleUtil.US, "[\"eng\"]");
+					addString(LocaleUtil.BRAZIL, "[\"por\"]");
+				}
+			});
+
+		JSONAssert.assertEquals(
+			JSONUtil.put(
+				"eng"
+			).toJSONString(),
+			String.valueOf(map.get("en_US")), false);
+	}
+
+	@Test
+	public void testToLocalizedValuesMapWithJSONObjectValues()
+		throws Exception {
+
+		Map<String, Object> map = LocalizedValueUtil.toLocalizedValuesMap(
+			new LocalizedValue() {
+				{
+					addString(LocaleUtil.US, "{\"language\": \"eng\"}");
+					addString(LocaleUtil.BRAZIL, "{\"language\": \"por\"}");
+				}
+			});
+
+		JSONAssert.assertEquals(
+			JSONUtil.put(
+				"language", "eng"
+			).toJSONString(),
+			String.valueOf(map.get("en_US")), false);
+	}
+
+	@Test
+	public void testToLocalizedValuesMapWithStringValues() {
 		Map<String, Object> map = LocalizedValueUtil.toLocalizedValuesMap(
 			new LocalizedValue() {
 				{
@@ -132,6 +174,12 @@ public class LocalizedValueUtilTest extends PowerMockito {
 				HashMapBuilder.put(
 					LocaleUtil.US, "en_US"
 				).build()));
+	}
+
+	private void _setUpJSONFactoryUtil() {
+		JSONFactoryUtil jsonFactoryUtil = new JSONFactoryUtil();
+
+		jsonFactoryUtil.setJSONFactory(new JSONFactoryImpl());
 	}
 
 	private void _setUpLanguageUtil() {
