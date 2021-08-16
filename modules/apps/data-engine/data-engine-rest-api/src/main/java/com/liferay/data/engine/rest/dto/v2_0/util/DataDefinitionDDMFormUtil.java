@@ -73,6 +73,18 @@ public class DataDefinitionDDMFormUtil {
 		return ddmForm;
 	}
 
+	private static void _addOption(
+		DDMFormFieldOptions ddmFormFieldOptions, JSONObject jsonObject,
+		Locale locale) {
+
+		ddmFormFieldOptions.addOptionLabel(
+			JSONUtil.getValueAsString(jsonObject, "Object/value"), locale,
+			JSONUtil.getValueAsString(jsonObject, "Object/label"));
+		ddmFormFieldOptions.addOptionReference(
+			JSONUtil.getValueAsString(jsonObject, "Object/value"),
+			JSONUtil.getValueAsString(jsonObject, "Object/reference"));
+	}
+
 	private static DDMFormFieldOptions _getDDMFormFieldOptions(
 		Locale locale, Map<String, ?> options) {
 
@@ -113,7 +125,12 @@ public class DataDefinitionDDMFormUtil {
 			}
 			else if (value instanceof List) {
 				for (Object option : (List<Object>)value) {
-					if (option instanceof Map) {
+					if (option instanceof JSONObject) {
+						_addOption(
+							ddmFormFieldOptions, (JSONObject)option,
+							LocaleUtil.fromLanguageId(entry.getKey()));
+					}
+					else if (option instanceof Map) {
 						ddmFormFieldOptions.addOptionLabel(
 							MapUtil.getString((Map<String, ?>)option, "value"),
 							LocaleUtil.fromLanguageId(entry.getKey()),
@@ -129,17 +146,9 @@ public class DataDefinitionDDMFormUtil {
 								JSONFactoryUtil.createJSONObject(
 									option.toString());
 
-							ddmFormFieldOptions.addOptionLabel(
-								JSONUtil.getValueAsString(
-									optionJSONObject, "Object/value"),
-								LocaleUtil.fromLanguageId(entry.getKey()),
-								JSONUtil.getValueAsString(
-									optionJSONObject, "Object/label"));
-							ddmFormFieldOptions.addOptionReference(
-								JSONUtil.getValueAsString(
-									optionJSONObject, "Object/value"),
-								JSONUtil.getValueAsString(
-									optionJSONObject, "Object/reference"));
+							_addOption(
+								ddmFormFieldOptions, optionJSONObject,
+								LocaleUtil.fromLanguageId(entry.getKey()));
 						}
 						catch (JSONException jsonException) {
 							if (_log.isDebugEnabled()) {
