@@ -19,6 +19,7 @@ import {
 	RulesSupport,
 	useFieldTypesResource,
 } from 'data-engine-js-components-web';
+import {SettingsContext} from 'dynamic-data-mapping-form-builder';
 import {fetch} from 'frontend-js-web';
 import React, {useEffect, useReducer} from 'react';
 
@@ -33,13 +34,21 @@ const CONFIG_DATA = {
 	actions: {
 		component: Actions,
 		expression: Liferay.Language.get('do'),
-		fieldFilter: ({rulesActionDisabled}) => !rulesActionDisabled,
+		fieldFilter: ({settingsContext}) =>
+			!SettingsContext.getSettingsContextProperty(
+				settingsContext,
+				'rulesActionDisabled'
+			),
 		name: Liferay.Language.get('actions'),
 	},
 	conditions: {
 		component: Conditions,
 		expression: Liferay.Language.get('if'),
-		fieldFilter: ({rulesConditionDisabled}) => !rulesConditionDisabled,
+		fieldFilter: ({settingsContext}) =>
+			!SettingsContext.getSettingsContextProperty(
+				settingsContext,
+				'rulesConditionDisabled'
+			),
 		name: Liferay.Language.get('condition'),
 	},
 };
