@@ -80,10 +80,6 @@ public class SearchLocationDDMFormFieldTemplateContextContributor
 				ddmFormField, ddmFormFieldRenderingContext.getLocale(),
 				"placeholder")
 		).put(
-			"rulesActionDisabled", true
-		).put(
-			"rulesConditionDisabled", true
-		).put(
 			"visibleFields",
 			DDMFormFieldTypeUtil.getPropertyValue(
 				ddmFormField, ddmFormFieldRenderingContext.getLocale(),

@@ -81,7 +81,8 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 							size = 12,
 							value = {
 								"dataType", "name", "fieldReference",
-								"showLabel", "repeatable", "readOnly"
+								"showLabel", "repeatable", "readOnly",
+								"rulesActionDisabled", "rulesConditionDisabled"
 							}
 						)
 					}

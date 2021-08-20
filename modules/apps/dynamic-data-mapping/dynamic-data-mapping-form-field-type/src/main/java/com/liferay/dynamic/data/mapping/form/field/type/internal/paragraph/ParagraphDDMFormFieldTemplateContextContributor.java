@@ -46,8 +46,6 @@ public class ParagraphDDMFormFieldTemplateContextContributor
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
 
 		return HashMapBuilder.<String, Object>put(
-			"rulesConditionDisabled", true
-		).put(
 			"text", getText(ddmFormField, ddmFormFieldRenderingContext)
 		).build();
 	}
