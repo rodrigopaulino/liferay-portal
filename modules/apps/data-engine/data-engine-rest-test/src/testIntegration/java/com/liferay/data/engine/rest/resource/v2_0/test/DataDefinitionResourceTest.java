@@ -748,7 +748,8 @@ public class DataDefinitionResourceTest
 		throws Exception {
 
 		DataDefinition dataDefinition = DataDefinition.toDTO(
-			DataDefinitionTestUtil.read("data-definition.json"));
+			DataDefinitionTestUtil.read(
+				"data-definition-with-fields-group.json"));
 
 		dataDefinition.setDescription(
 			HashMapBuilder.<String, Object>put(
