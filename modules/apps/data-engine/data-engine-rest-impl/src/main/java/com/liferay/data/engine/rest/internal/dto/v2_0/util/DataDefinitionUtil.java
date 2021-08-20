@@ -20,6 +20,7 @@ import com.liferay.data.engine.rest.dto.v2_0.DataDefinition;
 import com.liferay.data.engine.rest.dto.v2_0.DataDefinitionField;
 import com.liferay.data.engine.rest.internal.content.type.DataDefinitionContentTypeTracker;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
+import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
@@ -136,6 +137,13 @@ public class DataDefinitionUtil {
 					LocalizedValueUtil.toLocalizedValuesMap(
 						(LocalizedValue)entry.getValue()));
 			}
+			else if (_isFieldSetRows(ddmFormField, settingsDDMFormField) ||
+					 Objects.equals(settingsDDMFormField.getType(), "select")) {
+
+				customProperties.put(
+					entry.getKey(),
+					_toJSONArray(String.valueOf(entry.getValue())));
+			}
 			else if (Objects.equals(
 						settingsDDMFormField.getDataType(), "boolean")) {
 
@@ -202,6 +210,19 @@ public class DataDefinitionUtil {
 		return StringPool.BLANK;
 	}
 
+	private static boolean _isFieldSetRows(
+		DDMFormField ddmFormField, DDMFormField settingsDDMFormField) {
+
+		if (Objects.equals(
+				ddmFormField.getType(), DDMFormFieldTypeConstants.FIELDSET) &&
+			Objects.equals(settingsDDMFormField.getName(), "rows")) {
+
+			return true;
+		}
+
+		return false;
+	}
+
 	private static DataDefinitionField _toDataDefinitionField(
 		DDMFormField ddmFormField,
 		DDMFormFieldTypeServicesTracker ddmFormFieldTypeServicesTracker,
@@ -256,6 +277,19 @@ public class DataDefinitionUtil {
 		).toArray(
 			new DataDefinitionField[0]
 		);
+	}
+
+	private static JSONArray _toJSONArray(String value) {
+		try {
+			return JSONFactoryUtil.createJSONArray(value);
+		}
+		catch (Exception exception) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(exception, exception);
+			}
+		}
+
+		return JSONFactoryUtil.createJSONArray();
 	}
 
 	private static String[] _toLanguageIds(Set<Locale> locales) {
