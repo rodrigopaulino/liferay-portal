@@ -142,8 +142,8 @@ public class ParagraphDDMFormFieldTypeSettingsTest
 				DDMFormLayoutTestUtil.createDDMFormLayoutPage(
 					"name", "fieldReference", "showLabel", "repeatable",
 					"predefinedValue", "visibilityExpression", "fieldNamespace",
-					"indexType", "localizable", "readOnly", "dataType",
-					"type")));
+					"indexType", "localizable", "readOnly", "dataType", "type",
+					"rulesConditionDisabled")));
 	}
 
 	@Override

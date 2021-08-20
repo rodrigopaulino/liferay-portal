@@ -185,7 +185,8 @@ public class SearchLocationDDMFormFieldTypeSettingsTest
 					"redirectButton"),
 				DDMFormLayoutTestUtil.createDDMFormLayoutPage(
 					"dataType", "name", "fieldReference", "showLabel",
-					"repeatable", "readOnly")));
+					"repeatable", "readOnly", "rulesActionDisabled",
+					"rulesConditionDisabled")));
 	}
 
 	@Override
