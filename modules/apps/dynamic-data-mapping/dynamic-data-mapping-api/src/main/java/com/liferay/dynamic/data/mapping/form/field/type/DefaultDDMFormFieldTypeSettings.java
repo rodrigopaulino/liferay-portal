@@ -141,6 +141,16 @@ public interface DefaultDDMFormFieldTypeSettings
 		return new LocalizedValue();
 	}
 
+	@DDMFormField(predefinedValue = "true", visibilityExpression = "FALSE")
+	public default boolean rulesActionDisabled() {
+		return true;
+	}
+
+	@DDMFormField(predefinedValue = "true", visibilityExpression = "FALSE")
+	public default boolean rulesConditionDisabled() {
+		return true;
+	}
+
 	@DDMFormField(
 		label = "%show-label", predefinedValue = "true",
 		properties = {"showAsSwitcher=true", "visualProperty=true"}
