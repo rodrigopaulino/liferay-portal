@@ -21,6 +21,9 @@ export const FIELDS = [
 		options: [],
 		repeatable: true,
 		selector: '.date-picker',
+		settingsContext: {
+			pages: [],
+		},
 		title: 'date',
 		type: 'date',
 		value: 'date',
@@ -33,6 +36,9 @@ export const FIELDS = [
 		options: [],
 		repeatable: true,
 		selector: 'input.ddm-field-text',
+		settingsContext: {
+			pages: [],
+		},
 		title: 'text',
 		type: 'text',
 		value: 'text',
@@ -45,6 +51,9 @@ export const FIELDS = [
 		options: [],
 		repeatable: false,
 		selector: '.form-builder-select-field',
+		settingsContext: {
+			pages: [],
+		},
 		title: 'select',
 		type: 'select',
 		value: 'select',
@@ -57,6 +66,9 @@ export const FIELDS = [
 		options: [],
 		repeatable: false,
 		selector: 'table',
+		settingsContext: {
+			pages: [],
+		},
 		title: 'grid',
 		type: 'grid',
 		value: 'grid',
@@ -69,6 +81,9 @@ export const FIELDS = [
 		options: [],
 		repeatable: false,
 		selector: '.input',
+		settingsContext: {
+			pages: [],
+		},
 		title: 'image',
 		type: 'image',
 		value: 'image',
@@ -81,6 +96,9 @@ export const FIELDS = [
 		options: [],
 		repeatable: false,
 		selector: '.form-builder-select-field',
+		settingsContext: {
+			pages: [],
+		},
 		title: 'radio',
 		type: 'radio',
 		value: 'radio',
@@ -93,6 +111,9 @@ export const FIELDS = [
 		options: [],
 		repeatable: false,
 		selector: '.clay-color-picker',
+		settingsContext: {
+			pages: [],
+		},
 		title: 'color',
 		type: 'color',
 		value: 'color',
@@ -105,6 +126,9 @@ export const FIELDS = [
 		options: [],
 		repeatable: false,
 		selector: '#undefinedContainer',
+		settingsContext: {
+			pages: [],
+		},
 		title: 'rich_text',
 		type: 'rich_text',
 		value: 'rich_text',
@@ -117,6 +141,9 @@ export const FIELDS = [
 		options: [],
 		repeatable: false,
 		selector: '.form-builder-select-field',
+		settingsContext: {
+			pages: [],
+		},
 		title: 'checkboxMultiple',
 		type: 'checkbox_multiple',
 		value: 'checkboxMultiple',
@@ -129,6 +156,9 @@ export const FIELDS = [
 		options: [],
 		repeatable: false,
 		selector: 'input.form-control',
+		settingsContext: {
+			pages: [],
+		},
 		title: 'integer',
 		type: 'numeric',
 		value: 'integer',
@@ -141,6 +171,9 @@ export const FIELDS = [
 		options: [],
 		repeatable: false,
 		selector: 'input.form-control',
+		settingsContext: {
+			pages: [],
+		},
 		title: 'double',
 		type: 'numeric',
 		value: 'double',
@@ -153,6 +186,9 @@ export const FIELDS = [
 		options: [],
 		repeatable: false,
 		selector: '.liferay-ddm-form-field-document-library',
+		settingsContext: {
+			pages: [],
+		},
 		title: 'document_library',
 		type: 'document_library',
 		value: 'document_library',

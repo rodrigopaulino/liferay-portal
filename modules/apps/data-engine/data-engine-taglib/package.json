@@ -33,9 +33,6 @@
 		"collectCoverageFrom": [
 			"src/main/resources/META-INF/resources/data_layout_builder/js/**/*.es.js"
 		],
-		"moduleNameMapper": {
-			"^dynamic-data-mapping-form-builder$": "<rootDir>/test/mock/dynamic-data-mapping-form-builder.es.js"
-		},
 		"setupFilesAfterEnv": [
 			"<rootDir>/jest-setup.config.js"
 		],
