@@ -52,18 +52,6 @@ describe('dataConverter', () => {
 		});
 	});
 
-	it('is getting data definition field formatted value', () => {
-		expect(
-			dataConverter._getDataDefinitionFieldFormattedValue('json', {
-				test: 'test',
-			})
-		).toBe('{"test":"test"}');
-
-		expect(
-			dataConverter._getDataDefinitionFieldFormattedValue('', 'test')
-		).toBe('test');
-	});
-
 	it('is getting data definition field', () => {
 		expect(
 			getDataDefinitionField(
