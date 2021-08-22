@@ -231,7 +231,7 @@ export function getDataDefinitionField({nestedFields = [], settingsContext}) {
 	const settingsContextVisitor = new PagesVisitor(settingsContext.pages);
 
 	settingsContextVisitor.mapFields(
-		({dataType, fieldName, localizable, localizedValue, value}) => {
+		({fieldName, localizable, localizedValue, value}) => {
 			if (fieldName === 'predefinedValue') {
 				fieldName = 'defaultValue';
 			}
@@ -247,9 +247,7 @@ export function getDataDefinitionField({nestedFields = [], settingsContext}) {
 				updatableHash[fieldName] = localizedValue ?? {};
 			}
 			else {
-				updatableHash[
-					fieldName
-				] = _getDataDefinitionFieldFormattedValue(dataType, value);
+				updatableHash[fieldName] = value;
 			}
 		},
 		false
@@ -443,14 +441,6 @@ function _fromDDMFormToDataDefinitionPropertyName(propertyName) {
 	return map[propertyName] || propertyName;
 }
 
-function _getDataDefinitionFieldFormattedValue(dataType, value) {
-	if (dataType === 'json' && typeof value !== 'string') {
-		return JSON.stringify(value);
-	}
-
-	return value;
-}
-
 function _getDataDefinitionFieldPropertyValue(
 	dataDefinitionField,
 	propertyName
@@ -485,6 +475,5 @@ function _isCustomProperty(name) {
 
 export default {
 	_fromDDMFormToDataDefinitionPropertyName,
-	_getDataDefinitionFieldFormattedValue,
 	_isCustomProperty,
 };
