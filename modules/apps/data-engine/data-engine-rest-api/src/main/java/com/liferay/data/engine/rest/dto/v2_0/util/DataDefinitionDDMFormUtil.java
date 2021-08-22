@@ -104,9 +104,16 @@ public class DataDefinitionDDMFormUtil {
 
 				for (Object curValue : values) {
 					try {
-						JSONObject jsonObject =
-							JSONFactoryUtil.createJSONObject(
+						JSONObject jsonObject;
+
+						if (curValue instanceof Map) {
+							jsonObject = JSONFactoryUtil.createJSONObject(
+								(Map<?, ?>)curValue);
+						}
+						else {
+							jsonObject = JSONFactoryUtil.createJSONObject(
 								curValue.toString());
+						}
 
 						ddmFormFieldOptions.addOptionLabel(
 							jsonObject.getString("value"),
