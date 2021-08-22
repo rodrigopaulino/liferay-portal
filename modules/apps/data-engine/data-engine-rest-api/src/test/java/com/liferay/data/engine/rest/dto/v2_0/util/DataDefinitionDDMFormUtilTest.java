@@ -33,6 +33,7 @@ import com.liferay.portal.kernel.util.SetUtil;
 
 import java.util.Collections;
 import java.util.Locale;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -110,7 +111,10 @@ public class DataDefinitionDDMFormUtilTest extends PowerMockito {
 					setDDMFormFieldOptions(
 						new DDMFormFieldOptions() {
 							{
+								addOptionLabel(
+									"valor", LocaleUtil.BRAZIL, "rótulo");
 								addOptionLabel("value", LocaleUtil.US, "label");
+								addOptionReference("valor", "referência");
 								addOptionReference("value", "reference");
 								setDefaultLocale(LocaleUtil.US);
 							}
@@ -227,6 +231,17 @@ public class DataDefinitionDDMFormUtilTest extends PowerMockito {
 									).put(
 										"value", "value"
 									))
+							).put(
+								"pt_BR",
+								new Map[] {
+									HashMapBuilder.<String, Object>put(
+										"label", "rótulo"
+									).put(
+										"reference", "referência"
+									).put(
+										"value", "valor"
+									).build()
+								}
 							).build()
 						).build());
 					setDefaultValue(
