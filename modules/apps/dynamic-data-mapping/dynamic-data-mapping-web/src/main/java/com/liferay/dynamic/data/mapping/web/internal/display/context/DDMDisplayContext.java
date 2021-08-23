@@ -309,15 +309,9 @@ public class DDMDisplayContext {
 	}
 
 	public String getScopedStructureLabel() {
-		String scopeTitle = ParamUtil.getString(_renderRequest, "scopeTitle");
+		DDMDisplay ddmDisplay = getDDMDisplay();
 
-		if (Validator.isNull(scopeTitle)) {
-			DDMDisplay ddmDisplay = getDDMDisplay();
-
-			return ddmDisplay.getTitle(_ddmWebRequestHelper.getLocale());
-		}
-
-		return scopeTitle;
+		return ddmDisplay.getTitle(_ddmWebRequestHelper.getLocale());
 	}
 
 	public CreationMenu getSelectStructureCreationMenu()

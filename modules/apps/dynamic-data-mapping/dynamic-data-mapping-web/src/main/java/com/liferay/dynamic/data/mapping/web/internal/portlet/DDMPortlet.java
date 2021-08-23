@@ -90,7 +90,6 @@ import org.osgi.service.component.annotations.Reference;
 		"com.liferay.portlet.autopropagated-parameters=navigationStartsOn",
 		"com.liferay.portlet.autopropagated-parameters=refererPortletName",
 		"com.liferay.portlet.autopropagated-parameters=refererWebDAVToken",
-		"com.liferay.portlet.autopropagated-parameters=scopeTitle",
 		"com.liferay.portlet.autopropagated-parameters=showAncestorScopes",
 		"com.liferay.portlet.autopropagated-parameters=showBackURL",
 		"com.liferay.portlet.autopropagated-parameters=showCacheableInput",
