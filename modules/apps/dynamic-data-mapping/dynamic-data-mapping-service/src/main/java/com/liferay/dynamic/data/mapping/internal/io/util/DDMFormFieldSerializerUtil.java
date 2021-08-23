@@ -33,6 +33,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -185,6 +186,13 @@ public class DDMFormFieldSerializerUtil {
 		}
 		else if (_isArray(property)) {
 			return jsonFactory.createJSONArray((Object[])property);
+		}
+
+		if (property instanceof Collection) {
+			return jsonFactory.createJSONArray((Collection<?>)property);
+		}
+		else if (property instanceof Map) {
+			return jsonFactory.createJSONObject((Map<?, ?>)property);
 		}
 
 		return String.valueOf(property);
