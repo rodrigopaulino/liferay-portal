@@ -137,13 +137,6 @@ public class DataDefinitionUtil {
 					LocalizedValueUtil.toLocalizedValuesMap(
 						(LocalizedValue)entry.getValue()));
 			}
-			else if (_isFieldSetRows(ddmFormField, settingsDDMFormField) ||
-					 Objects.equals(settingsDDMFormField.getType(), "select")) {
-
-				customProperties.put(
-					entry.getKey(),
-					_toJSONArray(String.valueOf(entry.getValue())));
-			}
 			else if (Objects.equals(
 						settingsDDMFormField.getDataType(), "boolean")) {
 
@@ -156,6 +149,13 @@ public class DataDefinitionUtil {
 				customProperties.put(
 					entry.getKey(),
 					_toMap((DDMFormFieldOptions)entry.getValue()));
+			}
+			else if (Objects.equals(settingsDDMFormField.getType(), "select") ||
+					 _isFieldSetRows(ddmFormField, settingsDDMFormField)) {
+
+				customProperties.put(
+					entry.getKey(),
+					_toJSONArray(String.valueOf(entry.getValue())));
 			}
 			else if (Objects.equals(
 						settingsDDMFormField.getType(), "validation")) {
