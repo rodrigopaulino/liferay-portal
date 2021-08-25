@@ -77,7 +77,8 @@ public class SaveFormInstanceMVCCommandHelper {
 			PortletRequest portletRequest, PortletResponse portletResponse)
 		throws Exception {
 
-		return saveFormInstance(portletRequest, portletResponse, false);
+		return _saveFormInstance(
+			portletRequest, getSettingsDDMFormValues(portletRequest), false);
 	}
 
 	public DDMFormInstance saveFormInstance(
@@ -85,57 +86,20 @@ public class SaveFormInstanceMVCCommandHelper {
 			boolean validateDDMFormFieldSettings)
 		throws Exception {
 
-		long formInstanceId = ParamUtil.getLong(
-			portletRequest, "formInstanceId");
-
-		if (formInstanceId == 0) {
-			return addFormInstance(
-				portletRequest, validateDDMFormFieldSettings);
-		}
-
-		return updateFormInstance(
-			portletRequest, formInstanceId, validateDDMFormFieldSettings);
+		return _saveFormInstance(
+			portletRequest, getSettingsDDMFormValues(portletRequest),
+			validateDDMFormFieldSettings);
 	}
 
-	protected DDMFormInstance addFormInstance(
-			PortletRequest portletRequest, boolean validateFormFieldsSettings)
+	public DDMFormInstance saveFormInstance(
+			PortletRequest portletRequest, PortletResponse portletResponse,
+			DDMFormValues settingsDDMFormValues,
+			boolean validateDDMFormFieldSettings)
 		throws Exception {
 
-		ServiceContext serviceContext = ServiceContextFactory.getInstance(
-			DDMFormInstance.class.getName(), portletRequest);
-
-		long groupId = ParamUtil.getLong(portletRequest, "groupId");
-		String name = ParamUtil.getString(portletRequest, "name");
-		String description = ParamUtil.getString(portletRequest, "description");
-		DDMForm ddmForm = getDDMForm(portletRequest, serviceContext);
-		DDMFormLayout ddmFormLayout = getDDMFormLayout(portletRequest);
-
-		Map<Locale, String> nameMap = getNameMap(
-			ddmForm, name, "untitled-form");
-		Map<Locale, String> descriptionMap = getLocalizedMap(
-			description, ddmForm.getAvailableLocales(),
-			ddmForm.getDefaultLocale());
-
-		if (ParamUtil.getBoolean(portletRequest, "saveAsDraft")) {
-			serviceContext.setAttribute(
-				"status", WorkflowConstants.STATUS_DRAFT);
-		}
-
-		if (validateFormFieldsSettings) {
-			formInstanceFieldSettingsValidator.validate(
-				portletRequest, ddmForm);
-		}
-
-		DDMFormValues settingsDDMFormValues = getSettingsDDMFormValues(
-			portletRequest);
-
-		validateRedirectURL(
-			settingsDDMFormValues,
-			_portal.getHttpServletRequest(portletRequest));
-
-		return formInstanceService.addFormInstance(
-			groupId, nameMap, descriptionMap, ddmForm, ddmFormLayout,
-			settingsDDMFormValues, serviceContext);
+		return _saveFormInstance(
+			portletRequest, settingsDDMFormValues,
+			validateDDMFormFieldSettings);
 	}
 
 	protected DDMForm getDDMForm(
@@ -229,47 +193,6 @@ public class SaveFormInstanceMVCCommandHelper {
 			DDMFormContextDeserializerRequest.with(
 				DDMFormFactory.create(DDMFormInstanceSettings.class),
 				settingsContext));
-	}
-
-	protected DDMFormInstance updateFormInstance(
-			PortletRequest portletRequest, long formInstanceId,
-			boolean validateFormFieldsSettings)
-		throws Exception {
-
-		ServiceContext serviceContext = ServiceContextFactory.getInstance(
-			DDMFormInstance.class.getName(), portletRequest);
-
-		String name = ParamUtil.getString(portletRequest, "name");
-		String description = ParamUtil.getString(portletRequest, "description");
-		DDMForm ddmForm = getDDMForm(portletRequest, serviceContext);
-		DDMFormLayout ddmFormLayout = getDDMFormLayout(portletRequest);
-
-		Map<Locale, String> nameMap = getNameMap(
-			ddmForm, name, "untitled-form");
-		Map<Locale, String> descriptionMap = getLocalizedMap(
-			description, ddmForm.getAvailableLocales(),
-			ddmForm.getDefaultLocale());
-
-		if (ParamUtil.getBoolean(portletRequest, "saveAsDraft")) {
-			serviceContext.setAttribute(
-				"status", WorkflowConstants.ACTION_SAVE_DRAFT);
-		}
-
-		if (validateFormFieldsSettings) {
-			formInstanceFieldSettingsValidator.validate(
-				portletRequest, ddmForm);
-		}
-
-		DDMFormValues settingsDDMFormValues = getSettingsDDMFormValues(
-			portletRequest);
-
-		validateRedirectURL(
-			settingsDDMFormValues,
-			_portal.getHttpServletRequest(portletRequest));
-
-		return formInstanceService.updateFormInstance(
-			formInstanceId, nameMap, descriptionMap, ddmForm, ddmFormLayout,
-			settingsDDMFormValues, serviceContext);
 	}
 
 	protected void validateRedirectURL(
@@ -410,6 +333,58 @@ public class SaveFormInstanceMVCCommandHelper {
 
 			return null;
 		}
+	}
+
+	private DDMFormInstance _saveFormInstance(
+			PortletRequest portletRequest, DDMFormValues settingsDDMFormValues,
+			boolean validateDDMFormFieldSettings)
+		throws Exception {
+
+		ServiceContext serviceContext = ServiceContextFactory.getInstance(
+			DDMFormInstance.class.getName(), portletRequest);
+
+		DDMForm ddmForm = getDDMForm(portletRequest, serviceContext);
+
+		if (ParamUtil.getBoolean(portletRequest, "saveAsDraft")) {
+			serviceContext.setAttribute(
+				"status", WorkflowConstants.ACTION_SAVE_DRAFT);
+		}
+
+		if (validateDDMFormFieldSettings) {
+			formInstanceFieldSettingsValidator.validate(
+				portletRequest, ddmForm);
+		}
+
+		validateRedirectURL(
+			settingsDDMFormValues,
+			_portal.getHttpServletRequest(portletRequest));
+
+		long formInstanceId = ParamUtil.getLong(
+			portletRequest, "formInstanceId");
+
+		if (formInstanceId == 0) {
+			return formInstanceService.addFormInstance(
+				ParamUtil.getLong(portletRequest, "groupId"),
+				getNameMap(
+					ddmForm, ParamUtil.getString(portletRequest, "name"),
+					"untitled-form"),
+				getLocalizedMap(
+					ParamUtil.getString(portletRequest, "description"),
+					ddmForm.getAvailableLocales(), ddmForm.getDefaultLocale()),
+				ddmForm, getDDMFormLayout(portletRequest),
+				settingsDDMFormValues, serviceContext);
+		}
+
+		return formInstanceService.updateFormInstance(
+			formInstanceId,
+			getNameMap(
+				ddmForm, ParamUtil.getString(portletRequest, "name"),
+				"untitled-form"),
+			getLocalizedMap(
+				ParamUtil.getString(portletRequest, "description"),
+				ddmForm.getAvailableLocales(), ddmForm.getDefaultLocale()),
+			ddmForm, getDDMFormLayout(portletRequest), settingsDDMFormValues,
+			serviceContext);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

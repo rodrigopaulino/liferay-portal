@@ -19,15 +19,9 @@ import com.liferay.dynamic.data.mapping.constants.DDMPortletKeys;
 import com.liferay.dynamic.data.mapping.form.values.query.DDMFormValuesQuery;
 import com.liferay.dynamic.data.mapping.form.values.query.DDMFormValuesQueryFactory;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
-import com.liferay.dynamic.data.mapping.model.DDMFormInstanceSettings;
-import com.liferay.dynamic.data.mapping.model.DDMFormInstanceVersion;
-import com.liferay.dynamic.data.mapping.model.DDMStructure;
-import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
 import com.liferay.dynamic.data.mapping.model.Value;
-import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
-import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.ResourceConstants;
 import com.liferay.portal.kernel.model.ResourcePermission;
 import com.liferay.portal.kernel.model.Role;
@@ -38,6 +32,7 @@ import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
 import com.liferay.portal.kernel.service.RoleLocalService;
 import com.liferay.portal.kernel.service.ServiceContext;
 import com.liferay.portal.kernel.service.ServiceContextFactory;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
@@ -67,47 +62,24 @@ public class PublishFormInstanceMVCActionCommand
 			LiferayPortletURL portletURL)
 		throws Exception {
 
-		DDMFormInstance ddmFormInstance =
-			saveFormInstanceMVCCommandHelper.saveFormInstance(
-				actionRequest, actionResponse, true);
-
-		boolean published = !_isFormInstancePublished(ddmFormInstance);
-
-		updateFormInstancePermission(
-			actionRequest, ddmFormInstance.getFormInstanceId(), published);
-
-		DDMFormValues settingsDDMFormValues =
-			ddmFormInstance.getSettingsDDMFormValues();
-
-		updatePublishedDDMFormFieldValue(settingsDDMFormValues, published);
-
 		ServiceContext serviceContext = ServiceContextFactory.getInstance(
 			DDMFormInstance.class.getName(), actionRequest);
 
-		if (published) {
-			serviceContext.setAttribute(
-				"status", WorkflowConstants.STATUS_APPROVED);
-		}
-		else {
-			DDMFormInstanceVersion latestFormInstanceVersion =
-				ddmFormInstance.getFormInstanceVersion(
-					ddmFormInstance.getVersion());
+		serviceContext.setAttribute(
+			"status", WorkflowConstants.STATUS_APPROVED);
 
-			serviceContext.setAttribute(
-				"status", latestFormInstanceVersion.getStatus());
-		}
+		DDMFormValues settingsDDMFormValues =
+			saveFormInstanceMVCCommandHelper.getSettingsDDMFormValues(
+				actionRequest);
 
-		DDMStructure ddmStructure = ddmFormInstance.getStructure();
+		boolean published = _togglePublishedSetting(settingsDDMFormValues);
 
-		DDMStructureVersion latestDDMStructureVersion =
-			ddmStructure.getLatestStructureVersion();
+		DDMFormInstance ddmFormInstance =
+			saveFormInstanceMVCCommandHelper.saveFormInstance(
+				actionRequest, actionResponse, settingsDDMFormValues, true);
 
-		ddmFormInstance = _ddmFormInstanceService.updateFormInstance(
-			ddmFormInstance.getFormInstanceId(), ddmFormInstance.getNameMap(),
-			ddmFormInstance.getDescriptionMap(),
-			latestDDMStructureVersion.getDDMForm(),
-			latestDDMStructureVersion.getDDMFormLayout(), settingsDDMFormValues,
-			serviceContext);
+		_updateFormInstancePermission(
+			actionRequest, ddmFormInstance.getFormInstanceId(), published);
 
 		portletURL.setParameter(
 			"formInstanceId",
@@ -116,35 +88,29 @@ public class PublishFormInstanceMVCActionCommand
 		portletURL.setParameter("showPublishAlert", Boolean.TRUE.toString());
 	}
 
-	@Reference(unbind = "-")
-	protected void setDDMFormInstanceService(
-		DDMFormInstanceService ddmFormInstanceService) {
+	private boolean _togglePublishedSetting(DDMFormValues ddmFormValues)
+		throws Exception {
 
-		_ddmFormInstanceService = ddmFormInstanceService;
+		DDMFormValuesQuery ddmFormValuesQuery =
+			_ddmFormValuesQueryFactory.create(ddmFormValues, "/published");
+
+		DDMFormFieldValue ddmFormFieldValue =
+			ddmFormValuesQuery.selectSingleDDMFormFieldValue();
+
+		Value value = ddmFormFieldValue.getValue();
+
+		boolean published = !GetterUtil.getBoolean(
+			value.getString(value.getDefaultLocale()));
+
+		value.addString(
+			ddmFormValues.getDefaultLocale(), Boolean.toString(published));
+
+		return published;
 	}
 
-	@Reference(unbind = "-")
-	protected void setDDMFormValuesQueryFactory(
-		DDMFormValuesQueryFactory ddmFormValuesQueryFactory) {
-
-		_ddmFormValuesQueryFactory = ddmFormValuesQueryFactory;
-	}
-
-	@Reference(unbind = "-")
-	protected void setResourcePermissionLocalService(
-		ResourcePermissionLocalService resourcePermissionLocalService) {
-
-		_resourcePermissionLocalService = resourcePermissionLocalService;
-	}
-
-	@Reference(unbind = "-")
-	protected void setRoleLocalService(RoleLocalService roleLocalService) {
-		_roleLocalService = roleLocalService;
-	}
-
-	protected void updateFormInstancePermission(
+	private void _updateFormInstancePermission(
 			ActionRequest actionRequest, long formInstanceId, boolean published)
-		throws PortalException {
+		throws Exception {
 
 		Role role = _roleLocalService.getRole(
 			_portal.getCompanyId(actionRequest), RoleConstants.GUEST);
@@ -182,38 +148,16 @@ public class PublishFormInstanceMVCActionCommand
 			resourcePermission);
 	}
 
-	protected void updatePublishedDDMFormFieldValue(
-			DDMFormValues ddmFormValues, boolean published)
-		throws PortalException {
-
-		DDMFormValuesQuery ddmFormValuesQuery =
-			_ddmFormValuesQueryFactory.create(ddmFormValues, "/published");
-
-		DDMFormFieldValue ddmFormFieldValue =
-			ddmFormValuesQuery.selectSingleDDMFormFieldValue();
-
-		Value value = ddmFormFieldValue.getValue();
-
-		value.addString(
-			ddmFormValues.getDefaultLocale(), Boolean.toString(published));
-	}
-
-	private boolean _isFormInstancePublished(DDMFormInstance formInstance)
-		throws Exception {
-
-		DDMFormInstanceSettings ddmFormInstanceSettings =
-			formInstance.getSettingsModel();
-
-		return ddmFormInstanceSettings.published();
-	}
-
-	private DDMFormInstanceService _ddmFormInstanceService;
+	@Reference
 	private DDMFormValuesQueryFactory _ddmFormValuesQueryFactory;
 
 	@Reference
 	private Portal _portal;
 
+	@Reference
 	private ResourcePermissionLocalService _resourcePermissionLocalService;
+
+	@Reference
 	private RoleLocalService _roleLocalService;
 
 }
