@@ -106,6 +106,41 @@ public class DDMFormInstanceVersionServiceImpl
 			ddmFormInstanceId, status);
 	}
 
+	@Override
+	public List<DDMFormInstanceVersion> search(
+		long companyId, long groupId, String keywords, int start, int end,
+		OrderByComparator<DDMFormInstanceVersion> orderByComparator) {
+
+		return ddmFormInstanceVersionFinder.filterFindByKeywords(
+			companyId, groupId, keywords, start, end, orderByComparator);
+	}
+
+	@Override
+	public List<DDMFormInstanceVersion> search(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean andOperator, int start, int end,
+		OrderByComparator<DDMFormInstanceVersion> orderByComparator) {
+
+		return ddmFormInstanceVersionFinder.filterFindByC_G_N_D(
+			companyId, groupId, names, descriptions, andOperator, start, end,
+			orderByComparator);
+	}
+
+	@Override
+	public int searchCount(long companyId, long groupId, String keywords) {
+		return ddmFormInstanceVersionFinder.filterCountByKeywords(
+			companyId, groupId, keywords);
+	}
+
+	@Override
+	public int searchCount(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean andOperator) {
+
+		return ddmFormInstanceVersionFinder.filterCountByC_G_N_D(
+			companyId, groupId, names, descriptions, andOperator);
+	}
+
 	@Reference(
 		target = "(model.class.name=com.liferay.dynamic.data.mapping.model.DDMFormInstance)"
 	)
