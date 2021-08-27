@@ -85,6 +85,38 @@ public class DDMFormInstanceVersionServiceUtil {
 		return getService().getOSGiServiceIdentifier();
 	}
 
+	public static List<DDMFormInstanceVersion> search(
+		long companyId, long groupId, String keywords, int start, int end,
+		OrderByComparator<DDMFormInstanceVersion> orderByComparator) {
+
+		return getService().search(
+			companyId, groupId, keywords, start, end, orderByComparator);
+	}
+
+	public static List<DDMFormInstanceVersion> search(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean andOperator, int start, int end,
+		OrderByComparator<DDMFormInstanceVersion> orderByComparator) {
+
+		return getService().search(
+			companyId, groupId, names, descriptions, andOperator, start, end,
+			orderByComparator);
+	}
+
+	public static int searchCount(
+		long companyId, long groupId, String keywords) {
+
+		return getService().searchCount(companyId, groupId, keywords);
+	}
+
+	public static int searchCount(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean andOperator) {
+
+		return getService().searchCount(
+			companyId, groupId, names, descriptions, andOperator);
+	}
+
 	public static DDMFormInstanceVersionService getService() {
 		return _service;
 	}

@@ -19,6 +19,7 @@ import com.liferay.dynamic.data.mapping.service.DDMFormInstanceLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.persistence.DDMFormInstanceFinder;
 import com.liferay.dynamic.data.mapping.service.persistence.DDMFormInstancePersistence;
+import com.liferay.dynamic.data.mapping.service.persistence.DDMFormInstanceVersionFinder;
 import com.liferay.dynamic.data.mapping.service.persistence.DDMFormInstanceVersionPersistence;
 import com.liferay.exportimport.kernel.lar.ExportImportHelperUtil;
 import com.liferay.exportimport.kernel.lar.ManifestSummary;
@@ -653,5 +654,8 @@ public abstract class DDMFormInstanceLocalServiceBaseImpl
 	@Reference
 	protected DDMFormInstanceVersionPersistence
 		ddmFormInstanceVersionPersistence;
+
+	@Reference
+	protected DDMFormInstanceVersionFinder ddmFormInstanceVersionFinder;
 
 }

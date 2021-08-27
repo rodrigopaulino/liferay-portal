@@ -392,6 +392,43 @@ public class DDMFormInstanceVersionLocalServiceWrapper
 			primaryKeyObj);
 	}
 
+	@Override
+	public java.util.List<DDMFormInstanceVersion> search(
+		long companyId, long groupId, String keywords, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DDMFormInstanceVersion>
+			orderByComparator) {
+
+		return _ddmFormInstanceVersionLocalService.search(
+			companyId, groupId, keywords, start, end, orderByComparator);
+	}
+
+	@Override
+	public java.util.List<DDMFormInstanceVersion> search(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean andOperator, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DDMFormInstanceVersion>
+			orderByComparator) {
+
+		return _ddmFormInstanceVersionLocalService.search(
+			companyId, groupId, names, descriptions, andOperator, start, end,
+			orderByComparator);
+	}
+
+	@Override
+	public int searchCount(long companyId, long groupId, String keywords) {
+		return _ddmFormInstanceVersionLocalService.searchCount(
+			companyId, groupId, keywords);
+	}
+
+	@Override
+	public int searchCount(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean andOperator) {
+
+		return _ddmFormInstanceVersionLocalService.searchCount(
+			companyId, groupId, names, descriptions, andOperator);
+	}
+
 	/**
 	 * Updates the ddm form instance version in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *

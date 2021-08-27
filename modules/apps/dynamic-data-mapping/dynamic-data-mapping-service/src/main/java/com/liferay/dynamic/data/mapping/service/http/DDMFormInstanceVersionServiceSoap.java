@@ -171,6 +171,95 @@ public class DDMFormInstanceVersionServiceSoap {
 		}
 	}
 
+	public static
+		com.liferay.dynamic.data.mapping.model.DDMFormInstanceVersionSoap[]
+				search(
+					long companyId, long groupId, String keywords, int start,
+					int end,
+					com.liferay.portal.kernel.util.OrderByComparator
+						<com.liferay.dynamic.data.mapping.model.
+							DDMFormInstanceVersion> orderByComparator)
+			throws RemoteException {
+
+		try {
+			java.util.List
+				<com.liferay.dynamic.data.mapping.model.DDMFormInstanceVersion>
+					returnValue = DDMFormInstanceVersionServiceUtil.search(
+						companyId, groupId, keywords, start, end,
+						orderByComparator);
+
+			return com.liferay.dynamic.data.mapping.model.
+				DDMFormInstanceVersionSoap.toSoapModels(returnValue);
+		}
+		catch (Exception exception) {
+			_log.error(exception, exception);
+
+			throw new RemoteException(exception.getMessage());
+		}
+	}
+
+	public static
+		com.liferay.dynamic.data.mapping.model.DDMFormInstanceVersionSoap[]
+				search(
+					long companyId, long groupId, String[] names,
+					String[] descriptions, boolean andOperator, int start,
+					int end,
+					com.liferay.portal.kernel.util.OrderByComparator
+						<com.liferay.dynamic.data.mapping.model.
+							DDMFormInstanceVersion> orderByComparator)
+			throws RemoteException {
+
+		try {
+			java.util.List
+				<com.liferay.dynamic.data.mapping.model.DDMFormInstanceVersion>
+					returnValue = DDMFormInstanceVersionServiceUtil.search(
+						companyId, groupId, names, descriptions, andOperator,
+						start, end, orderByComparator);
+
+			return com.liferay.dynamic.data.mapping.model.
+				DDMFormInstanceVersionSoap.toSoapModels(returnValue);
+		}
+		catch (Exception exception) {
+			_log.error(exception, exception);
+
+			throw new RemoteException(exception.getMessage());
+		}
+	}
+
+	public static int searchCount(long companyId, long groupId, String keywords)
+		throws RemoteException {
+
+		try {
+			int returnValue = DDMFormInstanceVersionServiceUtil.searchCount(
+				companyId, groupId, keywords);
+
+			return returnValue;
+		}
+		catch (Exception exception) {
+			_log.error(exception, exception);
+
+			throw new RemoteException(exception.getMessage());
+		}
+	}
+
+	public static int searchCount(
+			long companyId, long groupId, String[] names, String[] descriptions,
+			boolean andOperator)
+		throws RemoteException {
+
+		try {
+			int returnValue = DDMFormInstanceVersionServiceUtil.searchCount(
+				companyId, groupId, names, descriptions, andOperator);
+
+			return returnValue;
+		}
+		catch (Exception exception) {
+			_log.error(exception, exception);
+
+			throw new RemoteException(exception.getMessage());
+		}
+	}
+
 	private static Log _log = LogFactoryUtil.getLog(
 		DDMFormInstanceVersionServiceSoap.class);
 

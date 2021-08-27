@@ -270,6 +270,154 @@ public class DDMFormInstanceVersionServiceHttp {
 		}
 	}
 
+	public static java.util.List
+		<com.liferay.dynamic.data.mapping.model.DDMFormInstanceVersion> search(
+			HttpPrincipal httpPrincipal, long companyId, long groupId,
+			String keywords, int start, int end,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<com.liferay.dynamic.data.mapping.model.DDMFormInstanceVersion>
+					orderByComparator) {
+
+		try {
+			MethodKey methodKey = new MethodKey(
+				DDMFormInstanceVersionServiceUtil.class, "search",
+				_searchParameterTypes5);
+
+			MethodHandler methodHandler = new MethodHandler(
+				methodKey, companyId, groupId, keywords, start, end,
+				orderByComparator);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception exception) {
+				throw new com.liferay.portal.kernel.exception.SystemException(
+					exception);
+			}
+
+			return (java.util.List
+				<com.liferay.dynamic.data.mapping.model.DDMFormInstanceVersion>)
+					returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException
+					systemException) {
+
+			_log.error(systemException, systemException);
+
+			throw systemException;
+		}
+	}
+
+	public static java.util.List
+		<com.liferay.dynamic.data.mapping.model.DDMFormInstanceVersion> search(
+			HttpPrincipal httpPrincipal, long companyId, long groupId,
+			String[] names, String[] descriptions, boolean andOperator,
+			int start, int end,
+			com.liferay.portal.kernel.util.OrderByComparator
+				<com.liferay.dynamic.data.mapping.model.DDMFormInstanceVersion>
+					orderByComparator) {
+
+		try {
+			MethodKey methodKey = new MethodKey(
+				DDMFormInstanceVersionServiceUtil.class, "search",
+				_searchParameterTypes6);
+
+			MethodHandler methodHandler = new MethodHandler(
+				methodKey, companyId, groupId, names, descriptions, andOperator,
+				start, end, orderByComparator);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception exception) {
+				throw new com.liferay.portal.kernel.exception.SystemException(
+					exception);
+			}
+
+			return (java.util.List
+				<com.liferay.dynamic.data.mapping.model.DDMFormInstanceVersion>)
+					returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException
+					systemException) {
+
+			_log.error(systemException, systemException);
+
+			throw systemException;
+		}
+	}
+
+	public static int searchCount(
+		HttpPrincipal httpPrincipal, long companyId, long groupId,
+		String keywords) {
+
+		try {
+			MethodKey methodKey = new MethodKey(
+				DDMFormInstanceVersionServiceUtil.class, "searchCount",
+				_searchCountParameterTypes7);
+
+			MethodHandler methodHandler = new MethodHandler(
+				methodKey, companyId, groupId, keywords);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception exception) {
+				throw new com.liferay.portal.kernel.exception.SystemException(
+					exception);
+			}
+
+			return ((Integer)returnObj).intValue();
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException
+					systemException) {
+
+			_log.error(systemException, systemException);
+
+			throw systemException;
+		}
+	}
+
+	public static int searchCount(
+		HttpPrincipal httpPrincipal, long companyId, long groupId,
+		String[] names, String[] descriptions, boolean andOperator) {
+
+		try {
+			MethodKey methodKey = new MethodKey(
+				DDMFormInstanceVersionServiceUtil.class, "searchCount",
+				_searchCountParameterTypes8);
+
+			MethodHandler methodHandler = new MethodHandler(
+				methodKey, companyId, groupId, names, descriptions,
+				andOperator);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception exception) {
+				throw new com.liferay.portal.kernel.exception.SystemException(
+					exception);
+			}
+
+			return ((Integer)returnObj).intValue();
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException
+					systemException) {
+
+			_log.error(systemException, systemException);
+
+			throw systemException;
+		}
+	}
+
 	private static Log _log = LogFactoryUtil.getLog(
 		DDMFormInstanceVersionServiceHttp.class);
 
@@ -288,5 +436,20 @@ public class DDMFormInstanceVersionServiceHttp {
 		_getLatestFormInstanceVersionParameterTypes4 = new Class[] {
 			long.class, int.class
 		};
+	private static final Class<?>[] _searchParameterTypes5 = new Class[] {
+		long.class, long.class, String.class, int.class, int.class,
+		com.liferay.portal.kernel.util.OrderByComparator.class
+	};
+	private static final Class<?>[] _searchParameterTypes6 = new Class[] {
+		long.class, long.class, String[].class, String[].class, boolean.class,
+		int.class, int.class,
+		com.liferay.portal.kernel.util.OrderByComparator.class
+	};
+	private static final Class<?>[] _searchCountParameterTypes7 = new Class[] {
+		long.class, long.class, String.class
+	};
+	private static final Class<?>[] _searchCountParameterTypes8 = new Class[] {
+		long.class, long.class, String[].class, String[].class, boolean.class
+	};
 
 }

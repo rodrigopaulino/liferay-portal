@@ -91,6 +91,43 @@ public class DDMFormInstanceVersionServiceWrapper
 	}
 
 	@Override
+	public java.util.List<DDMFormInstanceVersion> search(
+		long companyId, long groupId, String keywords, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DDMFormInstanceVersion>
+			orderByComparator) {
+
+		return _ddmFormInstanceVersionService.search(
+			companyId, groupId, keywords, start, end, orderByComparator);
+	}
+
+	@Override
+	public java.util.List<DDMFormInstanceVersion> search(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean andOperator, int start, int end,
+		com.liferay.portal.kernel.util.OrderByComparator<DDMFormInstanceVersion>
+			orderByComparator) {
+
+		return _ddmFormInstanceVersionService.search(
+			companyId, groupId, names, descriptions, andOperator, start, end,
+			orderByComparator);
+	}
+
+	@Override
+	public int searchCount(long companyId, long groupId, String keywords) {
+		return _ddmFormInstanceVersionService.searchCount(
+			companyId, groupId, keywords);
+	}
+
+	@Override
+	public int searchCount(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean andOperator) {
+
+		return _ddmFormInstanceVersionService.searchCount(
+			companyId, groupId, names, descriptions, andOperator);
+	}
+
+	@Override
 	public DDMFormInstanceVersionService getWrappedService() {
 		return _ddmFormInstanceVersionService;
 	}

@@ -17,6 +17,7 @@ package com.liferay.dynamic.data.mapping.service.base;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceVersion;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceVersionService;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceVersionServiceUtil;
+import com.liferay.dynamic.data.mapping.service.persistence.DDMFormInstanceVersionFinder;
 import com.liferay.dynamic.data.mapping.service.persistence.DDMFormInstanceVersionPersistence;
 import com.liferay.portal.aop.AopService;
 import com.liferay.portal.kernel.dao.db.DB;
@@ -146,6 +147,9 @@ public abstract class DDMFormInstanceVersionServiceBaseImpl
 	@Reference
 	protected DDMFormInstanceVersionPersistence
 		ddmFormInstanceVersionPersistence;
+
+	@Reference
+	protected DDMFormInstanceVersionFinder ddmFormInstanceVersionFinder;
 
 	@Reference
 	protected com.liferay.counter.kernel.service.CounterLocalService

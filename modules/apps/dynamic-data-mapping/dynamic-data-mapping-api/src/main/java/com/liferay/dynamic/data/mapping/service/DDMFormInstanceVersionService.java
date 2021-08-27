@@ -86,4 +86,23 @@ public interface DDMFormInstanceVersionService extends BaseService {
 	 */
 	public String getOSGiServiceIdentifier();
 
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DDMFormInstanceVersion> search(
+		long companyId, long groupId, String keywords, int start, int end,
+		OrderByComparator<DDMFormInstanceVersion> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public List<DDMFormInstanceVersion> search(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean andOperator, int start, int end,
+		OrderByComparator<DDMFormInstanceVersion> orderByComparator);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int searchCount(long companyId, long groupId, String keywords);
+
+	@Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+	public int searchCount(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean andOperator);
+
 }

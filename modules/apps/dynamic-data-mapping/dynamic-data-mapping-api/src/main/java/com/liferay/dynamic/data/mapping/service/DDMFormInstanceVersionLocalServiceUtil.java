@@ -341,6 +341,38 @@ public class DDMFormInstanceVersionLocalServiceUtil {
 		return getService().getPersistedModel(primaryKeyObj);
 	}
 
+	public static List<DDMFormInstanceVersion> search(
+		long companyId, long groupId, String keywords, int start, int end,
+		OrderByComparator<DDMFormInstanceVersion> orderByComparator) {
+
+		return getService().search(
+			companyId, groupId, keywords, start, end, orderByComparator);
+	}
+
+	public static List<DDMFormInstanceVersion> search(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean andOperator, int start, int end,
+		OrderByComparator<DDMFormInstanceVersion> orderByComparator) {
+
+		return getService().search(
+			companyId, groupId, names, descriptions, andOperator, start, end,
+			orderByComparator);
+	}
+
+	public static int searchCount(
+		long companyId, long groupId, String keywords) {
+
+		return getService().searchCount(companyId, groupId, keywords);
+	}
+
+	public static int searchCount(
+		long companyId, long groupId, String[] names, String[] descriptions,
+		boolean andOperator) {
+
+		return getService().searchCount(
+			companyId, groupId, names, descriptions, andOperator);
+	}
+
 	/**
 	 * Updates the ddm form instance version in the database or adds it if it does not yet exist. Also notifies the appropriate model listeners.
 	 *
