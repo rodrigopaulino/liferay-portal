@@ -158,6 +158,60 @@
 				DDMFormInstanceRecord.formInstanceRecordId DESC
 		]]>
 	</sql>
+	<sql id="com.liferay.dynamic.data.mapping.service.persistence.DDMFormInstanceVersionFinder.countByC_G_N_D">
+		<![CDATA[
+			SELECT
+				COUNT(DISTINCT DDMFormInstanceVersion.formInstanceId) AS COUNT_VALUE
+			FROM
+				(
+					SELECT
+						DDMFormInstanceVersion.formInstanceId, MAX(DDMFormInstanceVersion.formInstanceVersionId) formInstanceVersionId
+					FROM
+						DDMFormInstanceVersion
+					WHERE
+						(DDMFormInstanceVersion.groupId = ?) AND
+						(DDMFormInstanceVersion.companyId = ?)
+					GROUP BY
+						DDMFormInstanceVersion.formInstanceId
+				)
+				TEMP_TABLE
+					INNER JOIN
+						DDMFormInstanceVersion ON
+							TEMP_TABLE.formInstanceVersionId = DDMFormInstanceVersion.formInstanceVersionId
+			WHERE
+				(LOWER(DDMFormInstanceVersion.name) LIKE ? [$AND_OR_NULL_CHECK$]) [$AND_OR_CONNECTOR$]
+				(DDMFormInstanceVersion.description LIKE ? [$AND_OR_NULL_CHECK$])
+		]]>
+	</sql>
+	<sql id="com.liferay.dynamic.data.mapping.service.persistence.DDMFormInstanceVersionFinder.findByC_G_N_D">
+		<![CDATA[
+			SELECT
+				{DDMFormInstanceVersion.*}
+			FROM
+				(
+					SELECT
+						DDMFormInstanceVersion.formInstanceId, MAX(DDMFormInstanceVersion.formInstanceVersionId) formInstanceVersionId
+					FROM
+						DDMFormInstanceVersion
+					WHERE
+						(DDMFormInstanceVersion.groupId = ?) AND
+						(DDMFormInstanceVersion.companyId = ?)
+					GROUP BY
+						DDMFormInstanceVersion.formInstanceId
+				)
+				TEMP_TABLE
+					INNER JOIN
+						DDMFormInstanceVersion ON
+							TEMP_TABLE.formInstanceVersionId = DDMFormInstanceVersion.formInstanceVersionId
+			WHERE
+				(
+					(LOWER(DDMFormInstanceVersion.name) LIKE ? [$AND_OR_NULL_CHECK$]) [$AND_OR_CONNECTOR$]
+					(DDMFormInstanceVersion.description LIKE ? [$AND_OR_NULL_CHECK$])
+				)
+			ORDER BY
+				DDMFormInstanceVersion.formInstanceId DESC
+		]]>
+	</sql>
 	<sql id="com.liferay.dynamic.data.mapping.service.persistence.DDMStructureFinder.countByC_G_C_C_N_D">
 		<![CDATA[
 			SELECT
