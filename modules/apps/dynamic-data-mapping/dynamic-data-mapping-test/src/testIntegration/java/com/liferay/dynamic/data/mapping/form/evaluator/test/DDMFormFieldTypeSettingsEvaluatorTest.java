@@ -26,19 +26,24 @@ import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.model.DDMDataProviderInstance;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
+import com.liferay.dynamic.data.mapping.model.DDMFormRule;
 import com.liferay.dynamic.data.mapping.model.UnlocalizedValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.test.util.DDMDataProviderTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormValuesTestUtil;
 import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.configuration.test.util.ConfigurationTestUtil;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.test.rule.AggregateTestRule;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
 import com.liferay.portal.kernel.util.HashMapDictionaryBuilder;
 import com.liferay.portal.kernel.util.KeyValuePair;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.test.rule.Inject;
 import com.liferay.portal.test.rule.LiferayIntegrationTestRule;
@@ -46,6 +51,8 @@ import com.liferay.portal.test.rule.PermissionCheckerMethodTestRule;
 
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -159,8 +166,41 @@ public class DDMFormFieldTypeSettingsEvaluatorTest {
 
 		builder.withGroupId(1L);
 
-		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
-			_ddmFormEvaluator.evaluate(builder.build());
+		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse;
+
+		// try-catch included to investigate LRQA-66927. If resolved, remove it.
+
+		try {
+			ddmFormEvaluatorEvaluateResponse = _ddmFormEvaluator.evaluate(
+				builder.build());
+		}
+		catch (NullPointerException nullPointerException) {
+			String ddmFormEvaluatorString = StringPool.NULL;
+
+			if (_ddmFormEvaluator != null) {
+				ddmFormEvaluatorString = _ddmFormEvaluator.toString();
+			}
+
+			List<DDMFormRule> ddmFormRules = ddmForm.getDDMFormRules();
+
+			Stream<DDMFormRule> stream = ddmFormRules.stream();
+
+			_log.error(
+				StringBundler.concat(
+					"DDMFormEvaluator: \"", ddmFormEvaluatorString, "\"; ",
+					stream.filter(
+						DDMFormRule::isEnabled
+					).map(
+						ddmFormRule ->
+							"DDMFormRule: {condition: \"" +
+								ddmFormRule.getCondition() + "\"}"
+					).collect(
+						Collectors.joining("; ")
+					)),
+				nullPointerException);
+
+			return;
+		}
 
 		Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
 			ddmFormFieldsPropertyChanges =
@@ -292,6 +332,9 @@ public class DDMFormFieldTypeSettingsEvaluatorTest {
 
 		return ddmFormFieldsPropertyChanges.get(ddmFormFieldContextKey);
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		DDMFormFieldTypeSettingsEvaluatorTest.class);
 
 	@Inject(filter = "ddm.data.provider.type=rest")
 	private DDMDataProvider _ddmDataProvider;
