@@ -44,11 +44,13 @@ import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidator;
 import com.liferay.dynamic.data.mapping.validator.internal.expression.DDMFormFieldValueExpressionParameterAccessor;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMapFactory;
+import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.SetUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -132,9 +134,9 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 			return true;
 		}
 
-		try {
-			DDMExpression<Boolean> ddmExpression = null;
+		DDMExpression<Boolean> ddmExpression = null;
 
+		try {
 			if (ddmFormFieldValidation.getParameterLocalizedValue() != null) {
 				LocalizedValue parameterLocalizedValue =
 					ddmFormFieldValidation.getParameterLocalizedValue();
@@ -190,6 +192,28 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 		}
 		catch (DDMExpressionException ddmExpressionException) {
 			throw new DDMFormValuesValidationException(ddmExpressionException);
+		}
+		catch (NullPointerException nullPointerException) {
+
+			// Catching NPE to investigate LRQA-66928. If resolved, remove it.
+
+			String ddmExpressionString = StringPool.NULL;
+
+			if (ddmExpression != null) {
+				ddmExpressionString = ddmExpression.toString();
+			}
+
+			String ddmExpressionFactoryString = StringPool.NULL;
+
+			if (_ddmExpressionFactory != null) {
+				ddmExpressionFactoryString = _ddmExpressionFactory.toString();
+			}
+
+			throw new NullPointerException(
+				StringBundler.concat(
+					nullPointerException.getMessage(), "; DDMExpression: \"",
+					ddmExpressionString, "\"; DDMExpressionFactory: \"",
+					ddmExpressionFactoryString, "\""));
 		}
 	}
 
