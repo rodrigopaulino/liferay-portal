@@ -170,7 +170,7 @@ public class DDLExporterTest {
 
 			Assert.assertEquals(
 				StringBundler.concat(
-					"No,1/1/1970,1,file.txt,\"Latitude: -8.035, Longitude: ",
+					"False,1/1/1970,1,file.txt,\"Latitude: -8.035, Longitude: ",
 					"-34.918\",2,Link to Page content,3,Option 1,Option 1,",
 					"Text content,Text Area content,Text HTML content,",
 					"Approved,", formatDate(recordVersion.getStatusDate()),
@@ -388,7 +388,7 @@ public class DDLExporterTest {
 
 			cell = row.getCell(0);
 
-			Assert.assertEquals("No", cell.getStringCellValue());
+			Assert.assertEquals("False", cell.getStringCellValue());
 
 			cell = row.getCell(1);
 
@@ -493,7 +493,7 @@ public class DDLExporterTest {
 
 		Element fieldsElement = rootElement.addElement("fields");
 
-		addFieldElement(fieldsElement, "Field0", "No");
+		addFieldElement(fieldsElement, "Field0", "False");
 		addFieldElement(fieldsElement, "Field1", "1/1/1970");
 		addFieldElement(fieldsElement, "Field2", "1");
 		addFieldElement(fieldsElement, "Field3", "file.txt");
