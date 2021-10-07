@@ -35,7 +35,7 @@ public class DocumentLibraryDataLayoutBuilderDefinition
 
 	@Override
 	public String[] getDisabledProperties() {
-		return new String[] {"requiredErrorMessage"};
+		return new String[] {"objectFieldName", "requiredErrorMessage"};
 	}
 
 	@Override
