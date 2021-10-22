@@ -1,6 +1,6 @@
 Bundle-Name: Liferay Data Engine REST Test Utilities
 Bundle-SymbolicName: com.liferay.data.engine.rest.test.util
-Bundle-Version: 1.0.3
+Bundle-Version: 1.1.0
 Export-Package:\
 	com.liferay.data.engine.rest.test.util,\
 	com.liferay.data.engine.rest.test.util.content.type
