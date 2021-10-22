@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.data.engine.rest.resource.v2_0.test.util.content.type;
+package com.liferay.data.engine.rest.test.util.content.type;
 
 import com.liferay.data.engine.content.type.DataDefinitionContentType;
 import com.liferay.portal.kernel.exception.PortalException;
