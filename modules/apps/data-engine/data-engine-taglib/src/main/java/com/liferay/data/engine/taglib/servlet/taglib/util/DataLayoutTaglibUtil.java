@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.data.engine.taglib.internal.servlet.taglib.util;
+package com.liferay.data.engine.taglib.servlet.taglib.util;
 
 import com.liferay.data.engine.content.type.DataDefinitionContentType;
 import com.liferay.data.engine.field.type.util.LocalizedValueUtil;

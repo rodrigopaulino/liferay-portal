@@ -1,9 +1,10 @@
 Bundle-Name: Liferay Data Engine Taglib
 Bundle-SymbolicName: com.liferay.data.engine.taglib
-Bundle-Version: 3.3.8
+Bundle-Version: 3.4.0
 Export-Package:\
 	com.liferay.data.engine.taglib.servlet.taglib,\
-	com.liferay.data.engine.taglib.servlet.taglib.definition
+	com.liferay.data.engine.taglib.servlet.taglib.definition,\
+	com.liferay.data.engine.taglib.servlet.taglib.util
 Provide-Capability:\
 	osgi.extender;\
 		osgi.extender="jsp.taglib";\
