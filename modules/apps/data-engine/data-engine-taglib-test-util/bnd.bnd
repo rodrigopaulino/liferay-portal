@@ -1,0 +1,5 @@
+Bundle-Name: Liferay Data Engine Taglib Test Utilities
+Bundle-SymbolicName: com.liferay.data.engine.taglib.test.util
+Bundle-Version: 1.0.0
+Export-Package: com.liferay.data.engine.taglib.internal.servlet.taglib.util
+Fragment-Host: com.liferay.data.engine.taglib

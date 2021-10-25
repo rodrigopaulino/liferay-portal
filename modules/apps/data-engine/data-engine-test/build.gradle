@@ -1,0 +1,8 @@
+dependencies {
+	testIntegrationCompile group: "com.liferay", name: "javax.servlet.jsp", version: "2.3.3-b02.LIFERAY-PATCHED-9"
+	testIntegrationCompile project(":apps:data-engine:data-engine-rest-api")
+	testIntegrationCompile project(":apps:data-engine:data-engine-rest-test-util")
+	testIntegrationCompile project(":apps:data-engine:data-engine-taglib")
+	testIntegrationCompile project(":apps:data-engine:data-engine-test-util")
+	testIntegrationCompile project(":test:arquillian-extension-junit-bridge")
+}
