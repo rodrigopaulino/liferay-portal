@@ -39,6 +39,10 @@ public final class CreateExpressionRequest {
 		return _expression;
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), with no direct replacement
+	 */
+	@Deprecated
 	public boolean isDDMExpressionDateValidation() {
 		return _ddmExpressionDateValidation;
 	}
@@ -62,6 +66,10 @@ public final class CreateExpressionRequest {
 			return this;
 		}
 
+		/**
+		 * @deprecated As of Cavanaugh (7.4.x), with no direct replacement
+		 */
+		@Deprecated
 		public Builder withDDMExpressionDateValidation(
 			boolean ddmExpressionDateValidation) {
 
