@@ -68,12 +68,33 @@ public class DateFunctionsUtil {
 		return LocalDate.now(ZoneId.of(timeZoneId));
 	}
 
+	public static LocalDate getParsedLocalDate(
+		String dateString, Locale locale) {
+
+		try {
+			Date date = DateUtil.parseDate("yyyy-MM-dd", dateString, locale);
+
+			ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(
+				date.toInstant(), ZoneOffset.UTC);
+
+			return zonedDateTime.toLocalDate();
+		}
+		catch (ParseException parseException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(parseException, parseException);
+			}
+		}
+
+		return LocalDate.parse(
+			dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+	}
+
 	public static Boolean isFutureDate(
 		String dateString1, String dateString2, Locale locale) {
 
-		LocalDate localDate = _getParsedLocalDate(dateString1, locale);
+		LocalDate localDate = getParsedLocalDate(dateString1, locale);
 
-		if (localDate.isBefore(_getParsedLocalDate(dateString2, locale))) {
+		if (localDate.isBefore(getParsedLocalDate(dateString2, locale))) {
 			return false;
 		}
 
@@ -83,9 +104,9 @@ public class DateFunctionsUtil {
 	public static Boolean isPastDate(
 		String dateString1, String dateString2, Locale locale) {
 
-		LocalDate localDate = _getParsedLocalDate(dateString1, locale);
+		LocalDate localDate = getParsedLocalDate(dateString1, locale);
 
-		if (localDate.isAfter(_getParsedLocalDate(dateString2, locale))) {
+		if (localDate.isAfter(getParsedLocalDate(dateString2, locale))) {
 			return false;
 		}
 
@@ -106,27 +127,6 @@ public class DateFunctionsUtil {
 		}
 
 		return null;
-	}
-
-	private static LocalDate _getParsedLocalDate(
-		String dateString, Locale locale) {
-
-		try {
-			Date date = DateUtil.parseDate("yyyy-MM-dd", dateString, locale);
-
-			ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(
-				date.toInstant(), ZoneOffset.UTC);
-
-			return zonedDateTime.toLocalDate();
-		}
-		catch (ParseException parseException) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(parseException, parseException);
-			}
-		}
-
-		return LocalDate.parse(
-			dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(

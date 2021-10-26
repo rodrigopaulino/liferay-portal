@@ -17,6 +17,14 @@ package com.liferay.dynamic.data.mapping.form.evaluator.internal.function;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionParameterAccessor;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionParameterAccessorAware;
+import com.liferay.dynamic.data.mapping.form.evaluator.internal.function.util.DateFunctionsUtil;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
+import com.liferay.portal.kernel.util.Validator;
+
+import java.time.LocalDate;
 
 /**
  * @author Carolina Barbosa
@@ -31,15 +39,52 @@ public class DateRangeFunction
 
 	@Override
 	public Boolean apply(Object object1, Object object2) {
-		_futureDatesFunction.setDDMExpressionParameterAccessor(
-			_ddmExpressionParameterAccessor);
-		_pastDatesFunction.setDDMExpressionParameterAccessor(
-			_ddmExpressionParameterAccessor);
+		if ((_ddmExpressionParameterAccessor == null) ||
+			(_ddmExpressionParameterAccessor.getLocale() == null) ||
+			Validator.isNull(object1) || Validator.isNull(object2)) {
 
-		if (_futureDatesFunction.apply(object1, object2) &&
-			_pastDatesFunction.apply(object1, object2)) {
+			return false;
+		}
 
-			return true;
+		try {
+			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
+				object2.toString());
+
+			JSONObject endsOnJSONObject = jsonObject.getJSONObject("endsOn");
+
+			if (endsOnJSONObject == null) {
+				return false;
+			}
+
+			JSONObject startsFromJSONObject = jsonObject.getJSONObject(
+				"startsFrom");
+
+			if (startsFromJSONObject == null) {
+				return false;
+			}
+
+			LocalDate localDate = DateFunctionsUtil.getParsedLocalDate(
+				object1.toString(),
+				_ddmExpressionParameterAccessor.getLocale());
+
+			if (!localDate.isAfter(
+					DateFunctionsUtil.getComparisonLocalDate(
+						DateFunctionsUtil.getCurrentLocalDate(
+							_ddmExpressionParameterAccessor.getTimeZoneId()),
+						endsOnJSONObject)) &&
+				!localDate.isBefore(
+					DateFunctionsUtil.getComparisonLocalDate(
+						DateFunctionsUtil.getCurrentLocalDate(
+							_ddmExpressionParameterAccessor.getTimeZoneId()),
+						startsFromJSONObject))) {
+
+				return true;
+			}
+		}
+		catch (Exception exception) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(exception, exception);
+			}
 		}
 
 		return false;
@@ -57,10 +102,9 @@ public class DateRangeFunction
 		_ddmExpressionParameterAccessor = ddmExpressionParameterAccessor;
 	}
 
+	private static final Log _log = LogFactoryUtil.getLog(
+		DateRangeFunction.class);
+
 	private DDMExpressionParameterAccessor _ddmExpressionParameterAccessor;
-	private final FutureDatesFunction _futureDatesFunction =
-		new FutureDatesFunction();
-	private final PastDatesFunction _pastDatesFunction =
-		new PastDatesFunction();
 
 }
