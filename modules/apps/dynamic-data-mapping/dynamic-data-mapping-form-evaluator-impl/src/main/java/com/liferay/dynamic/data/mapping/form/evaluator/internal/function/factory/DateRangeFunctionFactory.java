@@ -22,11 +22,13 @@ import org.osgi.service.component.annotations.Component;
 
 /**
  * @author Carolina Barbosa
+ * @deprecated As of Athanasius (7.3.x), with no direct replacement
  */
 @Component(
 	property = "name=" + DateRangeFunction.NAME,
 	service = DDMExpressionFunctionFactory.class
 )
+@Deprecated
 public class DateRangeFunctionFactory implements DDMExpressionFunctionFactory {
 
 	@Override

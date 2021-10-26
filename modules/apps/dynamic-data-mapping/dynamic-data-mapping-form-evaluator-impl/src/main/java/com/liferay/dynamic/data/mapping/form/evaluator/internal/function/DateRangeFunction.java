@@ -20,7 +20,9 @@ import com.liferay.dynamic.data.mapping.expression.DDMExpressionParameterAccesso
 
 /**
  * @author Carolina Barbosa
+ * @deprecated As of Athanasius (7.3.x), with no direct replacement
  */
+@Deprecated
 public class DateRangeFunction
 	implements DDMExpressionFunction.Function2<Object, Object, Boolean>,
 			   DDMExpressionParameterAccessorAware {
