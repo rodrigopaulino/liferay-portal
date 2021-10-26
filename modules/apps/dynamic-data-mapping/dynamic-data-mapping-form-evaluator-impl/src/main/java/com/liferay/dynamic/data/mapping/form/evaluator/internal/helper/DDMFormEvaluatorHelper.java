@@ -44,7 +44,6 @@ import com.liferay.dynamic.data.mapping.model.DDMFormRule;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
-import com.liferay.dynamic.data.mapping.storage.constants.FieldConstants;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
@@ -161,20 +160,11 @@ public class DDMFormEvaluatorHelper {
 	protected <T> DDMExpression<T> createExpression(String expression)
 		throws DDMExpressionException {
 
-		return createExpression(expression, false);
-	}
-
-	protected <T> DDMExpression<T> createExpression(
-			String expression, boolean ddmExpressionDateValidation)
-		throws DDMExpressionException {
-
 		return _ddmExpressionFactory.createExpression(
 			CreateExpressionRequest.Builder.newBuilder(
 				expression
 			).withDDMExpressionActionHandler(
 				ddmFormEvaluatorExpressionActionHandler
-			).withDDMExpressionDateValidation(
-				ddmExpressionDateValidation
 			).withDDMExpressionFieldAccessor(
 				ddmFormEvaluatorDDMExpressionFieldAccessor
 			).withDDMExpressionObserver(
@@ -633,14 +623,11 @@ public class DDMFormEvaluatorHelper {
 					ddmFormFieldValidationExpression.getValue());
 			}
 			else {
-				DDMFormField ddmFormField = _ddmFormFieldsMap.get(fieldName);
-
 				ddmExpression = createExpression(
-					StringUtil.replace(
-						ddmFormFieldValidationExpression.getValue(),
-						"{parameter}", localizedValueString),
-					StringUtil.equals(
-						ddmFormField.getType(), FieldConstants.DATE));
+					ddmFormFieldValidationExpression.getExpression(
+						localizedValueString,
+						ddmFormEvaluatorExpressionParameterAccessor.
+							getTimeZoneId()));
 			}
 
 			ddmExpression.setVariable(

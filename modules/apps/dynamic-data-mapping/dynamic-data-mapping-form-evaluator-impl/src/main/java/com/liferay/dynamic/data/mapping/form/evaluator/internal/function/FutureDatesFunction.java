@@ -17,8 +17,10 @@ package com.liferay.dynamic.data.mapping.form.evaluator.internal.function;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionParameterAccessor;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionParameterAccessorAware;
-import com.liferay.dynamic.data.mapping.form.evaluator.internal.function.util.DateFunctionsUtil;
+import com.liferay.dynamic.data.mapping.form.validation.util.DateParameterUtil;
 import com.liferay.portal.kernel.util.Validator;
+
+import java.time.LocalDate;
 
 /**
  * @author Bruno Oliveira
@@ -39,9 +41,18 @@ public class FutureDatesFunction
 			return false;
 		}
 
-		return DateFunctionsUtil.isFutureDate(
-			object1.toString(), object2.toString(),
-			_ddmExpressionParameterAccessor.getLocale());
+		LocalDate localDate = DateParameterUtil.getLocalDate(
+			object1.toString(), _ddmExpressionParameterAccessor.getLocale());
+
+		if (localDate.isBefore(
+				DateParameterUtil.getLocalDate(
+					object2.toString(),
+					_ddmExpressionParameterAccessor.getLocale()))) {
+
+			return false;
+		}
+
+		return true;
 	}
 
 	@Override

@@ -12,8 +12,11 @@
  * details.
  */
 
-package com.liferay.dynamic.data.mapping.form.evaluator.internal.function.util;
+package com.liferay.dynamic.data.mapping.form.validation.util;
 
+import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.json.JSONException;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -37,80 +40,9 @@ import java.util.TimeZone;
 /**
  * @author Carolina Barbosa
  */
-public class DateFunctionsUtil {
+public class DateParameterUtil {
 
-	public static LocalDate getComparisonLocalDate(
-		LocalDate currentLocalDate, JSONObject jsonObject) {
-
-		String type = jsonObject.getString("type");
-
-		if (StringUtil.equals(type, "customDate") &&
-			StringUtil.equals(jsonObject.getString("date"), "responseDate")) {
-
-			return _getCustomLocalDate(
-				currentLocalDate, jsonObject.getInt("quantity"),
-				jsonObject.getString("unit"));
-		}
-		else if (StringUtil.equals(type, "responseDate")) {
-			return currentLocalDate;
-		}
-
-		return null;
-	}
-
-	public static LocalDate getCurrentLocalDate(String timeZoneId) {
-		if (Validator.isNull(timeZoneId)) {
-			TimeZone timeZone = TimeZoneUtil.getDefault();
-
-			timeZoneId = timeZone.getID();
-		}
-
-		return LocalDate.now(ZoneId.of(timeZoneId));
-	}
-
-	public static Boolean isFutureDate(
-		String dateString1, String dateString2, Locale locale) {
-
-		LocalDate localDate = _getParsedLocalDate(dateString1, locale);
-
-		if (localDate.isBefore(_getParsedLocalDate(dateString2, locale))) {
-			return false;
-		}
-
-		return true;
-	}
-
-	public static Boolean isPastDate(
-		String dateString1, String dateString2, Locale locale) {
-
-		LocalDate localDate = _getParsedLocalDate(dateString1, locale);
-
-		if (localDate.isAfter(_getParsedLocalDate(dateString2, locale))) {
-			return false;
-		}
-
-		return true;
-	}
-
-	private static LocalDate _getCustomLocalDate(
-		LocalDate localDate, int quantity, String unit) {
-
-		if (StringUtil.equals(unit, "days")) {
-			return localDate.plusDays(quantity);
-		}
-		else if (StringUtil.equals(unit, "months")) {
-			return localDate.plusMonths(quantity);
-		}
-		else if (StringUtil.equals(unit, "years")) {
-			return localDate.plusYears(quantity);
-		}
-
-		return null;
-	}
-
-	private static LocalDate _getParsedLocalDate(
-		String dateString, Locale locale) {
-
+	public static LocalDate getLocalDate(String dateString, Locale locale) {
 		try {
 			Date date = DateUtil.parseDate("yyyy-MM-dd", dateString, locale);
 
@@ -129,7 +61,78 @@ public class DateFunctionsUtil {
 			dateString, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 	}
 
+	public static String getParameter(
+		String key, String parameter, String timeZoneId) {
+
+		JSONObject jsonObject;
+
+		try {
+			jsonObject = JSONFactoryUtil.createJSONObject(parameter);
+		}
+		catch (JSONException jsonException) {
+			return StringPool.BLANK;
+		}
+
+		LocalDate localDate = _getComparisonLocalDate(
+			_getCurrentLocalDate(timeZoneId), jsonObject.getJSONObject(key));
+
+		if (localDate == null) {
+			return StringPool.BLANK;
+		}
+
+		return localDate.toString();
+	}
+
+	private static LocalDate _getComparisonLocalDate(
+		LocalDate currentLocalDate, JSONObject jsonObject) {
+
+		if (jsonObject == null) {
+			return null;
+		}
+
+		String type = jsonObject.getString("type");
+
+		if (StringUtil.equals(type, "customDate") &&
+			StringUtil.equals(jsonObject.getString("date"), "responseDate")) {
+
+			return _getCustomLocalDate(
+				currentLocalDate, jsonObject.getInt("quantity"),
+				jsonObject.getString("unit"));
+		}
+		else if (StringUtil.equals(type, "responseDate")) {
+			return currentLocalDate;
+		}
+
+		return null;
+	}
+
+	private static LocalDate _getCurrentLocalDate(String timeZoneId) {
+		if (Validator.isNull(timeZoneId)) {
+			TimeZone timeZone = TimeZoneUtil.getDefault();
+
+			timeZoneId = timeZone.getID();
+		}
+
+		return LocalDate.now(ZoneId.of(timeZoneId));
+	}
+
+	private static LocalDate _getCustomLocalDate(
+		LocalDate localDate, int quantity, String unit) {
+
+		if (StringUtil.equals(unit, "days")) {
+			return localDate.plusDays(quantity);
+		}
+		else if (StringUtil.equals(unit, "months")) {
+			return localDate.plusMonths(quantity);
+		}
+		else if (StringUtil.equals(unit, "years")) {
+			return localDate.plusYears(quantity);
+		}
+
+		return null;
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
-		DateFunctionsUtil.class);
+		DateParameterUtil.class);
 
 }

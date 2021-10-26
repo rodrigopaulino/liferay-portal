@@ -23,6 +23,7 @@ Export-Package:\
 	com.liferay.dynamic.data.mapping.form.renderer,\
 	com.liferay.dynamic.data.mapping.form.renderer.constants,\
 	com.liferay.dynamic.data.mapping.form.validation,\
+	com.liferay.dynamic.data.mapping.form.validation.util,\
 	com.liferay.dynamic.data.mapping.form.values.factory,\
 	com.liferay.dynamic.data.mapping.form.values.query,\
 	com.liferay.dynamic.data.mapping.info.display.field,\

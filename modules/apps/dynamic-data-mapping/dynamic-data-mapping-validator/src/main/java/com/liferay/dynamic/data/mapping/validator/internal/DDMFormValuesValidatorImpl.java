@@ -51,7 +51,6 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringBundler;
-import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Collections;
@@ -143,12 +142,10 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 
 				ddmExpression = _ddmExpressionFactory.createExpression(
 					CreateExpressionRequest.Builder.newBuilder(
-						StringUtil.replace(
-							ddmFormFieldValidationExpression.getValue(),
-							"{parameter}",
-							parameterLocalizedValue.getString(locale))
-					).withDDMExpressionDateValidation(
-						StringUtil.equals(dataType, FieldConstants.DATE)
+						ddmFormFieldValidationExpression.getExpression(
+							parameterLocalizedValue.getString(locale),
+							_ddmFormFieldValueExpressionParameterAccessor.
+								getTimeZoneId())
 					).withDDMExpressionParameterAccessor(
 						_ddmFormFieldValueExpressionParameterAccessor
 					).build());

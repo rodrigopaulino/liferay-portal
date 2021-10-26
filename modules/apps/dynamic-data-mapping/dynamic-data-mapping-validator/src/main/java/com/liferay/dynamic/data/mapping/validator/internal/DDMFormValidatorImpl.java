@@ -27,7 +27,6 @@ import com.liferay.dynamic.data.mapping.model.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidationExpression;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
-import com.liferay.dynamic.data.mapping.storage.constants.FieldConstants;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException.MustNotDuplicateFieldName;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValidationException.MustSetAvailableLocales;
@@ -381,20 +380,14 @@ public class DDMFormValidatorImpl implements DDMFormValidator {
 					).build());
 			}
 			else {
-				String value = ddmFormFieldValidationExpression.getValue();
-
 				LocalizedValue parameterLocalizedValue =
 					ddmFormFieldValidation.getParameterLocalizedValue();
 
 				for (Locale locale : locales) {
 					_ddmExpressionFactory.createExpression(
 						CreateExpressionRequest.Builder.newBuilder(
-							StringUtil.replace(
-								value, "{parameter}",
-								parameterLocalizedValue.getString(locale))
-						).withDDMExpressionDateValidation(
-							StringUtil.equals(
-								ddmFormField.getType(), FieldConstants.DATE)
+							ddmFormFieldValidationExpression.getExpression(
+								parameterLocalizedValue.getString(locale), null)
 						).build());
 				}
 			}
