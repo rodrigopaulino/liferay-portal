@@ -18,10 +18,6 @@ import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionParameterAccessor;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionParameterAccessorAware;
 import com.liferay.dynamic.data.mapping.form.evaluator.internal.function.util.DateFunctionsUtil;
-import com.liferay.portal.kernel.json.JSONFactoryUtil;
-import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.Validator;
 
 /**
@@ -36,33 +32,15 @@ public class PastDatesFunction
 	@Override
 	public Boolean apply(Object object1, Object object2) {
 		if ((_ddmExpressionParameterAccessor == null) ||
+			(_ddmExpressionParameterAccessor.getLocale() == null) ||
 			Validator.isNull(object1) || Validator.isNull(object2)) {
 
 			return false;
 		}
 
-		try {
-			JSONObject jsonObject = JSONFactoryUtil.createJSONObject(
-				object2.toString());
-
-			JSONObject endsOnJSONObject = jsonObject.getJSONObject("endsOn");
-
-			if (endsOnJSONObject == null) {
-				return false;
-			}
-
-			return DateFunctionsUtil.isPastDate(
-				object1.toString(), endsOnJSONObject,
-				_ddmExpressionParameterAccessor.getLocale(),
-				_ddmExpressionParameterAccessor.getTimeZoneId());
-		}
-		catch (Exception exception) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(exception, exception);
-			}
-		}
-
-		return false;
+		return DateFunctionsUtil.isPastDate(
+			object1.toString(), object2.toString(),
+			_ddmExpressionParameterAccessor.getLocale());
 	}
 
 	@Override
@@ -76,9 +54,6 @@ public class PastDatesFunction
 
 		_ddmExpressionParameterAccessor = ddmExpressionParameterAccessor;
 	}
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		PastDatesFunction.class);
 
 	private DDMExpressionParameterAccessor _ddmExpressionParameterAccessor;
 

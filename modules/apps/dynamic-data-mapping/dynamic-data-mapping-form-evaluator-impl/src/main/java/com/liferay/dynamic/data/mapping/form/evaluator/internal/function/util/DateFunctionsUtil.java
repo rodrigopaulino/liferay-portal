@@ -39,35 +39,7 @@ import java.util.TimeZone;
  */
 public class DateFunctionsUtil {
 
-	public static Boolean isFutureDate(
-		String dateString1, String dateString2, Locale locale) {
-
-		LocalDate localDate = _getParsedLocalDate(dateString1, locale);
-
-		if (localDate.isBefore(_getParsedLocalDate(dateString2, locale))) {
-			return false;
-		}
-
-		return true;
-	}
-
-	public static Boolean isPastDate(
-		String dateString, JSONObject jsonObject, Locale locale,
-		String timeZoneId) {
-
-		LocalDate localDate = _getParsedLocalDate(dateString, locale);
-
-		if (localDate.isAfter(
-				_getComparisonLocalDate(
-					_getCurrentLocalDate(timeZoneId), jsonObject))) {
-
-			return false;
-		}
-
-		return true;
-	}
-
-	private static LocalDate _getComparisonLocalDate(
+	public static LocalDate getComparisonLocalDate(
 		LocalDate currentLocalDate, JSONObject jsonObject) {
 
 		String type = jsonObject.getString("type");
@@ -86,7 +58,7 @@ public class DateFunctionsUtil {
 		return null;
 	}
 
-	private static LocalDate _getCurrentLocalDate(String timeZoneId) {
+	public static LocalDate getCurrentLocalDate(String timeZoneId) {
 		if (Validator.isNull(timeZoneId)) {
 			TimeZone timeZone = TimeZoneUtil.getDefault();
 
@@ -94,6 +66,30 @@ public class DateFunctionsUtil {
 		}
 
 		return LocalDate.now(ZoneId.of(timeZoneId));
+	}
+
+	public static Boolean isFutureDate(
+		String dateString1, String dateString2, Locale locale) {
+
+		LocalDate localDate = _getParsedLocalDate(dateString1, locale);
+
+		if (localDate.isBefore(_getParsedLocalDate(dateString2, locale))) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public static Boolean isPastDate(
+		String dateString1, String dateString2, Locale locale) {
+
+		LocalDate localDate = _getParsedLocalDate(dateString1, locale);
+
+		if (localDate.isAfter(_getParsedLocalDate(dateString2, locale))) {
+			return false;
+		}
+
+		return true;
 	}
 
 	private static LocalDate _getCustomLocalDate(
