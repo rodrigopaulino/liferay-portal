@@ -40,15 +40,11 @@ import java.util.TimeZone;
 public class DateFunctionsUtil {
 
 	public static Boolean isFutureDate(
-		String dateString, JSONObject jsonObject, Locale locale,
-		String timeZoneId) {
+		String dateString1, String dateString2, Locale locale) {
 
-		LocalDate localDate = _getParsedLocalDate(dateString, locale);
+		LocalDate localDate = _getParsedLocalDate(dateString1, locale);
 
-		if (localDate.isBefore(
-				_getComparisonLocalDate(
-					_getCurrentLocalDate(timeZoneId), jsonObject))) {
-
+		if (localDate.isBefore(_getParsedLocalDate(dateString2, locale))) {
 			return false;
 		}
 
