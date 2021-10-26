@@ -14,7 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.form.evaluator.internal.function;
 
-import com.liferay.portal.kernel.json.JSONUtil;
 import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 import com.liferay.portal.util.DateFormatFactoryImpl;
@@ -47,51 +46,12 @@ public class PastDatesFunctionTest {
 	}
 
 	@Test
-	public void testApplyFalse1() {
+	public void testApplyFalse() {
 		LocalDate tomorrowLocalDate = _todayLocalDate.plusDays(1);
 
 		Assert.assertFalse(
 			_pastDatesFunction.apply(
-				tomorrowLocalDate.toString(),
-				JSONUtil.put(
-					"endsOn", JSONUtil.put("type", "responseDate")
-				).toString()));
-	}
-
-	@Test
-	public void testApplyFalse2() {
-		Assert.assertFalse(
-			_pastDatesFunction.apply(
-				null,
-				JSONUtil.put(
-					"endsOn", JSONUtil.put("type", "responseDate")
-				).toString()));
-	}
-
-	@Test
-	public void testApplyFalseCustomDays() {
-		Assert.assertFalse(_apply(_todayLocalDate.minusDays(10), "days", -12));
-		Assert.assertFalse(_apply(_todayLocalDate.plusDays(14), "days", 12));
-		Assert.assertFalse(_apply(_todayLocalDate.plusDays(999), "days", 998));
-	}
-
-	@Test
-	public void testApplyFalseCustomMonths() {
-		Assert.assertFalse(
-			_apply(_todayLocalDate.minusMonths(10), "months", -12));
-		Assert.assertFalse(
-			_apply(_todayLocalDate.plusMonths(14), "months", 12));
-		Assert.assertFalse(
-			_apply(_todayLocalDate.plusMonths(999), "months", 998));
-	}
-
-	@Test
-	public void testApplyFalseCustomYears1() {
-		Assert.assertFalse(
-			_apply(_todayLocalDate.minusYears(10), "years", -12));
-		Assert.assertFalse(_apply(_todayLocalDate.plusYears(14), "years", 12));
-		Assert.assertFalse(
-			_apply(_todayLocalDate.plusYears(999), "years", 998));
+				tomorrowLocalDate.toString(), _todayLocalDate.toString()));
 	}
 
 	@Test
@@ -100,49 +60,54 @@ public class PastDatesFunctionTest {
 
 		Assert.assertTrue(
 			_pastDatesFunction.apply(
-				yesterdayLocalDate.toString(),
-				JSONUtil.put(
-					"endsOn", JSONUtil.put("type", "responseDate")
-				).toString()));
-	}
+				yesterdayLocalDate.toString(), _todayLocalDate.toString()));
 
-	@Test
-	public void testApplyTrueCustomDays() {
-		Assert.assertTrue(_apply(_todayLocalDate.minusDays(14), "days", -12));
-		Assert.assertTrue(_apply(_todayLocalDate.plusDays(10), "days", 12));
-		Assert.assertTrue(_apply(_todayLocalDate.plusDays(11), "days", 12));
-	}
-
-	@Test
-	public void testApplyTrueCustomMonths() {
 		Assert.assertTrue(
-			_apply(_todayLocalDate.minusMonths(14), "months", -12));
-		Assert.assertTrue(_apply(_todayLocalDate.plusMonths(10), "months", 12));
-		Assert.assertTrue(_apply(_todayLocalDate.plusMonths(11), "months", 12));
+			_pastDatesFunction.apply(
+				_todayLocalDate.toString(), _todayLocalDate.toString()));
 	}
 
 	@Test
-	public void testApplyTrueCustomYears() {
-		Assert.assertTrue(_apply(_todayLocalDate.minusYears(14), "years", -12));
-		Assert.assertTrue(_apply(_todayLocalDate.plusYears(10), "years", 12));
-		Assert.assertTrue(_apply(_todayLocalDate.plusYears(11), "years", 12));
+	public void testApplyWithoutDDMExpressionParameterAccessor() {
+		_pastDatesFunction.setDDMExpressionParameterAccessor(null);
+
+		LocalDate yesterdayLocalDate = _todayLocalDate.minusDays(1);
+
+		Assert.assertFalse(
+			_pastDatesFunction.apply(
+				yesterdayLocalDate.toString(), _todayLocalDate.toString()));
+
+		_pastDatesFunction.setDDMExpressionParameterAccessor(
+			new DefaultDDMExpressionParameterAccessor());
 	}
 
-	private Boolean _apply(LocalDate localDate, String unit, int quantity) {
-		return _pastDatesFunction.apply(
-			localDate.toString(),
-			JSONUtil.put(
-				"endsOn",
-				JSONUtil.put(
-					"date", "responseDate"
-				).put(
-					"quantity", quantity
-				).put(
-					"type", "customDate"
-				).put(
-					"unit", unit
-				)
-			).toString());
+	@Test
+	public void testApplyWithoutLocale() {
+		DefaultDDMExpressionParameterAccessor
+			defaultDDMExpressionParameterAccessor =
+				new DefaultDDMExpressionParameterAccessor();
+
+		defaultDDMExpressionParameterAccessor.setGetLocaleSupplier(() -> null);
+
+		_pastDatesFunction.setDDMExpressionParameterAccessor(
+			defaultDDMExpressionParameterAccessor);
+
+		LocalDate yesterdayLocalDate = _todayLocalDate.minusDays(1);
+
+		Assert.assertFalse(
+			_pastDatesFunction.apply(
+				yesterdayLocalDate.toString(), _todayLocalDate.toString()));
+
+		_pastDatesFunction.setDDMExpressionParameterAccessor(
+			new DefaultDDMExpressionParameterAccessor());
+	}
+
+	@Test
+	public void testApplyWithoutValues() {
+		Assert.assertFalse(
+			_pastDatesFunction.apply(null, _todayLocalDate.toString()));
+		Assert.assertFalse(
+			_pastDatesFunction.apply(_todayLocalDate.toString(), null));
 	}
 
 	private void _setUpDateFormatFactoryUtil() {
