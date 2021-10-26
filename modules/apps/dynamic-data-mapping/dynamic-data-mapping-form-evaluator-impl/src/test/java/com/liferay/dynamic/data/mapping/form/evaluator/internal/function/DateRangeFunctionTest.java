@@ -25,6 +25,7 @@ import java.time.ZoneId;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -50,6 +51,7 @@ public class DateRangeFunctionTest {
 		_setUpPastDatesFunction();
 	}
 
+	@Ignore
 	@Test
 	public void testApplyFalse1() {
 		LocalDate yesterdayLocalDate = _todayLocalDate.minusDays(1);
@@ -64,6 +66,7 @@ public class DateRangeFunctionTest {
 				).toString()));
 	}
 
+	@Ignore
 	@Test
 	public void testApplyFalse2() {
 		LocalDate tomorrowLocalDate = _todayLocalDate.plusDays(1);
@@ -108,6 +111,7 @@ public class DateRangeFunctionTest {
 				)));
 	}
 
+	@Ignore
 	@Test
 	public void testApplyFalseCustomDays() {
 		Assert.assertFalse(
@@ -119,6 +123,7 @@ public class DateRangeFunctionTest {
 			_apply(_todayLocalDate.plusDays(30), "days", 12, 24));
 	}
 
+	@Ignore
 	@Test
 	public void testApplyFalseCustomMonths() {
 		Assert.assertFalse(
@@ -131,6 +136,7 @@ public class DateRangeFunctionTest {
 			_apply(_todayLocalDate.plusMonths(30), "months", 12, 24));
 	}
 
+	@Ignore
 	@Test
 	public void testApplyFalseCustomYears() {
 		Assert.assertFalse(
@@ -143,6 +149,7 @@ public class DateRangeFunctionTest {
 			_apply(_todayLocalDate.plusYears(30), "years", 12, 24));
 	}
 
+	@Ignore
 	@Test
 	public void testApplyTrue() {
 		Assert.assertTrue(
@@ -155,6 +162,7 @@ public class DateRangeFunctionTest {
 				).toString()));
 	}
 
+	@Ignore
 	@Test
 	public void testApplyTrueCustomDays() {
 		Assert.assertTrue(
@@ -162,6 +170,7 @@ public class DateRangeFunctionTest {
 		Assert.assertTrue(_apply(_todayLocalDate.plusDays(20), "days", 12, 24));
 	}
 
+	@Ignore
 	@Test
 	public void testApplyTrueCustomMonths() {
 		Assert.assertTrue(
@@ -170,6 +179,7 @@ public class DateRangeFunctionTest {
 			_apply(_todayLocalDate.plusMonths(20), "months", 12, 24));
 	}
 
+	@Ignore
 	@Test
 	public void testApplyTrueCustomYears() {
 		Assert.assertTrue(
