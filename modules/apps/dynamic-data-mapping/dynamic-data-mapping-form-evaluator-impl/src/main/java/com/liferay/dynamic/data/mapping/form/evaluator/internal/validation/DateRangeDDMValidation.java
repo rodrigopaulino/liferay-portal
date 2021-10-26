@@ -55,7 +55,8 @@ public class DateRangeDDMValidation implements DDMValidation {
 
 	@Override
 	public String getTemplate() {
-		return "dateRange({name}, \"{parameter}\")";
+		return "futureDates({name}, \"{parameter}\") AND pastDates({name}, " +
+			"\"{parameter}\")";
 	}
 
 }
