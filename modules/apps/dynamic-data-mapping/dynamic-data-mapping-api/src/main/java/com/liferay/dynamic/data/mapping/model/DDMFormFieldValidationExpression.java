@@ -15,6 +15,7 @@
 package com.liferay.dynamic.data.mapping.model;
 
 import com.liferay.dynamic.data.mapping.form.validation.util.DateParameterUtil;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.petra.lang.HashUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 
@@ -55,29 +56,34 @@ public class DDMFormFieldValidationExpression {
 		return false;
 	}
 
-	public String getExpression(String parameter, String timeZoneId) {
-		if (_name.equals("dateRange")) {
+	public String getExpression(
+		DDMFormValues ddmFormValues, String parameter, String timeZoneId) {
+
+		if (_name == null) {
+			return StringUtil.replace(_value, "{parameter}", parameter);
+		}
+		else if (_name.equals("dateRange")) {
 			String partialExpression = StringUtil.replaceLast(
 				_value, "{parameter}",
 				DateParameterUtil.getParameter(
-					"endsOn", parameter, timeZoneId));
+					ddmFormValues, "endsOn", parameter, timeZoneId));
 
 			return StringUtil.replace(
 				partialExpression, "{parameter}",
 				DateParameterUtil.getParameter(
-					"startsFrom", parameter, timeZoneId));
+					ddmFormValues, "startsFrom", parameter, timeZoneId));
 		}
 		else if (_name.equals("futureDates")) {
 			return StringUtil.replace(
 				_value, "{parameter}",
 				DateParameterUtil.getParameter(
-					"startsFrom", parameter, timeZoneId));
+					ddmFormValues, "startsFrom", parameter, timeZoneId));
 		}
 		else if (_name.equals("pastDates")) {
 			return StringUtil.replace(
 				_value, "{parameter}",
 				DateParameterUtil.getParameter(
-					"endsOn", parameter, timeZoneId));
+					ddmFormValues, "endsOn", parameter, timeZoneId));
 		}
 
 		return StringUtil.replace(_value, "{parameter}", parameter);

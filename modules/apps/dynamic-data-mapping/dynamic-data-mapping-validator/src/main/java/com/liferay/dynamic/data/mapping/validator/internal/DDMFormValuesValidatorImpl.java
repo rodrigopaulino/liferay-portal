@@ -76,6 +76,17 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 	public void validate(DDMFormValues ddmFormValues)
 		throws DDMFormValuesValidationException {
 
+		validate(ddmFormValues, null);
+	}
+
+	@Override
+	public void validate(DDMFormValues ddmFormValues, String timeZoneId)
+		throws DDMFormValuesValidationException {
+
+		_ddmFormFieldValueExpressionParameterAccessor =
+			new DDMFormFieldValueExpressionParameterAccessor(
+				ddmFormValues.getDefaultLocale(), timeZoneId);
+
 		DDMForm ddmForm = ddmFormValues.getDDMForm();
 
 		if (ddmForm == null) {
@@ -89,17 +100,6 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 		traverseDDMFormFieldValues(
 			ddmFormValues.getDDMFormFieldValues(),
 			ddmForm.getDDMFormFieldsMap(false));
-	}
-
-	@Override
-	public void validate(DDMFormValues ddmFormValues, String timeZoneId)
-		throws DDMFormValuesValidationException {
-
-		_ddmFormFieldValueExpressionParameterAccessor =
-			new DDMFormFieldValueExpressionParameterAccessor(
-				ddmFormValues.getDefaultLocale(), timeZoneId);
-
-		validate(ddmFormValues);
 	}
 
 	@Activate
@@ -116,11 +116,19 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 
 	protected boolean evaluateValidationExpression(
 			String dataType, String ddmFormFieldName,
-			DDMFormFieldValidation ddmFormFieldValidation, Locale locale,
-			Value value)
+			DDMFormFieldValidation ddmFormFieldValidation,
+			DDMFormFieldValue ddmFormFieldValue)
 		throws DDMFormValuesValidationException {
 
-		if ((value == null) || Validator.isNull(value.getString(locale))) {
+		if (ddmFormFieldValue.getValue() == null) {
+			return true;
+		}
+
+		Value value = ddmFormFieldValue.getValue();
+
+		Locale locale = value.getDefaultLocale();
+
+		if (Validator.isNull(value.getString(locale))) {
 			return true;
 		}
 
@@ -143,6 +151,7 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 				ddmExpression = _ddmExpressionFactory.createExpression(
 					CreateExpressionRequest.Builder.newBuilder(
 						ddmFormFieldValidationExpression.getExpression(
+							ddmFormFieldValue.getDDMFormValues(),
 							parameterLocalizedValue.getString(locale),
 							_ddmFormFieldValueExpressionParameterAccessor.
 								getTimeZoneId())
@@ -349,7 +358,7 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 	}
 
 	protected void validateDDMFormFieldValidationExpression(
-			DDMFormField ddmFormField, Value value)
+			DDMFormField ddmFormField, DDMFormFieldValue ddmFormFieldValue)
 		throws DDMFormValuesValidationException {
 
 		DDMFormFieldValidation ddmFormFieldValidation =
@@ -361,7 +370,7 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 
 		boolean valid = evaluateValidationExpression(
 			ddmFormField.getDataType(), ddmFormField.getName(),
-			ddmFormFieldValidation, value.getDefaultLocale(), value);
+			ddmFormFieldValidation, ddmFormFieldValue);
 
 		if (!valid) {
 			throw new MustSetValidValue(ddmFormField.getName());
@@ -418,7 +427,8 @@ public class DDMFormValuesValidatorImpl implements DDMFormValuesValidator {
 			validateDDMFormFieldValueLocales(
 				ddmFormField, availableLocales, defaultLocale, value);
 
-			validateDDMFormFieldValidationExpression(ddmFormField, value);
+			validateDDMFormFieldValidationExpression(
+				ddmFormField, ddmFormFieldValue);
 		}
 	}
 

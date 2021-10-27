@@ -387,7 +387,8 @@ public class DDMFormValidatorImpl implements DDMFormValidator {
 					_ddmExpressionFactory.createExpression(
 						CreateExpressionRequest.Builder.newBuilder(
 							ddmFormFieldValidationExpression.getExpression(
-								parameterLocalizedValue.getString(locale), null)
+								null, parameterLocalizedValue.getString(locale),
+								null)
 						).build());
 				}
 			}

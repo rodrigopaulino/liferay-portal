@@ -625,6 +625,7 @@ public class DDMFormEvaluatorHelper {
 			else {
 				ddmExpression = createExpression(
 					ddmFormFieldValidationExpression.getExpression(
+						_ddmFormEvaluatorEvaluateRequest.getDDMFormValues(),
 						localizedValueString,
 						ddmFormEvaluatorExpressionParameterAccessor.
 							getTimeZoneId()));

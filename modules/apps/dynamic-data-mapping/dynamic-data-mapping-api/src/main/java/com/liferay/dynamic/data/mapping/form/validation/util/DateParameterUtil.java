@@ -14,27 +14,26 @@
 
 package com.liferay.dynamic.data.mapping.form.validation.util;
 
+import com.liferay.dynamic.data.mapping.model.Value;
+import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
+import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.DateUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.TimeZoneUtil;
 import com.liferay.portal.kernel.util.Validator;
 
-import java.text.ParseException;
-
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
-import java.util.Date;
-import java.util.Locale;
+import java.util.List;
+import java.util.Map;
 import java.util.TimeZone;
 
 /**
@@ -42,19 +41,9 @@ import java.util.TimeZone;
  */
 public class DateParameterUtil {
 
-	public static LocalDate getLocalDate(String dateString, Locale locale) {
-		try {
-			Date date = DateUtil.parseDate("yyyy-MM-dd", dateString, locale);
-
-			ZonedDateTime zonedDateTime = ZonedDateTime.ofInstant(
-				date.toInstant(), ZoneOffset.UTC);
-
-			return zonedDateTime.toLocalDate();
-		}
-		catch (ParseException parseException) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(parseException, parseException);
-			}
+	public static LocalDate getLocalDate(String dateString) {
+		if (Validator.isNull(dateString)) {
+			return null;
 		}
 
 		return LocalDate.parse(
@@ -62,7 +51,8 @@ public class DateParameterUtil {
 	}
 
 	public static String getParameter(
-		String key, String parameter, String timeZoneId) {
+		DDMFormValues ddmFormValues, String key, String parameter,
+		String timeZoneId) {
 
 		JSONObject jsonObject;
 
@@ -70,11 +60,16 @@ public class DateParameterUtil {
 			jsonObject = JSONFactoryUtil.createJSONObject(parameter);
 		}
 		catch (JSONException jsonException) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(jsonException, jsonException);
+			}
+
 			return StringPool.BLANK;
 		}
 
 		LocalDate localDate = _getComparisonLocalDate(
-			_getCurrentLocalDate(timeZoneId), jsonObject.getJSONObject(key));
+			_getCurrentLocalDate(timeZoneId), ddmFormValues,
+			jsonObject.getJSONObject(key));
 
 		if (localDate == null) {
 			return StringPool.BLANK;
@@ -84,7 +79,8 @@ public class DateParameterUtil {
 	}
 
 	private static LocalDate _getComparisonLocalDate(
-		LocalDate currentLocalDate, JSONObject jsonObject) {
+		LocalDate currentLocalDate, DDMFormValues ddmFormValues,
+		JSONObject jsonObject) {
 
 		if (jsonObject == null) {
 			return null;
@@ -92,12 +88,30 @@ public class DateParameterUtil {
 
 		String type = jsonObject.getString("type");
 
-		if (StringUtil.equals(type, "customDate") &&
-			StringUtil.equals(jsonObject.getString("date"), "responseDate")) {
+		if (StringUtil.equals(type, "customDate")) {
+			if (StringUtil.equals(
+					jsonObject.getString("date"), "responseDate")) {
 
-			return _getCustomLocalDate(
-				currentLocalDate, jsonObject.getInt("quantity"),
-				jsonObject.getString("unit"));
+				return _getCustomLocalDate(
+					currentLocalDate, jsonObject.getInt("quantity"),
+					jsonObject.getString("unit"));
+			}
+			else if (StringUtil.equals(
+						jsonObject.getString("date"), "dateField")) {
+
+				return _getCustomLocalDate(
+					getLocalDate(
+						_getDateFieldValue(
+							jsonObject.getString("dateFieldName"),
+							ddmFormValues)),
+					jsonObject.getInt("quantity"),
+					jsonObject.getString("unit"));
+			}
+		}
+		else if (StringUtil.equals(type, "dateField")) {
+			return getLocalDate(
+				_getDateFieldValue(
+					jsonObject.getString("dateFieldName"), ddmFormValues));
 		}
 		else if (StringUtil.equals(type, "responseDate")) {
 			return currentLocalDate;
@@ -119,6 +133,10 @@ public class DateParameterUtil {
 	private static LocalDate _getCustomLocalDate(
 		LocalDate localDate, int quantity, String unit) {
 
+		if (localDate == null) {
+			return null;
+		}
+
 		if (StringUtil.equals(unit, "days")) {
 			return localDate.plusDays(quantity);
 		}
@@ -127,6 +145,26 @@ public class DateParameterUtil {
 		}
 		else if (StringUtil.equals(unit, "years")) {
 			return localDate.plusYears(quantity);
+		}
+
+		return null;
+	}
+
+	private static String _getDateFieldValue(
+		String dateFieldName, DDMFormValues ddmFormValues) {
+
+		Map<String, List<DDMFormFieldValue>> ddmFormFieldValuesMap =
+			ddmFormValues.getDDMFormFieldValuesMap(true);
+
+		List<DDMFormFieldValue> ddmFormFieldValues = ddmFormFieldValuesMap.get(
+			dateFieldName);
+
+		if (ListUtil.isNotEmpty(ddmFormFieldValues)) {
+			DDMFormFieldValue ddmFormFieldValue = ddmFormFieldValues.get(0);
+
+			Value value = ddmFormFieldValue.getValue();
+
+			return value.getString(ddmFormValues.getDefaultLocale());
 		}
 
 		return null;
