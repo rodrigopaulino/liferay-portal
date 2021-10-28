@@ -39,9 +39,6 @@ public class PastDatesFunctionTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_pastDatesFunction.setDDMExpressionParameterAccessor(
-			new DefaultDDMExpressionParameterAccessor());
-
 		_setUpDateFormatFactoryUtil();
 	}
 
@@ -65,41 +62,6 @@ public class PastDatesFunctionTest {
 		Assert.assertTrue(
 			_pastDatesFunction.apply(
 				_todayLocalDate.toString(), _todayLocalDate.toString()));
-	}
-
-	@Test
-	public void testApplyWithoutDDMExpressionParameterAccessor() {
-		_pastDatesFunction.setDDMExpressionParameterAccessor(null);
-
-		LocalDate yesterdayLocalDate = _todayLocalDate.minusDays(1);
-
-		Assert.assertFalse(
-			_pastDatesFunction.apply(
-				yesterdayLocalDate.toString(), _todayLocalDate.toString()));
-
-		_pastDatesFunction.setDDMExpressionParameterAccessor(
-			new DefaultDDMExpressionParameterAccessor());
-	}
-
-	@Test
-	public void testApplyWithoutLocale() {
-		DefaultDDMExpressionParameterAccessor
-			defaultDDMExpressionParameterAccessor =
-				new DefaultDDMExpressionParameterAccessor();
-
-		defaultDDMExpressionParameterAccessor.setGetLocaleSupplier(() -> null);
-
-		_pastDatesFunction.setDDMExpressionParameterAccessor(
-			defaultDDMExpressionParameterAccessor);
-
-		LocalDate yesterdayLocalDate = _todayLocalDate.minusDays(1);
-
-		Assert.assertFalse(
-			_pastDatesFunction.apply(
-				yesterdayLocalDate.toString(), _todayLocalDate.toString()));
-
-		_pastDatesFunction.setDDMExpressionParameterAccessor(
-			new DefaultDDMExpressionParameterAccessor());
 	}
 
 	@Test

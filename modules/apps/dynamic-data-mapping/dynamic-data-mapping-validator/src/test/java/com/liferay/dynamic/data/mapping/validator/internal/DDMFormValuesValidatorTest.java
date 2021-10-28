@@ -37,6 +37,7 @@ import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidationExcepti
 import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidationException.MustSetValidValue;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidationException.MustSetValidValuesSize;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidationException.RequiredValue;
+import com.liferay.dynamic.data.mapping.validator.internal.expression.DDMFormFieldValueExpressionParameterAccessor;
 import com.liferay.osgi.service.tracker.collections.map.ServiceTrackerMap;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.json.JSONFactoryImpl;
@@ -75,6 +76,8 @@ public class DDMFormValuesValidatorTest {
 
 	@Test
 	public void testEvaluateDateValidationExpression() throws Exception {
+		String ddmFormFieldName = "Field";
+
 		DDMFormFieldValidation ddmFormFieldValidation =
 			new DDMFormFieldValidation();
 
@@ -90,12 +93,16 @@ public class DDMFormValuesValidatorTest {
 
 		Assert.assertTrue(
 			_ddmFormValuesValidatorImpl.evaluateValidationExpression(
-				"date", "Field", ddmFormFieldValidation, LocaleUtil.US, null));
+				"date", ddmFormFieldName, ddmFormFieldValidation,
+				DDMFormValuesTestUtil.createLocalizedDDMFormFieldValue(
+					ddmFormFieldName, null)));
 	}
 
 	@Test
 	public void testEvaluateDDMFormFieldValidationExpressionNull()
 		throws Exception {
+
+		String ddmFormFieldName = "Field";
 
 		DDMFormFieldValidation ddmFormFieldValidation =
 			new DDMFormFieldValidation();
@@ -106,13 +113,15 @@ public class DDMFormValuesValidatorTest {
 
 		Assert.assertTrue(
 			_ddmFormValuesValidatorImpl.evaluateValidationExpression(
-				"double", "Field", ddmFormFieldValidation, LocaleUtil.US,
-				DDMFormValuesTestUtil.createLocalizedValue(
-					"12", LocaleUtil.US)));
+				"double", ddmFormFieldName, ddmFormFieldValidation,
+				DDMFormValuesTestUtil.createLocalizedDDMFormFieldValue(
+					ddmFormFieldName, "12")));
 	}
 
 	@Test
 	public void testEvaluateForDoubleType() throws Exception {
+		String ddmFormFieldName = "Field";
+
 		DDMFormFieldValidation ddmFormFieldValidation =
 			new DDMFormFieldValidation();
 
@@ -128,13 +137,15 @@ public class DDMFormValuesValidatorTest {
 
 		Assert.assertTrue(
 			_ddmFormValuesValidatorImpl.evaluateValidationExpression(
-				"double", "Field", ddmFormFieldValidation, LocaleUtil.US,
-				DDMFormValuesTestUtil.createLocalizedValue(
-					"10", LocaleUtil.US)));
+				"double", ddmFormFieldName, ddmFormFieldValidation,
+				DDMFormValuesTestUtil.createLocalizedDDMFormFieldValue(
+					ddmFormFieldName, "10")));
 	}
 
 	@Test
 	public void testEvaluateForDoubleTypeWithSeparator() throws Exception {
+		String ddmFormFieldName = "Field";
+
 		DDMFormFieldValidation ddmFormFieldValidation =
 			new DDMFormFieldValidation();
 
@@ -154,8 +165,9 @@ public class DDMFormValuesValidatorTest {
 
 		Assert.assertTrue(
 			_ddmFormValuesValidatorImpl.evaluateValidationExpression(
-				"double", "Field", ddmFormFieldValidation, LocaleUtil.BRAZIL,
-				localizedValue));
+				"double", "Field", ddmFormFieldValidation,
+				DDMFormValuesTestUtil.createDDMFormFieldValue(
+					ddmFormFieldName, localizedValue)));
 	}
 
 	@Test(expected = MustSetValidValue.class)
@@ -942,6 +954,10 @@ public class DDMFormValuesValidatorTest {
 			_ddmFormValuesValidatorImpl, "_ddmFormFieldTypeServicesTracker",
 			ProxyFactory.newDummyInstance(
 				DDMFormFieldTypeServicesTracker.class));
+		ReflectionTestUtil.setFieldValue(
+			_ddmFormValuesValidatorImpl,
+			"_ddmFormFieldValueExpressionParameterAccessor",
+			new DDMFormFieldValueExpressionParameterAccessor(null, null));
 		ReflectionTestUtil.setFieldValue(
 			_ddmFormValuesValidatorImpl, "_serviceTrackerMap",
 			ProxyFactory.newDummyInstance(ServiceTrackerMap.class));

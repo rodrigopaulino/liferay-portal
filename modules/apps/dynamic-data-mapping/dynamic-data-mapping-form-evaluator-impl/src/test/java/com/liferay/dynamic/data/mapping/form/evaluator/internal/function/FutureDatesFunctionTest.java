@@ -40,9 +40,6 @@ public class FutureDatesFunctionTest {
 
 	@Before
 	public void setUp() throws Exception {
-		_futureDatesFunction.setDDMExpressionParameterAccessor(
-			new DefaultDDMExpressionParameterAccessor());
-
 		_setUpDateFormatFactoryUtil();
 	}
 
@@ -66,41 +63,6 @@ public class FutureDatesFunctionTest {
 		Assert.assertTrue(
 			_futureDatesFunction.apply(
 				_todayLocalDate.toString(), _todayLocalDate.toString()));
-	}
-
-	@Test
-	public void testApplyWithoutDDMExpressionParameterAccessor() {
-		_futureDatesFunction.setDDMExpressionParameterAccessor(null);
-
-		LocalDate tomorrowLocalDate = _todayLocalDate.plusDays(1);
-
-		Assert.assertFalse(
-			_futureDatesFunction.apply(
-				tomorrowLocalDate.toString(), _todayLocalDate.toString()));
-
-		_futureDatesFunction.setDDMExpressionParameterAccessor(
-			new DefaultDDMExpressionParameterAccessor());
-	}
-
-	@Test
-	public void testApplyWithoutLocale() {
-		DefaultDDMExpressionParameterAccessor
-			defaultDDMExpressionParameterAccessor =
-				new DefaultDDMExpressionParameterAccessor();
-
-		defaultDDMExpressionParameterAccessor.setGetLocaleSupplier(() -> null);
-
-		_futureDatesFunction.setDDMExpressionParameterAccessor(
-			defaultDDMExpressionParameterAccessor);
-
-		LocalDate tomorrowLocalDate = _todayLocalDate.plusDays(1);
-
-		Assert.assertFalse(
-			_futureDatesFunction.apply(
-				tomorrowLocalDate.toString(), _todayLocalDate.toString()));
-
-		_futureDatesFunction.setDDMExpressionParameterAccessor(
-			new DefaultDDMExpressionParameterAccessor());
 	}
 
 	@Test

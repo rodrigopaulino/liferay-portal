@@ -18,7 +18,6 @@ import com.liferay.dynamic.data.mapping.expression.CreateExpressionRequest;
 import com.liferay.dynamic.data.mapping.expression.DDMExpression;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunctionFactory;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunctionTracker;
-import com.liferay.dynamic.data.mapping.expression.internal.functions.DateValidationFunction;
 import com.liferay.dynamic.data.mapping.expression.internal.functions.PowFunction;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
@@ -66,19 +65,6 @@ public class DDMExpressionFactoryImplTest extends PowerMockito {
 		Assert.assertEquals(0, bigDecimal.compareTo(new BigDecimal(8)));
 	}
 
-	@Test
-	public void testCreateDDMExpressionDateValidation() throws Exception {
-		DDMExpression<Boolean> ddmExpression =
-			_ddmExpressionFactoryImpl.createExpression(
-				CreateExpressionRequest.Builder.newBuilder(
-					"dateValidation(\"{\"startsFrom\": \"responseDate\"}\")"
-				).withDDMExpressionDateValidation(
-					true
-				).build());
-
-		Assert.assertTrue(ddmExpression.evaluate());
-	}
-
 	private void _setUpDDMExpressionFunctionTracker() throws Exception {
 		DDMExpressionFunctionTracker ddmExpressionFunctionTracker = mock(
 			DDMExpressionFunctionTracker.class);
@@ -88,8 +74,6 @@ public class DDMExpressionFactoryImplTest extends PowerMockito {
 				Matchers.any())
 		).thenReturn(
 			HashMapBuilder.<String, DDMExpressionFunctionFactory>put(
-				"dateValidation", () -> new DateValidationFunction()
-			).put(
 				"pow", () -> new PowFunction()
 			).build()
 		);
