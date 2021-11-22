@@ -336,6 +336,12 @@ public class DDMFormFieldFactoryHelper {
 			ddmFormFieldValidation.setDDMFormFieldValidationExpression(
 				new DDMFormFieldValidationExpression() {
 					{
+						if (Validator.isNotNull(
+								_ddmFormField.validationExpressionName())) {
+
+							setName(_ddmFormField.validationExpressionName());
+						}
+
 						setValue(_ddmFormField.validationExpression());
 					}
 				});
@@ -354,6 +360,11 @@ public class DDMFormFieldFactoryHelper {
 
 			ddmFormFieldValidation.setErrorMessageLocalizedValue(
 				createLocalizedValue(validationErrorMessage));
+		}
+
+		if (Validator.isNotNull(_ddmFormField.validationParameter())) {
+			ddmFormFieldValidation.setParameterLocalizedValue(
+				createLocalizedValue(_ddmFormField.validationParameter()));
 		}
 
 		return ddmFormFieldValidation;

@@ -101,7 +101,7 @@ import org.osgi.annotation.versioning.ProviderType;
 							size = 12,
 							value = {
 								"showPartialResultsToRespondents",
-								"limitToOneSubmissionPerUser"
+								"limitToOneSubmissionPerUser", "expirationDate"
 							}
 						)
 					}
@@ -138,6 +138,15 @@ public interface DDMFormInstanceSettings {
 		validationExpression = "isEmailAddress(emailToAddress)"
 	)
 	public String emailToAddress();
+
+	@DDMFormField(
+		label = "%expiration-date", type = "date",
+		validationErrorMessage = "%please-enter-a-valid-expiration-date-only-future-dates-are-accepted",
+		validationExpression = "futureDates(expirationDate, \"{parameter}\")",
+		validationExpressionName = "futureDates",
+		validationParameter = "{\"startsFrom\": {\"type\": \"responseDate\"}}"
+	)
+	public String expirationDate();
 
 	@DDMFormField(
 		label = "%limit-to-one-submission-per-user",

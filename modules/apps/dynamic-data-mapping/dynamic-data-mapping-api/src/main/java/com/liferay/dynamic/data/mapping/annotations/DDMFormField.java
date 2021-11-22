@@ -58,6 +58,10 @@ public @interface DDMFormField {
 
 	public String validationExpression() default StringPool.BLANK;
 
+	public String validationExpressionName() default StringPool.BLANK;
+
+	public String validationParameter() default StringPool.BLANK;
+
 	/**
 	 * @deprecated As of Judson (7.1.x), replaced by {@link DDMFormRule}
 	 */
