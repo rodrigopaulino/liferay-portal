@@ -33,6 +33,10 @@ import org.osgi.service.component.annotations.Modified;
 )
 public class FFSubmissionsSettingsConfigurationActivator {
 
+	public boolean expirationDateEnabled() {
+		return _ffSubmissionsSettingsConfiguration.expirationDateEnabled();
+	}
+
 	public boolean limitToOneSubmissionEnabled() {
 		return _ffSubmissionsSettingsConfiguration.
 			limitToOneSubmissionEnabled();

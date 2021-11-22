@@ -1750,6 +1750,13 @@ public class DDMFormAdminDisplayContext {
 			ddmFormLayoutColumn.getDDMFormFieldNames();
 
 		if (!_ffSubmissionsSettingsConfigurationActivator.
+				expirationDateEnabled()) {
+
+			ddmFormFieldNames.remove("expirationDate");
+			ddmFormFieldNames.remove("neverExpire");
+		}
+
+		if (!_ffSubmissionsSettingsConfigurationActivator.
 				limitToOneSubmissionEnabled()) {
 
 			ddmFormFieldNames.remove("limitToOneSubmissionPerUser");
