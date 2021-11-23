@@ -25,6 +25,20 @@ import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 public interface TestDDMForm {
 
 	@DDMFormField(
+		validationErrorMessage = "errorMessage",
+		validationExpression = "expression",
+		validationExpressionName = "expressionName",
+		validationParameter = "parameter"
+	)
+	public void fieldWithAllValidationParameters();
+
+	@DDMFormField(
+		validationErrorMessage = "errorMessage",
+		validationExpression = "expression"
+	)
+	public void fieldWithPartialValidationParameters();
+
+	@DDMFormField(
 		label = "%label",
 		properties = {
 			"autoFocus=true", "placeholder=%enter-a-field-label",

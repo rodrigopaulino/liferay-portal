@@ -15,6 +15,9 @@
 package com.liferay.dynamic.data.mapping.util;
 
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
+import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidationExpression;
+import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.test.util.TestDDMForm;
 
 import java.util.Map;
@@ -43,6 +46,74 @@ public class DDMFormFieldFactoryHelperTest {
 			ddmFormFieldFactoryHelper.createDDMFormField();
 
 		Assert.assertEquals("", ddmFormField.getDataType());
+	}
+
+	@Test
+	public void testGetDDMFormFieldValidationWithAllParameters()
+		throws Exception {
+
+		Class<?> clazz = TestDDMForm.class;
+
+		DDMFormFieldFactoryHelper ddmFormFieldFactoryHelper =
+			new DDMFormFieldFactoryHelper(
+				new DDMFormFactoryHelper(clazz),
+				clazz.getMethod("fieldWithAllValidationParameters"));
+
+		DDMFormFieldValidation ddmFormFieldValidation =
+			ddmFormFieldFactoryHelper.getDDMFormFieldValidation();
+
+		LocalizedValue localizedValue =
+			ddmFormFieldValidation.getErrorMessageLocalizedValue();
+
+		Assert.assertEquals(
+			"errorMessage",
+			localizedValue.getString(localizedValue.getDefaultLocale()));
+
+		DDMFormFieldValidationExpression ddmFormFieldValidationExpression =
+			ddmFormFieldValidation.getDDMFormFieldValidationExpression();
+
+		Assert.assertEquals(
+			"expression", ddmFormFieldValidationExpression.getValue());
+		Assert.assertEquals(
+			"expressionName", ddmFormFieldValidationExpression.getName());
+
+		localizedValue = ddmFormFieldValidation.getParameterLocalizedValue();
+
+		Assert.assertEquals(
+			"parameter",
+			localizedValue.getString(localizedValue.getDefaultLocale()));
+	}
+
+	@Test
+	public void testGetDDMFormFieldValidationWithPartialParameters()
+		throws Exception {
+
+		Class<?> clazz = TestDDMForm.class;
+
+		DDMFormFieldFactoryHelper ddmFormFieldFactoryHelper =
+			new DDMFormFieldFactoryHelper(
+				new DDMFormFactoryHelper(clazz),
+				clazz.getMethod("fieldWithPartialValidationParameters"));
+
+		DDMFormFieldValidation ddmFormFieldValidation =
+			ddmFormFieldFactoryHelper.getDDMFormFieldValidation();
+
+		LocalizedValue localizedValue =
+			ddmFormFieldValidation.getErrorMessageLocalizedValue();
+
+		Assert.assertEquals(
+			"errorMessage",
+			localizedValue.getString(localizedValue.getDefaultLocale()));
+
+		DDMFormFieldValidationExpression ddmFormFieldValidationExpression =
+			ddmFormFieldValidation.getDDMFormFieldValidationExpression();
+
+		Assert.assertEquals(
+			"expression", ddmFormFieldValidationExpression.getValue());
+
+		Assert.assertNull(ddmFormFieldValidationExpression.getName());
+
+		Assert.assertNull(ddmFormFieldValidation.getParameterLocalizedValue());
 	}
 
 	@Test
