@@ -31,6 +31,7 @@ import org.osgi.annotation.versioning.ProviderType;
 	rules = {
 		@DDMFormRule(
 			actions = {
+				"setEnabled('expirationDate', NOT(getValue('neverExpire')))",
 				"setVisible('emailFromAddress', getValue('sendEmailNotification'))",
 				"setVisible('emailFromName', getValue('sendEmailNotification'))",
 				"setVisible('emailSubject', getValue('sendEmailNotification'))",
@@ -101,7 +102,8 @@ import org.osgi.annotation.versioning.ProviderType;
 							size = 12,
 							value = {
 								"showPartialResultsToRespondents",
-								"limitToOneSubmissionPerUser", "expirationDate"
+								"limitToOneSubmissionPerUser", "expirationDate",
+								"neverExpire"
 							}
 						)
 					}
@@ -153,6 +155,11 @@ public interface DDMFormInstanceSettings {
 		tip = "%respondents-will-be-required-to-sign-in", type = "checkbox"
 	)
 	public boolean limitToOneSubmissionPerUser();
+
+	@DDMFormField(
+		label = "%never-expire", predefinedValue = "true", type = "checkbox"
+	)
+	public boolean neverExpire();
 
 	@DDMFormField(
 		label = "%select-object",
