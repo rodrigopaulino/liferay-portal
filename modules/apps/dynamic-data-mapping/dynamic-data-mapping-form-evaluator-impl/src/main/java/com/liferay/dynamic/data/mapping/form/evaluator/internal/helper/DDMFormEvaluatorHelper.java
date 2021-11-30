@@ -210,7 +210,7 @@ public class DDMFormEvaluatorHelper {
 		}
 	}
 
-	protected boolean evaluateDDMFormRuleCondition(String condition) {
+	protected Boolean evaluateDDMFormRuleCondition(String condition) {
 		try {
 			return evaluateExpression(condition);
 		}
@@ -736,7 +736,7 @@ public class DDMFormEvaluatorHelper {
 
 	private void _evaluateDDMFormRules(
 		List<DDMFormRule> ddmFormRules,
-		boolean ddmFormRuleConditionEvaluationResult) {
+		Boolean ddmFormRuleConditionEvaluationResult) {
 
 		Stream<DDMFormRule> stream = ddmFormRules.stream();
 
@@ -745,8 +745,9 @@ public class DDMFormEvaluatorHelper {
 		).filter(
 			ddmFormRule ->
 				Validator.isNotNull(ddmFormRule.getCondition()) &&
-				(evaluateDDMFormRuleCondition(ddmFormRule.getCondition()) ==
-					ddmFormRuleConditionEvaluationResult)
+				Objects.equals(
+					ddmFormRuleConditionEvaluationResult,
+					evaluateDDMFormRuleCondition(ddmFormRule.getCondition()))
 		).forEach(
 			ddmFormRule -> {
 				_evaluateDDMFormRule(
