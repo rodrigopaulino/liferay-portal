@@ -14,15 +14,14 @@
 
 package com.liferay.dynamic.data.mapping.form.evaluator.internal.function;
 
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
+import com.liferay.dynamic.data.mapping.expression.functions.Function1;
 
 import org.apache.commons.lang.math.NumberUtils;
 
 /**
  * @author Leonardo Barros
  */
-public class IsIntegerFunction
-	implements DDMExpressionFunction.Function1<Object, Boolean> {
+public class IsIntegerFunction extends Function1<Object, Boolean> {
 
 	public static final String NAME = "isInteger";
 

@@ -14,15 +14,14 @@
 
 package com.liferay.dynamic.data.mapping.form.evaluator.internal.function;
 
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
+import com.liferay.dynamic.data.mapping.expression.functions.Function1;
 
 import java.math.BigDecimal;
 
 /**
  * @author Leonardo Barros
  */
-public class IsDecimalFunction
-	implements DDMExpressionFunction.Function1<Object, Boolean> {
+public class IsDecimalFunction extends Function1<Object, Boolean> {
 
 	public static final String NAME = "isDecimal";
 

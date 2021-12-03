@@ -14,15 +14,14 @@
 
 package com.liferay.dynamic.data.mapping.form.evaluator.internal.function;
 
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
+import com.liferay.dynamic.data.mapping.expression.functions.Function1;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
 /**
  * @author Carolina Barbosa
  */
-public class HasObjectFieldFunction
-	implements DDMExpressionFunction.Function1<String, Boolean> {
+public class HasObjectFieldFunction extends Function1<String, Boolean> {
 
 	public static final String NAME = "hasObjectField";
 

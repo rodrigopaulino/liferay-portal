@@ -14,12 +14,12 @@
 
 package com.liferay.dynamic.data.mapping.form.evaluator.internal.function;
 
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionObserver;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionObserverAware;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionParameterAccessor;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionParameterAccessorAware;
 import com.liferay.dynamic.data.mapping.expression.UpdateFieldPropertyRequest;
+import com.liferay.dynamic.data.mapping.expression.functions.Function2;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
@@ -38,8 +38,8 @@ import java.util.Locale;
  * @author Leonardo Barros
  */
 public class SetOptionsFunction
-	implements DDMExpressionFunction.Function2<String, String, Boolean>,
-			   DDMExpressionObserverAware, DDMExpressionParameterAccessorAware {
+	extends Function2<String, String, Boolean>
+	implements DDMExpressionObserverAware, DDMExpressionParameterAccessorAware {
 
 	public static final String NAME = "setOptions";
 

@@ -14,7 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.form.evaluator.internal.function;
 
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
+import com.liferay.dynamic.data.mapping.expression.functions.Function2;
 import com.liferay.portal.json.JSONObjectImpl;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -27,8 +27,7 @@ import java.util.Set;
 /**
  * @author Leonardo Barros
  */
-public class ContainsFunction
-	implements DDMExpressionFunction.Function2<Object, Object, Boolean> {
+public class ContainsFunction extends Function2<Object, Object, Boolean> {
 
 	public static final String NAME = "contains";
 

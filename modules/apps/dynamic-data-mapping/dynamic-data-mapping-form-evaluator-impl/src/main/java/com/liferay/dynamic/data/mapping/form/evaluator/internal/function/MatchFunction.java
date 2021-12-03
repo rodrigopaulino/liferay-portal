@@ -14,7 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.form.evaluator.internal.function;
 
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
+import com.liferay.dynamic.data.mapping.expression.functions.Function2;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 
@@ -24,8 +24,7 @@ import java.util.regex.Pattern;
 /**
  * @author Leonardo Barros
  */
-public class MatchFunction
-	implements DDMExpressionFunction.Function2<String, String, Boolean> {
+public class MatchFunction extends Function2<String, String, Boolean> {
 
 	public static final String NAME = "match";
 

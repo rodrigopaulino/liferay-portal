@@ -16,11 +16,11 @@ package com.liferay.dynamic.data.mapping.form.evaluator.internal.function;
 
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionFieldAccessor;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionFieldAccessorAware;
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionParameterAccessor;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionParameterAccessorAware;
 import com.liferay.dynamic.data.mapping.expression.GetFieldPropertyRequest;
 import com.liferay.dynamic.data.mapping.expression.GetFieldPropertyResponse;
+import com.liferay.dynamic.data.mapping.expression.functions.Function2;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.petra.string.StringPool;
@@ -29,8 +29,8 @@ import com.liferay.petra.string.StringPool;
  * @author Marcos Martins
  */
 public class GetOptionLabelFunction
+	extends Function2<String, String, Object>
 	implements DDMExpressionFieldAccessorAware,
-			   DDMExpressionFunction.Function2<String, String, Object>,
 			   DDMExpressionParameterAccessorAware {
 
 	public static final String NAME = "getOptionLabel";

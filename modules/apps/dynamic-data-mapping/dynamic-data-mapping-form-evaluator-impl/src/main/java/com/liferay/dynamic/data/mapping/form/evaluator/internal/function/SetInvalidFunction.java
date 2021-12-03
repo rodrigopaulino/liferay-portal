@@ -14,17 +14,17 @@
 
 package com.liferay.dynamic.data.mapping.form.evaluator.internal.function;
 
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionObserver;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionObserverAware;
 import com.liferay.dynamic.data.mapping.expression.UpdateFieldPropertyRequest;
+import com.liferay.dynamic.data.mapping.expression.functions.Function2;
 
 /**
  * @author Leonardo Barros
  */
 public class SetInvalidFunction
-	implements DDMExpressionFunction.Function2<String, String, Boolean>,
-			   DDMExpressionObserverAware {
+	extends Function2<String, String, Boolean>
+	implements DDMExpressionObserverAware {
 
 	public static final String NAME = "setInvalid";
 

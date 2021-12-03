@@ -14,7 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.form.evaluator.internal.function;
 
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
+import com.liferay.dynamic.data.mapping.expression.functions.Function1;
 import com.liferay.petra.string.CharPool;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -24,8 +24,7 @@ import java.util.stream.Stream;
 /**
  * @author Leonardo Barros
  */
-public class IsEmailAddressFunction
-	implements DDMExpressionFunction.Function1<String, Boolean> {
+public class IsEmailAddressFunction extends Function1<String, Boolean> {
 
 	public static final String NAME = "isEmailAddress";
 

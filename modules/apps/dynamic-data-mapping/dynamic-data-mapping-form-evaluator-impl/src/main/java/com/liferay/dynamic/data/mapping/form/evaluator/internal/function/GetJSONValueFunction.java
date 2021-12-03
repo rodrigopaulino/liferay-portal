@@ -14,7 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.form.evaluator.internal.function;
 
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
+import com.liferay.dynamic.data.mapping.expression.functions.Function1;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
@@ -23,8 +23,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 /**
  * @author Marcos Martins
  */
-public class GetJSONValueFunction
-	implements DDMExpressionFunction.Function1<String, JSONObject> {
+public class GetJSONValueFunction extends Function1<String, JSONObject> {
 
 	public static final String NAME = "getJSONValue";
 

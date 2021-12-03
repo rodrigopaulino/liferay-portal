@@ -14,7 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.form.evaluator.internal.function;
 
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
+import com.liferay.dynamic.data.mapping.expression.functions.Function1;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.util.Validator;
@@ -24,8 +24,7 @@ import java.util.stream.Stream;
 /**
  * @author Leonardo Barros
  */
-public class IsEmptyFunction
-	implements DDMExpressionFunction.Function1<Object, Boolean> {
+public class IsEmptyFunction extends Function1<Object, Boolean> {
 
 	public static final String NAME = "isEmpty";
 

@@ -16,16 +16,16 @@ package com.liferay.dynamic.data.mapping.form.evaluator.internal.function;
 
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionActionHandler;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionActionHandlerAware;
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
 import com.liferay.dynamic.data.mapping.expression.ExecuteActionRequest;
+import com.liferay.dynamic.data.mapping.expression.functions.Function2;
 
 /**
  * @author Inácio Nery
  * @author Leonardo Barros
  */
 public class JumpPageFunction
-	implements DDMExpressionActionHandlerAware,
-			   DDMExpressionFunction.Function2<Number, Number, Boolean> {
+	extends Function2<Number, Number, Boolean>
+	implements DDMExpressionActionHandlerAware {
 
 	public static final String NAME = "jumpPage";
 

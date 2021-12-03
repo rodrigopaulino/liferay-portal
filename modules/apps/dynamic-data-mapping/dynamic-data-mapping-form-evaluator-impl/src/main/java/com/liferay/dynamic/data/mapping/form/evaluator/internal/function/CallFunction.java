@@ -19,12 +19,12 @@ import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderRequest;
 import com.liferay.dynamic.data.mapping.data.provider.DDMDataProviderResponse;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionFieldAccessor;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionFieldAccessorAware;
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionObserver;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionObserverAware;
 import com.liferay.dynamic.data.mapping.expression.GetFieldPropertyRequest;
 import com.liferay.dynamic.data.mapping.expression.GetFieldPropertyResponse;
 import com.liferay.dynamic.data.mapping.expression.UpdateFieldPropertyRequest;
+import com.liferay.dynamic.data.mapping.expression.functions.Function3;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -51,9 +51,8 @@ import java.util.Optional;
  * @author Leonardo Barros
  */
 public class CallFunction
-	implements DDMExpressionFieldAccessorAware,
-			   DDMExpressionFunction.Function3<String, String, String, Boolean>,
-			   DDMExpressionObserverAware {
+	extends Function3<String, String, String, Boolean>
+	implements DDMExpressionFieldAccessorAware, DDMExpressionObserverAware {
 
 	public static final String NAME = "call";
 

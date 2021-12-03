@@ -14,7 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.form.evaluator.internal.function;
 
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
+import com.liferay.dynamic.data.mapping.expression.functions.Function1;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.portal.kernel.json.JSONArray;
@@ -23,8 +23,7 @@ import com.liferay.portal.kernel.util.GetterUtil;
 /**
  * @author Leonardo Barros
  */
-public class JoinFunction
-	implements DDMExpressionFunction.Function1<JSONArray, String> {
+public class JoinFunction extends Function1<JSONArray, String> {
 
 	public static final String NAME = "join";
 

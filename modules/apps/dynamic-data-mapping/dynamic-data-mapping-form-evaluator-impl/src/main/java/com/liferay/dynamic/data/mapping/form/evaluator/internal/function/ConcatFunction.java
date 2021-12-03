@@ -14,7 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.form.evaluator.internal.function;
 
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
+import com.liferay.dynamic.data.mapping.expression.functions.Function1;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.stream.Collectors;
@@ -23,8 +23,7 @@ import java.util.stream.Stream;
 /**
  * @author Leonardo Barros
  */
-public class ConcatFunction
-	implements DDMExpressionFunction.Function1<Object[], String> {
+public class ConcatFunction extends Function1<Object[], String> {
 
 	public static final String NAME = "concat";
 

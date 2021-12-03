@@ -14,17 +14,16 @@
 
 package com.liferay.dynamic.data.mapping.form.evaluator.internal.function;
 
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionParameterAccessor;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionParameterAccessorAware;
+import com.liferay.dynamic.data.mapping.expression.functions.Function0;
 import com.liferay.portal.kernel.util.Validator;
 
 /**
  * @author Rodrigo Paulino
  */
 public class HasGooglePlacesAPIKeyFunction
-	implements DDMExpressionFunction.Function0<Boolean>,
-			   DDMExpressionParameterAccessorAware {
+	extends Function0<Boolean> implements DDMExpressionParameterAccessorAware {
 
 	public static final String NAME = "hasGooglePlacesAPIKey";
 

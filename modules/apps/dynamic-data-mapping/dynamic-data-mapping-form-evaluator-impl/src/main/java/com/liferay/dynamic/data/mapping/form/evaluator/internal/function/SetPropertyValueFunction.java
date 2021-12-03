@@ -14,17 +14,17 @@
 
 package com.liferay.dynamic.data.mapping.form.evaluator.internal.function;
 
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionObserver;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionObserverAware;
 import com.liferay.dynamic.data.mapping.expression.UpdateFieldPropertyRequest;
+import com.liferay.dynamic.data.mapping.expression.functions.Function3;
 
 /**
  * @author Carolina Barbosa
  */
 public class SetPropertyValueFunction
-	implements DDMExpressionFunction.Function3<String, String, Object, Boolean>,
-			   DDMExpressionObserverAware {
+	extends Function3<String, String, Object, Boolean>
+	implements DDMExpressionObserverAware {
 
 	public static final String NAME = "setPropertyValue";
 

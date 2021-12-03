@@ -16,9 +16,9 @@ package com.liferay.dynamic.data.mapping.form.evaluator.internal.function;
 
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionFieldAccessor;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionFieldAccessorAware;
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
 import com.liferay.dynamic.data.mapping.expression.GetFieldPropertyRequest;
 import com.liferay.dynamic.data.mapping.expression.GetFieldPropertyResponse;
+import com.liferay.dynamic.data.mapping.expression.functions.Function1;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.util.GetterUtil;
 
@@ -26,8 +26,8 @@ import com.liferay.portal.kernel.util.GetterUtil;
  * @author Leonardo Barros
  */
 public class GetValueFunction
-	implements DDMExpressionFieldAccessorAware,
-			   DDMExpressionFunction.Function1<String, Object> {
+	extends Function1<String, Object>
+	implements DDMExpressionFieldAccessorAware {
 
 	public static final String NAME = "getValue";
 

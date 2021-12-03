@@ -14,9 +14,9 @@
 
 package com.liferay.dynamic.data.mapping.form.evaluator.internal.function;
 
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionParameterAccessor;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionParameterAccessorAware;
+import com.liferay.dynamic.data.mapping.expression.functions.Function1;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
@@ -30,8 +30,8 @@ import com.liferay.portal.kernel.service.UserLocalService;
  * @author Leonardo Barros
  */
 public class BelongsToRoleFunction
-	implements DDMExpressionFunction.Function1<String[], Boolean>,
-			   DDMExpressionParameterAccessorAware {
+	extends Function1<String[], Boolean>
+	implements DDMExpressionParameterAccessorAware {
 
 	public static final String NAME = "belongsTo";
 

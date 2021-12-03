@@ -18,7 +18,7 @@ import com.liferay.dynamic.data.mapping.expression.CreateExpressionRequest;
 import com.liferay.dynamic.data.mapping.expression.DDMExpression;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionException;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionFactory;
-import com.liferay.dynamic.data.mapping.expression.DDMExpressionFunction;
+import com.liferay.dynamic.data.mapping.expression.functions.Function2;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.StringUtil;
@@ -28,8 +28,7 @@ import java.util.stream.Stream;
 /**
  * @author Leonardo Barros
  */
-public class AllFunction
-	implements DDMExpressionFunction.Function2<String, Object, Boolean> {
+public class AllFunction extends Function2<String, Object, Boolean> {
 
 	public static final String NAME = "all";
 
