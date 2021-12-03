@@ -26,6 +26,11 @@ import com.liferay.dynamic.data.mapping.expression.DDMExpressionParameterAccesso
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionParameterAccessorAware;
 import com.liferay.dynamic.data.mapping.expression.GetFieldPropertyRequest;
 import com.liferay.dynamic.data.mapping.expression.GetFieldPropertyResponse;
+import com.liferay.dynamic.data.mapping.expression.functions.Function0;
+import com.liferay.dynamic.data.mapping.expression.functions.Function1;
+import com.liferay.dynamic.data.mapping.expression.functions.Function2;
+import com.liferay.dynamic.data.mapping.expression.functions.Function3;
+import com.liferay.dynamic.data.mapping.expression.functions.Function4;
 import com.liferay.dynamic.data.mapping.expression.internal.parser.DDMExpressionBaseVisitor;
 import com.liferay.dynamic.data.mapping.expression.internal.parser.DDMExpressionParser;
 import com.liferay.dynamic.data.mapping.expression.internal.parser.DDMExpressionParser.AdditionExpressionContext;
@@ -62,6 +67,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -577,6 +583,34 @@ public class DDMExpressionEvaluatorVisitor
 		catch (NoSuchMethodException noSuchMethodException) {
 			return clazz.getMethod("apply", Object[].class);
 		}
+	}
+
+	private Optional<Method> _getApplyMethodOptional(
+		DDMExpressionFunction ddmExpressionFunction,
+		Object[] functionParameters) {
+
+		Class<?> clazz = null;
+
+		if (ddmExpressionFunction instanceof Function0) {
+			clazz = Function0.class;
+		}
+		else if (ddmExpressionFunction instanceof Function1) {
+			clazz = Function1.class;
+		}
+		else if (ddmExpressionFunction instanceof Function2) {
+			clazz = Function2.class;
+		}
+		else if (ddmExpressionFunction instanceof Function3) {
+			clazz = Function3.class;
+		}
+		else if (ddmExpressionFunction instanceof Function4) {
+			clazz = Function4.class;
+		}
+		else {
+			return Optional.empty();
+		}
+
+		return Optional.ofNullable(clazz.getDeclaredMethods()[0]);
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
