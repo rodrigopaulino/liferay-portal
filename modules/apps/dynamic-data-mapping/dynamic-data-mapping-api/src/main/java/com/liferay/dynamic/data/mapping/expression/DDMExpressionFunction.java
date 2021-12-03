@@ -33,30 +33,50 @@ public interface DDMExpressionFunction {
 		return false;
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link com.liferay.dynamic.data.mapping.expression.functions.Function0}
+	 */
+	@Deprecated
 	public interface Function0<R> extends DDMExpressionFunction {
 
 		public R apply();
 
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link com.liferay.dynamic.data.mapping.expression.functions.Function1}
+	 */
+	@Deprecated
 	public interface Function1<A, R> extends DDMExpressionFunction {
 
 		public R apply(A a);
 
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link com.liferay.dynamic.data.mapping.expression.functions.Function2}
+	 */
+	@Deprecated
 	public interface Function2<A, B, R> extends DDMExpressionFunction {
 
 		public R apply(A a, B b);
 
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link com.liferay.dynamic.data.mapping.expression.functions.Function3}
+	 */
+	@Deprecated
 	public interface Function3<A, B, C, R> extends DDMExpressionFunction {
 
 		public R apply(A a, B b, C c);
 
 	}
 
+	/**
+	 * @deprecated As of Cavanaugh (7.4.x), replaced by {@link com.liferay.dynamic.data.mapping.expression.functions.Function4}
+	 */
+	@Deprecated
 	public interface Function4<A, B, C, D, R> extends DDMExpressionFunction {
 
 		public R apply(A a, B b, C c, D d);
