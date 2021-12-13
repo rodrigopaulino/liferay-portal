@@ -67,26 +67,23 @@ long formInstanceId = ddmFormDisplayContext.getFormInstanceId();
 		Locale displayLocale = LocaleUtil.fromLanguageId(languageId);
 
 		DDMFormInstance formInstance = ddmFormDisplayContext.getFormInstance();
+
+		boolean showSuccessPage = ddmFormDisplayContext.isShowSuccessPage();
+
+		boolean preview = ddmFormDisplayContext.isPreview();
 		%>
 
 		<c:choose>
-			<c:when test="<%= ddmFormDisplayContext.isShowSuccessPage() || (ddmFormDisplayContext.hasSubmittedAnEntry() && !ddmFormDisplayContext.isPreview()) %>">
+			<c:when test="<%= showSuccessPage || (ddmFormDisplayContext.hasSubmittedAnEntry() && !preview) %>">
 
 				<%
 				String pageDescription;
 				String pageTitle;
 				boolean showPartialResultsToRespondents = ddmFormDisplayContext.isFFShowPartialResultsEnabled() && ddmFormDisplayContext.isShowPartialResultsToRespondents();
 
-				if (ddmFormDisplayContext.isShowSuccessPage()) {
-					DDMFormSuccessPageSettings ddmFormSuccessPageSettings = ddmFormDisplayContext.getDDMFormSuccessPageSettings();
-
-					LocalizedValue title = ddmFormSuccessPageSettings.getTitle();
-
-					pageTitle = HtmlUtil.escape(GetterUtil.getString(title.getString(displayLocale), title.getString(title.getDefaultLocale())));
-
-					LocalizedValue body = ddmFormSuccessPageSettings.getBody();
-
-					pageDescription = HtmlUtil.escape(GetterUtil.getString(body.getString(displayLocale), body.getString(body.getDefaultLocale())));
+				if (showSuccessPage) {
+					pageDescription = ddmFormDisplayContext.getSuccessPageDescription(displayLocale);
+					pageTitle = ddmFormDisplayContext.getSuccessPageTitle(displayLocale);
 				}
 				else {
 					pageDescription = LanguageUtil.get(request, "you-can-fill-out-this-form-only-once.-contact-the-owner-of-the-form-if-you-think-this-is-a-mistake");
@@ -178,7 +175,7 @@ long formInstanceId = ddmFormDisplayContext.getFormInstanceId();
 
 						<liferay-ui:error-principal />
 
-						<c:if test="<%= ddmFormDisplayContext.isFormShared() || ddmFormDisplayContext.isPreview() %>">
+						<c:if test="<%= ddmFormDisplayContext.isFormShared() || preview %>">
 							<clay:container-fluid>
 								<div class="locale-actions">
 									<liferay-ui:language
@@ -304,7 +301,7 @@ long formInstanceId = ddmFormDisplayContext.getFormInstanceId();
 							<liferay-portlet:resourceURL copyCurrentRenderParameters="<%= false %>" id="/dynamic_data_mapping_form/add_form_instance_record" var="autoSaveFormInstanceRecordURL">
 								<portlet:param name="autoSave" value="<%= Boolean.TRUE.toString() %>" />
 								<portlet:param name="languageId" value="<%= languageId %>" />
-								<portlet:param name="preview" value="<%= String.valueOf(ddmFormDisplayContext.isPreview()) %>" />
+								<portlet:param name="preview" value="<%= String.valueOf(preview) %>" />
 							</liferay-portlet:resourceURL>
 
 							Liferay.on('sessionExpired', (event) => {
