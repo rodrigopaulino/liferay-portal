@@ -596,6 +596,11 @@ public class DDMFormDisplayContext {
 		return _autosaveEnabled;
 	}
 
+	public boolean isExpirationDateEnabled() {
+		return _ffSubmissionsSettingsConfigurationActivator.
+			expirationDateEnabled();
+	}
+
 	public boolean isFFShowPartialResultsEnabled() {
 		return _ffSubmissionsSettingsConfigurationActivator.
 			showPartialResultsEnabled();
