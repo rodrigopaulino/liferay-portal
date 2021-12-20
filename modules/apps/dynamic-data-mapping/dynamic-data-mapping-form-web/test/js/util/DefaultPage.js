@@ -37,16 +37,14 @@ describe('DefaultPage', () => {
 		expect(getByText('Page title')).toBeInTheDocument();
 	});
 
-	it('shows submit again button when Limit to one submission per user is disabled', () => {
-		const {getByText} = render(<DefaultPage />);
+	it('shows submit again button when the show submit again flag is enabled', () => {
+		const {getByText} = render(<DefaultPage showSubmitAgainButton />);
 
 		expect(getByText('submit-again')).toBeInTheDocument();
 	});
 
-	it('hides submit again button when Limit to one submission per user is enabled', () => {
-		const {queryByText} = render(
-			<DefaultPage limitToOneSubmissionPerUser />
-		);
+	it('hides submit again button when the show submit again flag is disabled', () => {
+		const {queryByText} = render(<DefaultPage />);
 
 		expect(queryByText('submit-again')).not.toBeInTheDocument();
 	});
