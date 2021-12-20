@@ -20,8 +20,8 @@ interface IProps {
 	formDescription?: string;
 	formReportDataURL?: string;
 	formTitle: string;
-	limitToOneSubmissionPerUser?: boolean;
 	pageDescription: string;
 	pageTitle: string;
 	showPartialResultsToRespondents?: boolean;
+	showSubmitAgainButton?: boolean;
 }

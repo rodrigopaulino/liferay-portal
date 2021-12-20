@@ -110,13 +110,13 @@ long formInstanceId = ddmFormDisplayContext.getFormInstanceId();
 						).put(
 							"formTitle", formInstance.getName(displayLocale)
 						).put(
-							"limitToOneSubmissionPerUser", ddmFormDisplayContext.isLimitToOneSubmissionPerUserEnabled()
-						).put(
 							"pageDescription", pageDescription
 						).put(
 							"pageTitle", pageTitle
 						).put(
 							"showPartialResultsToRespondents", showPartialResultsToRespondents
+						).put(
+							"showSubmitAgainButton", !expired && !ddmFormDisplayContext.isLimitToOneSubmissionPerUserEnabled()
 						).build()
 					%>'
 				/>
