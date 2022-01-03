@@ -16,7 +16,6 @@ package com.liferay.dynamic.data.mapping.form.field.type.internal.date;
 
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueRenderer;
 import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
-import com.liferay.dynamic.data.mapping.form.validation.util.DateParameterUtil;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.petra.string.StringPool;
@@ -29,6 +28,7 @@ import java.text.SimpleDateFormat;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.DecimalStyle;
 
 import java.util.Locale;
@@ -58,12 +58,28 @@ public class DateDDMFormFieldValueRenderer
 		return _render(locale, value.getString(locale));
 	}
 
+	private DateTimeFormatter _getDateTimeFormatter(
+		Locale locale, String pattern) {
+
+		DateTimeFormatterBuilder dateTimeFormatterBuilder =
+			new DateTimeFormatterBuilder();
+
+		return dateTimeFormatterBuilder.appendPattern(
+			pattern
+		).toFormatter(
+			locale
+		).withDecimalStyle(
+			DecimalStyle.of(locale)
+		);
+	}
+
 	private String _render(Locale defaultLocale, String valueString) {
 		if (Validator.isNull(valueString)) {
 			return StringPool.BLANK;
 		}
 
-		LocalDate localDate = DateParameterUtil.getLocalDate(valueString);
+		LocalDate localDate = LocalDate.parse(
+			valueString, _getDateTimeFormatter(defaultLocale, "yyyy-MM-dd"));
 
 		Locale locale = Optional.ofNullable(
 			LocaleThreadLocal.getThemeDisplayLocale()
@@ -89,11 +105,7 @@ public class DateDDMFormFieldValueRenderer
 			pattern = StringUtil.replace(pattern, 'y', "yy");
 		}
 
-		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(
-			pattern, locale);
-
-		return localDate.format(
-			dateTimeFormatter.withDecimalStyle(DecimalStyle.of(locale)));
+		return localDate.format(_getDateTimeFormatter(locale, pattern));
 	}
 
 }
