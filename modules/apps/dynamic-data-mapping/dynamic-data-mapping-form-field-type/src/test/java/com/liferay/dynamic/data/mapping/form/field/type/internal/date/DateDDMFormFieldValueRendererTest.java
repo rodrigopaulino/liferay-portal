@@ -79,14 +79,11 @@ public class DateDDMFormFieldValueRendererTest extends PowerMockito {
 
 	@Test
 	public void testRenderDisplayLocaleNull() {
-		DDMFormFieldValue ddmFormFieldValue =
-			DDMFormValuesTestUtil.createDDMFormFieldValue(
-				"birthday", new UnlocalizedValue("2015-01-25"));
-
 		Assert.assertEquals(
 			"٢٥/٠١/٢٠١٥",
 			_dateDDMFormFieldValueRenderer.render(
-				ddmFormFieldValue,
+				DDMFormValuesTestUtil.createDDMFormFieldValue(
+					"birthday", new UnlocalizedValue("٢٠١٥-٠١-٢٥")),
 				new Locale.Builder().setLanguage(
 					"ar"
 				).setRegion(
@@ -94,6 +91,11 @@ public class DateDDMFormFieldValueRendererTest extends PowerMockito {
 				).setExtension(
 					Locale.UNICODE_LOCALE_EXTENSION, "nu-arab"
 				).build()));
+
+		DDMFormFieldValue ddmFormFieldValue =
+			DDMFormValuesTestUtil.createDDMFormFieldValue(
+				"birthday", new UnlocalizedValue("2015-01-25"));
+
 		Assert.assertEquals(
 			"25/01/2015",
 			_dateDDMFormFieldValueRenderer.render(
