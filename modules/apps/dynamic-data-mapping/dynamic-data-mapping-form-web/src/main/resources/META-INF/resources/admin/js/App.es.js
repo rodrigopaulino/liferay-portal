@@ -79,39 +79,33 @@ export function App({autosaveInterval, autosaveURL, ...otherProps}) {
 						]}
 						value={state}
 					>
-						<AutoSaveProvider
-							interval={autosaveInterval}
-							url={autosaveURL}
-						>
-							<ToastProvider>
-								<Router>
-									<Switch>
-										<Route
-											component={NavigationBar}
-											path="/"
-										/>
-									</Switch>
+						<ToastProvider>
+							<Router>
+								<Switch>
+									<Route component={NavigationBar} path="/" />
+								</Switch>
 
-									<Switch>
+								<Switch>
+									<AutoSaveProvider
+										interval={autosaveInterval}
+										url={autosaveURL}
+									>
 										<Route
 											component={FormBuilder}
 											exact
 											path="/"
 										/>
+									</AutoSaveProvider>
 
-										<Route
-											component={RuleBuilder}
-											path="/rules"
-										/>
+									<Route
+										component={RuleBuilder}
+										path="/rules"
+									/>
 
-										<Route
-											component={Report}
-											path="/report"
-										/>
-									</Switch>
-								</Router>
-							</ToastProvider>
-						</AutoSaveProvider>
+									<Route component={Report} path="/report" />
+								</Switch>
+							</Router>
+						</ToastProvider>
 					</FormProvider>
 				</ClayModalProvider>
 			</ConfigProvider>

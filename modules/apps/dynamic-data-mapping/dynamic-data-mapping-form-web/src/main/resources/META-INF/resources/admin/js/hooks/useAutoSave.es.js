@@ -15,15 +15,13 @@
 import {useIsMounted} from '@liferay/frontend-js-react-web';
 import {
 	FormSupport,
-	StringUtils,
-	convertToFormData,
-	makeFetch,
 	useConfig,
 	useFormState,
 } from 'data-engine-js-components-web';
 import objectHash from 'object-hash';
 import React, {useCallback, useContext, useEffect, useRef} from 'react';
 
+import {saveForm} from '../util/saveForm';
 import {useStateSync} from './useStateSync.es';
 import {useValidateFormWithObjects} from './useValidateFormWithObjects';
 
@@ -36,46 +34,6 @@ const getStateHash = (state) =>
 		algorithm: 'md5',
 		unorderedObjects: true,
 	});
-
-const getFormData = ({name, portletNamespace}) => {
-	const form = document.querySelector(`#${portletNamespace}editForm`);
-
-	const formData = new FormData(form);
-
-	formData.append(`${portletNamespace}name`, JSON.stringify(name));
-	formData.append(`${portletNamespace}saveAsDraft`, 'true');
-
-	return convertToFormData(formData);
-};
-
-const defineIds = (portletNamespace, response) => {
-	const formInstanceIdNode = document.querySelector(
-		`#${portletNamespace}formInstanceId`
-	);
-
-	if (formInstanceIdNode && formInstanceIdNode.value === '0') {
-		formInstanceIdNode.value = response.formInstanceId;
-	}
-
-	const ddmStructureIdNode = document.querySelector(
-		`#${portletNamespace}ddmStructureId`
-	);
-
-	if (ddmStructureIdNode && ddmStructureIdNode.value === '0') {
-		ddmStructureIdNode.value = response.ddmStructureId;
-	}
-};
-
-const updateAutoSaveMessage = ({modifiedDate, portletNamespace}) => {
-	const autoSaveMessageNode = document.querySelector(
-		`#${portletNamespace}autosaveMessage`
-	);
-
-	autoSaveMessageNode.innerHTML = StringUtils.sub(
-		Liferay.Language.get('draft-x'),
-		[modifiedDate]
-	);
-};
 
 const MILLISECONDS_TO_MINUTE = 60000;
 
@@ -94,7 +52,6 @@ export function AutoSaveProvider({children, interval, url}) {
 		localizedName,
 		pages,
 		paginationMode,
-		rules,
 		successPageSettings,
 	} = useFormState();
 
@@ -108,8 +65,6 @@ export function AutoSaveProvider({children, interval, url}) {
 
 	const lastKnownHashRef = useRef(null);
 
-	const lastKnownHashRulesRef = useRef(null);
-
 	const validateFormWithObjects = useValidateFormWithObjects();
 
 	const getCurrentStateHash = useCallback(
@@ -121,7 +76,6 @@ export function AutoSaveProvider({children, interval, url}) {
 				name: localizedName,
 				pages,
 				paginationMode,
-				rules,
 				successPageSettings,
 			}),
 		[
@@ -131,45 +85,24 @@ export function AutoSaveProvider({children, interval, url}) {
 			localizedName,
 			pages,
 			paginationMode,
-			rules,
 			successPageSettings,
 		]
 	);
 
-	const doSave = useCallback(async () => {
+	const doSave = useCallback(() => {
 		const lastKnownHash = getCurrentStateHash();
 
 		doSyncInput();
 
-		const isValidToSaveForm = await validateFormWithObjects();
-
-		if (isValidToSaveForm) {
-			pendingRequestRef.current = makeFetch({
-				body: getFormData({
-					name: localizedName,
-					portletNamespace,
-				}),
-				url,
-			})
-				.then((response) => {
-					pendingRequestRef.current = null;
-
-					defineIds(portletNamespace, response);
-
+		if (validateFormWithObjects()) {
+			pendingRequestRef.current = saveForm(
+				{localizedName, portletNamespace, url},
+				() => {
 					lastKnownHashRef.current = lastKnownHash;
-
-					updateAutoSaveMessage({
-						modifiedDate: response.modifiedDate,
-						portletNamespace,
-					});
-
-					return response;
-				})
-				.catch((error) => {
-					pendingRequestRef.current = null;
-
-					console.error(error);
-				});
+				}
+			).finally(() => {
+				pendingRequestRef.current = null;
+			});
 		}
 
 		return pendingRequestRef.current;
@@ -218,22 +151,9 @@ export function AutoSaveProvider({children, interval, url}) {
 
 	useEffect(() => {
 		lastKnownHashRef.current = getCurrentStateHash();
-		lastKnownHashRulesRef.current = getStateHash(rules);
 
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
-
-	useEffect(() => {
-		const currentKnownHashRules = getStateHash(rules);
-
-		if (lastKnownHashRulesRef.current !== currentKnownHashRules) {
-			lastKnownHashRulesRef.current = currentKnownHashRules;
-
-			performSave();
-		}
-
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [lastKnownHashRulesRef, rules]);
 
 	return (
 		<AutoSaveContext.Provider value={{doSave, doSyncInput, isSaved}}>
