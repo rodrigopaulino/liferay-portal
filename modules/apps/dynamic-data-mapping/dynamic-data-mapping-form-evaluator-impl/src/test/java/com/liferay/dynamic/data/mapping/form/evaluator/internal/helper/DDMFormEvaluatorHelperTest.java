@@ -91,7 +91,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -1275,7 +1274,6 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 		Assert.assertFalse((boolean)ddmFormFieldPropertyChanges.get("valid"));
 	}
 
-	@Ignore
 	@Test
 	public void testValidationExpressionWithDateField() throws Exception {
 		DDMForm ddmForm = new DDMForm();
