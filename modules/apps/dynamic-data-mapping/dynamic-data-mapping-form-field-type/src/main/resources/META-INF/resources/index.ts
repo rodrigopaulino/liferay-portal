@@ -73,9 +73,16 @@ declare global {
 	const Liferay: {
 		Language: {
 			direction: LocalizedValue<Direction>;
-			get: (key: LocalizedTextKey) => string;
+			get: (key: string) => string;
 		};
 		Util: {
+			openSelectionModal(param: {
+				onClose: () => any;
+				onSelect: any;
+				selectEventName: string;
+				title: string;
+				url: any;
+			}): void;
 			sub: (string: string, data: any, ...others: string[]) => string;
 		};
 	};
