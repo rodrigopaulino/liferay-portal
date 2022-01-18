@@ -12,11 +12,6 @@
  * details.
  */
 
-import ClayButton from '@clayui/button';
-import ClayCard from '@clayui/card';
-import {ClayInput} from '@clayui/form';
-import ClayIcon from '@clayui/icon';
-import ClayProgressBar from '@clayui/progress-bar';
 import axios from 'axios';
 import {
 	PagesVisitor,
@@ -27,233 +22,9 @@ import {
 import React, {useCallback, useEffect, useMemo, useState} from 'react';
 
 import {FieldBase} from '../FieldBase/ReactFieldBase.es';
-
-const CardItem = ({fileEntryTitle, fileEntryURL}) => {
-	return (
-		<ClayCard horizontal>
-			<ClayCard.Body>
-				<div className="card-col-content card-col-gutters">
-					<h4 className="text-truncate" title={fileEntryTitle}>
-						{fileEntryTitle}
-					</h4>
-				</div>
-
-				<div className="card-col-field">
-					<a download={fileEntryTitle} href={fileEntryURL}>
-						<ClayIcon symbol="download" />
-					</a>
-				</div>
-			</ClayCard.Body>
-		</ClayCard>
-	);
-};
-
-const getValue = (value) => {
-	if (!value) {
-		return '';
-	}
-
-	if (typeof value === 'string') {
-		return value;
-	}
-
-	return JSON.stringify(value);
-};
-
-function transformFileEntryProperties({fileEntryTitle, fileEntryURL, value}) {
-	if (value && typeof value === 'string') {
-		try {
-			const fileEntry = JSON.parse(value);
-
-			fileEntryTitle = fileEntry.title;
-
-			if (fileEntry.url) {
-				fileEntryURL = fileEntry.url;
-			}
-		}
-		catch (error) {
-			console.warn('Unable to parse JSON', value);
-		}
-	}
-
-	return value ? [fileEntryTitle, fileEntryURL] : [];
-}
-
-const DocumentLibrary = ({
-	editingLanguageId,
-	fileEntryTitle = '',
-	fileEntryURL = '',
-	id,
-	message,
-	name,
-	onClearButtonClicked,
-	onSelectButtonClicked,
-	placeholder,
-	readOnly,
-	value,
-}) => {
-	const [transformedFileEntryTitle, transformedFileEntryURL] = useMemo(
-		() =>
-			transformFileEntryProperties({
-				fileEntryTitle,
-				fileEntryURL,
-				value,
-			}),
-		[fileEntryTitle, fileEntryURL, value]
-	);
-
-	return (
-		<div className="liferay-ddm-form-field-document-library">
-			{transformedFileEntryURL && readOnly ? (
-				<CardItem
-					fileEntryTitle={transformedFileEntryTitle}
-					fileEntryURL={transformedFileEntryURL}
-				/>
-			) : (
-				<ClayInput.Group>
-					<ClayInput.GroupItem prepend>
-						<ClayInput
-							aria-label={Liferay.Language.get('file')}
-							className="bg-light field"
-							dir={Liferay.Language.direction[editingLanguageId]}
-							disabled={readOnly}
-							id={`${name}inputFile`}
-							lang={editingLanguageId}
-							onClick={onSelectButtonClicked}
-							value={transformedFileEntryTitle || ''}
-						/>
-					</ClayInput.GroupItem>
-
-					<ClayInput.GroupItem append shrink>
-						<ClayButton
-							className="select-button"
-							disabled={readOnly}
-							displayType="secondary"
-							onClick={onSelectButtonClicked}
-						>
-							<span className="lfr-btn-label">
-								{Liferay.Language.get('select')}
-							</span>
-						</ClayButton>
-					</ClayInput.GroupItem>
-
-					{transformedFileEntryTitle && (
-						<ClayInput.GroupItem shrink>
-							<ClayButton
-								aria-label={Liferay.Language.get(
-									'unselect-file'
-								)}
-								displayType="secondary"
-								onClick={onClearButtonClicked}
-								type="button"
-							>
-								{Liferay.Language.get('clear')}
-							</ClayButton>
-						</ClayInput.GroupItem>
-					)}
-				</ClayInput.Group>
-			)}
-
-			<input
-				id={id}
-				name={name}
-				placeholder={placeholder}
-				type="hidden"
-				value={getValue(value)}
-			/>
-
-			{message && <div className="form-feedback-item">{message}</div>}
-		</div>
-	);
-};
-
-const GuestUploadFile = ({
-	fileEntryTitle = '',
-	fileEntryURL = '',
-	id,
-	message,
-	name,
-	onClearButtonClicked,
-	onUploadSelectButtonClicked,
-	placeholder,
-	progress,
-	readOnly,
-	value,
-}) => {
-	const [transformedFileEntryTitle] = useMemo(
-		() =>
-			transformFileEntryProperties({
-				fileEntryTitle,
-				fileEntryURL,
-				value,
-			}),
-		[fileEntryTitle, fileEntryURL, value]
-	);
-
-	return (
-		<div className="liferay-ddm-form-field-document-library">
-			<ClayInput.Group>
-				<ClayInput.GroupItem prepend>
-					<ClayInput
-						className="bg-light"
-						disabled={readOnly}
-						onClick={onUploadSelectButtonClicked}
-						type="text"
-						value={transformedFileEntryTitle || ''}
-					/>
-				</ClayInput.GroupItem>
-
-				<ClayInput.GroupItem append shrink>
-					<label
-						className={
-							'btn btn-secondary select-button' +
-							(transformedFileEntryTitle
-								? ' clear-button-upload-on'
-								: '') +
-							(readOnly ? ' disabled' : '')
-						}
-						htmlFor={`${name}inputFileGuestUpload`}
-					>
-						{Liferay.Language.get('select')}
-					</label>
-
-					<input
-						className="input-file"
-						disabled={readOnly}
-						id={`${name}inputFileGuestUpload`}
-						onChange={onUploadSelectButtonClicked}
-						type="file"
-					/>
-				</ClayInput.GroupItem>
-
-				{transformedFileEntryTitle && (
-					<ClayInput.GroupItem shrink>
-						<ClayButton
-							aria-label={Liferay.Language.get('unselect-file')}
-							displayType="secondary"
-							onClick={onClearButtonClicked}
-							type="button"
-						>
-							{Liferay.Language.get('clear')}
-						</ClayButton>
-					</ClayInput.GroupItem>
-				)}
-			</ClayInput.Group>
-
-			<input
-				id={id}
-				name={name}
-				placeholder={placeholder}
-				type="hidden"
-				value={getValue(value)}
-			/>
-
-			{progress !== 0 && <ClayProgressBar value={progress} />}
-
-			{message && <div className="form-feedback-item">{message}</div>}
-		</div>
-	);
-};
+import DownloadCard from './DownloadCard';
+import GuestUpload from './GuestUpload';
+import UserUpload from './UserUpload';
 
 const Main = ({
 	_onBlur,
@@ -284,8 +55,6 @@ const Main = ({
 }) => {
 	const {portletNamespace} = useConfig();
 	const {pages} = useFormState();
-
-	const [currentValue, setCurrentValue] = useState(value);
 
 	const isSignedIn = Liferay.ThemeDisplay.isSignedIn();
 
@@ -349,35 +118,6 @@ const Main = ({
 		return repetitionsCounter === maximumRepetitions;
 	}, [fieldName, maximumRepetitions, pages]);
 
-	const handleFieldChanged = useCallback(
-		(selectedItem) => {
-			if (selectedItem?.value) {
-				setCurrentValue(selectedItem.value);
-
-				onChange(selectedItem, selectedItem.value);
-			}
-		},
-		[onChange]
-	);
-
-	const handleSelectButtonClicked = useCallback(
-		({portletNamespace}, event) => {
-			onFocus(event);
-
-			Liferay.Util.openSelectionModal({
-				onClose: () => onBlur(event),
-				onSelect: handleFieldChanged,
-				selectEventName: `${portletNamespace}selectDocumentLibrary`,
-				title: Liferay.Util.sub(
-					Liferay.Language.get('select-x'),
-					Liferay.Language.get('document')
-				),
-				url: itemSelectorURL,
-			});
-		},
-		[handleFieldChanged, itemSelectorURL, onBlur, onFocus]
-	);
-
 	const configureErrorMessage = useCallback((message) => {
 		setErrorMessage(message);
 		setDisplayErrors(!!message);
@@ -391,8 +131,6 @@ const Main = ({
 	const handleGuestUploadFileChanged = useCallback(
 		(errorMessage, event, value) => {
 			configureErrorMessage(errorMessage);
-
-			setCurrentValue(value);
 
 			onChange(event, value ? value : '{}');
 		},
@@ -422,7 +160,55 @@ const Main = ({
 		[handleGuestUploadFileChanged]
 	);
 
-	const handleUploadSelectButtonClicked = useCallback(
+	const [transformedFileEntryTitle, transformedFileEntryURL] = useMemo(() => {
+		let title = fileEntryTitle;
+		let url = fileEntryURL;
+
+		if (value && typeof value === 'string') {
+			try {
+				const fileEntry = JSON.parse(value);
+
+				title = fileEntry.title;
+
+				if (fileEntry.url) {
+					url = fileEntry.url;
+				}
+			}
+			catch (error) {
+				console.warn('Unable to parse JSON', value);
+			}
+		}
+
+		return value ? [title, url] : [];
+	}, [fileEntryTitle, fileEntryURL, value]);
+
+	const handleChangeUserUpload = useCallback(
+		(event, value) => {
+			onChange(event, value ?? '{}');
+		},
+		[onChange]
+	);
+
+	const handleClearGuestUpload = useCallback(
+		(event) => {
+			onFocus(event);
+
+			onChange(event, '{}');
+
+			const guestUploadInput = document.getElementById(
+				`${name}inputFileGuestUpload`
+			);
+
+			if (guestUploadInput) {
+				guestUploadInput.value = '';
+			}
+
+			onBlur(event);
+		},
+		[name, onBlur, onChange, onFocus]
+	);
+
+	const handleSelectGuestUpload = useCallback(
 		(event) => {
 			onFocus(event);
 
@@ -444,8 +230,6 @@ const Main = ({
 						const progress = Math.round(
 							(event.loaded * 100) / event.total
 						);
-
-						setCurrentValue(null);
 
 						setProgress(progress);
 
@@ -525,67 +309,49 @@ const Main = ({
 			readOnly={hasCustomError ? true : readOnly}
 			valid={hasCustomError ? false : valid}
 		>
-			{allowGuestUsers && !isSignedIn ? (
-				<GuestUploadFile
-					fileEntryTitle={fileEntryTitle}
-					fileEntryURL={fileEntryURL}
+			<div className="liferay-ddm-form-field-document-library">
+				{allowGuestUsers && !isSignedIn ? (
+					<GuestUpload
+						handleClear={handleClearGuestUpload}
+						handleSelect={handleSelectGuestUpload}
+						name={name}
+						progress={progress}
+						readOnly={hasCustomError ? true : readOnly}
+						title={transformedFileEntryTitle}
+					/>
+				) : (
+					<>
+						{transformedFileEntryURL && readOnly ? (
+							<DownloadCard
+								title={transformedFileEntryTitle}
+								url={transformedFileEntryURL}
+							/>
+						) : (
+							<UserUpload
+								editingLanguageId={editingLanguageId}
+								handleChange={handleChangeUserUpload}
+								itemSelectorURL={itemSelectorURL}
+								name={name}
+								onBlur={onBlur}
+								onFocus={onFocus}
+								portletNamespace={portletNamespace}
+								readOnly={hasCustomError ? true : readOnly}
+								title={transformedFileEntryTitle}
+							/>
+						)}
+					</>
+				)}
+
+				<input
 					id={id}
-					message={message}
 					name={name}
-					onBlur={onBlur}
-					onClearButtonClicked={(event) => {
-						onFocus(event);
-
-						setCurrentValue(null);
-
-						onChange(event, '{}');
-
-						const guestUploadInput = document.getElementById(
-							`${name}inputFileGuestUpload`
-						);
-
-						if (guestUploadInput) {
-							guestUploadInput.value = '';
-						}
-
-						onBlur(event);
-					}}
-					onFocus={onFocus}
-					onUploadSelectButtonClicked={(event) =>
-						handleUploadSelectButtonClicked(event)
-					}
 					placeholder={placeholder}
-					progress={progress}
-					readOnly={hasCustomError ? true : readOnly}
-					value={currentValue || ''}
+					type="hidden"
+					value={value}
 				/>
-			) : (
-				<DocumentLibrary
-					editingLanguageId={editingLanguageId}
-					fileEntryTitle={fileEntryTitle}
-					fileEntryURL={fileEntryURL}
-					id={id}
-					message={message}
-					name={name}
-					onClearButtonClicked={(event) => {
-						setCurrentValue(null);
 
-						onChange(event, '{}');
-					}}
-					onSelectButtonClicked={(event) =>
-						handleSelectButtonClicked(
-							{
-								itemSelectorURL,
-								portletNamespace,
-							},
-							event
-						)
-					}
-					placeholder={placeholder}
-					readOnly={hasCustomError ? true : readOnly}
-					value={currentValue || ''}
-				/>
-			)}
+				{message && <div className="form-feedback-item">{message}</div>}
+			</div>
 		</FieldBase>
 	);
 };
