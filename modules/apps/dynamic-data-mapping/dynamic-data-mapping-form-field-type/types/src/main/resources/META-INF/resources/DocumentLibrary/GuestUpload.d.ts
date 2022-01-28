@@ -16,10 +16,12 @@ import React from 'react';
 declare const GuestUpload: React.FC<IProps>;
 export default GuestUpload;
 interface IProps {
-	handleClear: (event: any) => void;
-	handleSelect: (event: any) => void;
+	maxFileSize: number;
 	name: string;
-	progress: number;
+	onBlur: (event: any) => void;
+	onChange: (event: any, values: string[], keys: string[]) => void;
+	onFocus: (event: any) => void;
 	readOnly: boolean;
 	title: string;
+	url: string;
 }

@@ -15,16 +15,149 @@
 import ClayButton from '@clayui/button';
 import {ClayInput} from '@clayui/form';
 import ClayProgressBar from '@clayui/progress-bar';
-import React from 'react';
+import axios from 'axios';
+
+// @ts-ignore
+
+import {convertToFormData, useConfig} from 'data-engine-js-components-web';
+import React, {useCallback, useState} from 'react';
 
 const GuestUpload: React.FC<IProps> = ({
-	handleClear,
-	handleSelect,
+	maxFileSize,
 	name,
-	progress,
+	onBlur,
+	onChange,
+	onFocus,
 	readOnly,
 	title,
+	url,
 }) => {
+	const {portletNamespace} = useConfig();
+
+	const [progress, setProgress] = useState(0);
+
+	const disableSubmitButton = useCallback((disable = true) => {
+		const submitButton = document.getElementById('ddm-form-submit');
+
+		if (disable) {
+			submitButton?.setAttribute('disabled', disable);
+		}
+		else {
+			submitButton?.removeAttribute('disabled');
+		}
+	}, []);
+
+	const onClickClear = useCallback(
+		(event) => {
+			onFocus(event);
+
+			onChange(event, ['', '{}'], ['guestUploadErrorMessage', 'value']);
+
+			const guestUploadInput = document.getElementById(
+				`${name}inputFileGuestUpload`
+			);
+
+			if (guestUploadInput) {
+				guestUploadInput.setAttribute('value', '');
+			}
+
+			onBlur(event);
+		},
+		[name, onBlur, onChange, onFocus]
+	);
+
+	const onClickSelect = useCallback(
+		(event) => {
+			onFocus(event);
+
+			if (!event.target.files) {
+				return;
+			}
+
+			const file = event.target.files[0];
+
+			if (file?.size > maxFileSize) {
+				onChange(
+					event,
+					['true', '', '{}'],
+					[
+						'guestUploadFileSizeExceeded',
+						'guestUploadErrorMessage',
+						'value',
+					]
+				);
+
+				onBlur(event);
+
+				return;
+			}
+
+			const data = {
+				[`${portletNamespace}file`]: file,
+			};
+
+			axios
+				.post(url, convertToFormData(data), {
+					onUploadProgress: (event) => {
+						const progress = Math.round(
+							(event.loaded * 100) / event.total
+						);
+
+						setProgress(progress);
+
+						disableSubmitButton();
+					},
+				})
+				.then((response) => {
+					const {error, file} = response.data;
+
+					disableSubmitButton(false);
+
+					if (error) {
+						onChange(
+							event,
+							['false', error.message, '{}'],
+							[
+								'guestUploadFileSizeExceeded',
+								'guestUploadErrorMessage',
+								'value',
+							]
+						);
+					}
+					else {
+						onChange(
+							event,
+							['false', '', JSON.stringify(file)],
+							[
+								'guestUploadFileSizeExceeded',
+								'guestUploadErrorMessage',
+								'value',
+							]
+						);
+					}
+
+					setProgress(0);
+				})
+				.catch(() => {
+					disableSubmitButton(false);
+
+					setProgress(0);
+				})
+				.finally(() => {
+					onBlur(event);
+				});
+		},
+		[
+			disableSubmitButton,
+			maxFileSize,
+			url,
+			portletNamespace,
+			onBlur,
+			onChange,
+			onFocus,
+		]
+	);
+
 	return (
 		<>
 			<ClayInput.Group>
@@ -32,7 +165,6 @@ const GuestUpload: React.FC<IProps> = ({
 					<ClayInput
 						className="bg-light"
 						disabled={readOnly}
-						onClick={(event) => handleSelect(event)}
 						type="text"
 						value={title || ''}
 					/>
@@ -54,7 +186,7 @@ const GuestUpload: React.FC<IProps> = ({
 						className="input-file"
 						disabled={readOnly}
 						id={`${name}inputFileGuestUpload`}
-						onChange={(event) => handleSelect(event)}
+						onChange={(event) => onClickSelect(event)}
 						type="file"
 					/>
 				</ClayInput.GroupItem>
@@ -64,7 +196,7 @@ const GuestUpload: React.FC<IProps> = ({
 						<ClayButton
 							aria-label={Liferay.Language.get('unselect-file')}
 							displayType="secondary"
-							onClick={(event) => handleClear(event)}
+							onClick={(event) => onClickClear(event)}
 							type="button"
 						>
 							{Liferay.Language.get('clear')}
@@ -81,10 +213,12 @@ const GuestUpload: React.FC<IProps> = ({
 export default GuestUpload;
 
 interface IProps {
-	handleClear: (event: any) => void;
-	handleSelect: (event: any) => void;
+	maxFileSize: number;
 	name: string;
-	progress: number;
+	onBlur: (event: any) => void;
+	onChange: (event: any, values: string[], keys: string[]) => void;
+	onFocus: (event: any) => void;
 	readOnly: boolean;
 	title: string;
+	url: string;
 }

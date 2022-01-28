@@ -17,12 +17,11 @@ declare const UserUpload: React.FC<IProps>;
 export default UserUpload;
 interface IProps {
 	editingLanguageId: Locale;
-	handleChange: (event: any, value?: string) => void;
-	itemSelectorURL: string;
 	name: string;
 	onBlur: (event: any) => void;
+	onChange: (event: any, values: string[], keys: string[]) => void;
 	onFocus: (event: any) => void;
-	portletNamespace: string;
 	readOnly: boolean;
 	title: string;
+	url: string;
 }
