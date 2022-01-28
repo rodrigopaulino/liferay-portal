@@ -782,6 +782,20 @@ public class DDMFormEvaluatorHelper {
 		ddmFormEvaluatorExpressionObserver.updateFieldProperty(builder.build());
 	}
 
+	private void _setFieldErrorMessage(
+		DDMFormEvaluatorFieldContextKey ddmFormEvaluatorFieldContextKey,
+		String errorMessage) {
+
+		UpdateFieldPropertyRequest.Builder builder =
+			UpdateFieldPropertyRequest.Builder.newBuilder(
+				ddmFormEvaluatorFieldContextKey.getName(), "errorMessage",
+				errorMessage);
+
+		builder.withInstanceId(ddmFormEvaluatorFieldContextKey.getInstanceId());
+
+		ddmFormEvaluatorExpressionObserver.updateFieldProperty(builder.build());
+	}
+
 	private void _updateDDMFormFieldValue(
 		DDMFormFieldValue ddmFormFieldValue, Object newValue) {
 
@@ -810,6 +824,7 @@ public class DDMFormEvaluatorHelper {
 		_validateFieldsWithDDMFormFieldValidation();
 		_validateNumericFieldsWithInputMask();
 		_validateObjectRelationshipFields();
+		_validateUploadFields();
 	}
 
 	private void _validateFieldsMarkedAsRequired() {
@@ -1048,6 +1063,80 @@ public class DDMFormEvaluatorHelper {
 				LanguageUtil.get(
 					_ddmFormEvaluatorEvaluateRequest.getLocale(),
 					"the-field-value-is-invalid"))
+		);
+	}
+
+	private void _validateUploadFields() {
+		Collection<DDMFormField> ddmFormFields = _ddmFormFieldsMap.values();
+
+		Stream<DDMFormField> stream = ddmFormFields.stream();
+
+		stream.filter(
+			ddmFormField -> Objects.equals(
+				ddmFormField.getType(), "document_library")
+		).flatMap(
+			ddmFormField -> _getDDMFormEvaluatorFieldContextKeysStream(
+				ddmFormField.getName())
+		).forEach(
+			ddmFormEvaluatorFieldContextKey -> {
+				Object guestUploadErrorMessage = _getFieldPropertyResponseValue(
+					ddmFormEvaluatorFieldContextKey, "guestUploadErrorMessage");
+
+				if (!_isBooleanPropertyValue(
+						ddmFormEvaluatorFieldContextKey,
+						"containsAddFolderPermission", true)) {
+
+					_setFieldErrorMessage(
+						ddmFormEvaluatorFieldContextKey,
+						LanguageUtil.get(
+							_ddmFormEvaluatorEvaluateRequest.getLocale(),
+							"you-need-to-be-assigned-to-the-same-site-where-" +
+								"the-form-was-created-to-use-this-field"));
+				}
+				else if (_isBooleanPropertyValue(
+							ddmFormEvaluatorFieldContextKey,
+							"guestUploadForbidden", false)) {
+
+					_setFieldErrorMessage(
+						ddmFormEvaluatorFieldContextKey,
+						LanguageUtil.get(
+							_ddmFormEvaluatorEvaluateRequest.getLocale(),
+							"you-need-to-be-signed-in-to-edit-this-field"));
+				}
+				else if (_isBooleanPropertyValue(
+							ddmFormEvaluatorFieldContextKey,
+							"guestUploadLimitReached", false)) {
+
+					_setFieldErrorMessage(
+						ddmFormEvaluatorFieldContextKey,
+						LanguageUtil.get(
+							_ddmFormEvaluatorEvaluateRequest.getLocale(),
+							"the-maximum-number-of-submissions-allowed-for-" +
+								"this-form-has-been-reached"));
+				}
+				else if (_isBooleanPropertyValue(
+							ddmFormEvaluatorFieldContextKey,
+							"guestUploadFileSizeExceeded", false)) {
+
+					_setFieldAsInvalid(
+						ddmFormEvaluatorFieldContextKey,
+						LanguageUtil.format(
+							_ddmFormEvaluatorEvaluateRequest.getLocale(),
+							"please-enter-a-file-with-a-valid-file-size-no-" +
+								"larger-than-x",
+							LanguageUtil.formatStorageSize(
+								GetterUtil.getDouble(
+									_getFieldPropertyResponseValue(
+										ddmFormEvaluatorFieldContextKey,
+										"guestUploadMaxFileSize")),
+								_ddmFormEvaluatorEvaluateRequest.getLocale())));
+				}
+				else if (Validator.isNotNull(guestUploadErrorMessage)) {
+					_setFieldAsInvalid(
+						ddmFormEvaluatorFieldContextKey,
+						(String)guestUploadErrorMessage);
+				}
+			}
 		);
 	}
 
