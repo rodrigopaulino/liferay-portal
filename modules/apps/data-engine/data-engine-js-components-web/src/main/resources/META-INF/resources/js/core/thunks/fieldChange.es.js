@@ -31,7 +31,26 @@ const getEditedPages = ({
 	return pageVisitor.mapFields(
 		(field) => {
 			if (field.name === name) {
-				if (key !== 'value') {
+				if (
+					Array.isArray(key) &&
+					Array.isArray(value) &&
+					key.length > 0 &&
+					key.length === value.length
+				) {
+					const keys = key;
+					const values = value;
+
+					return {
+						...field,
+						...keys.reduce((currObj, key, index) => {
+							return {
+								...currObj,
+								[key]: values[index],
+							};
+						}, {}),
+					};
+				}
+				else if (key !== 'value') {
 					return {
 						...field,
 						[key]: value,
