@@ -20,12 +20,13 @@ import classNames from 'classnames';
 import {
 	EVENT_TYPES as CORE_EVENT_TYPES,
 	Layout,
+	PagesVisitor,
 	getRepeatedIndex,
 	useForm,
 	useFormState,
 } from 'data-engine-js-components-web';
 import moment from 'moment/min/moment-with-locales';
-import React, {useMemo, useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 
 import './FieldBase.scss';
 
@@ -170,10 +171,10 @@ export function FieldBase({
 	id,
 	label,
 	localizedValue = {},
+	maximumRepetitions = 0,
 	name,
 	nestedFields,
 	onClick,
-	overMaximumRepetitionsLimit = false,
 	readOnly,
 	repeatable,
 	required,
@@ -186,8 +187,26 @@ export function FieldBase({
 	valid,
 	visible,
 }) {
-	const {editingLanguageId} = useFormState();
+	const {editingLanguageId, pages} = useFormState();
 	const dispatch = useForm();
+
+	const checkMaximumRepetitions = useCallback(() => {
+		const visitor = new PagesVisitor(pages);
+
+		let repetitionsCounter = 0;
+
+		visitor.mapFields(
+			(field) => {
+				if (fieldName === field.fieldName) {
+					repetitionsCounter++;
+				}
+			},
+			true,
+			true
+		);
+
+		return repetitionsCounter >= maximumRepetitions;
+	}, [fieldName, maximumRepetitions, pages]);
 
 	const hasError = displayErrors && errorMessage && !valid;
 
@@ -281,7 +300,10 @@ export function FieldBase({
 						className={classNames(
 							'ddm-form-field-repeatable-add-button p-0',
 							{
-								hide: overMaximumRepetitionsLimit,
+								hide:
+									maximumRepetitions > 0
+										? checkMaximumRepetitions()
+										: false,
 							}
 						)}
 						disabled={readOnly}
