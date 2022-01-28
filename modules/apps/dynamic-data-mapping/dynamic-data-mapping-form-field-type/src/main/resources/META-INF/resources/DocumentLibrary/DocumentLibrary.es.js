@@ -12,14 +12,7 @@
  * details.
  */
 
-import axios from 'axios';
-import {
-	PagesVisitor,
-	convertToFormData,
-	useConfig,
-	useFormState,
-} from 'data-engine-js-components-web';
-import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import React, {useMemo} from 'react';
 
 import {FieldBase} from '../FieldBase/ReactFieldBase.es';
 import DownloadCard from './DownloadCard';
@@ -29,18 +22,19 @@ import UserUpload from './UserUpload';
 const Main = ({
 	_onBlur,
 	_onFocus,
-	allowGuestUsers,
-	displayErrors: initialDisplayErrors,
+	containsAddFolderPermission,
+	displayErrors,
 	editingLanguageId,
-	errorMessage: initialErrorMessage,
-	fieldName,
+	errorMessage,
 	fileEntryTitle,
 	fileEntryURL,
+	guestUploadForbidden,
+	guestUploadLimitReached,
+	guestUploadMaxFileSize,
 	guestUploadURL,
 	id,
 	itemSelectorURL,
 	maximumRepetitions,
-	maximumSubmissionLimitReached,
 	message,
 	name,
 	onBlur,
@@ -48,253 +42,21 @@ const Main = ({
 	onFocus,
 	placeholder,
 	readOnly,
-	showUploadPermissionMessage,
-	valid: initialValid,
+	valid,
 	value = '{}',
 	...otherProps
 }) => {
-	const {portletNamespace} = useConfig();
-	const {pages} = useFormState();
-
-	const isSignedIn = Liferay.ThemeDisplay.isSignedIn();
-
-	const getErrorMessages = useCallback(
-		(errorMessage, isSignedIn) => {
-			const errorMessages = [errorMessage];
-
-			if (!allowGuestUsers && !isSignedIn) {
-				errorMessages.push(
-					Liferay.Language.get(
-						'you-need-to-be-signed-in-to-edit-this-field'
-					)
-				);
-			}
-			else if (maximumSubmissionLimitReached) {
-				errorMessages.push(
-					Liferay.Language.get(
-						'the-maximum-number-of-submissions-allowed-for-this-form-has-been-reached'
-					)
-				);
-			}
-			else if (showUploadPermissionMessage) {
-				errorMessages.push(
-					Liferay.Language.get(
-						'you-need-to-be-assigned-to-the-same-site-where-the-form-was-created-to-use-this-field'
-					)
-				);
-			}
-
-			return errorMessages.join(' ');
-		},
+	const hasCustomError = useMemo(
+		() =>
+			!containsAddFolderPermission ||
+			guestUploadForbidden ||
+			guestUploadLimitReached,
 		[
-			allowGuestUsers,
-			maximumSubmissionLimitReached,
-			showUploadPermissionMessage,
+			containsAddFolderPermission,
+			guestUploadForbidden,
+			guestUploadLimitReached,
 		]
 	);
-
-	const [errorMessage, setErrorMessage] = useState(
-		getErrorMessages(initialErrorMessage, isSignedIn)
-	);
-	const [displayErrors, setDisplayErrors] = useState(initialDisplayErrors);
-	const [progress, setProgress] = useState(0);
-	const [valid, setValid] = useState(initialValid);
-
-	const checkMaximumRepetitions = useCallback(() => {
-		const visitor = new PagesVisitor(pages);
-
-		let repetitionsCounter = 0;
-
-		visitor.mapFields(
-			(field) => {
-				if (fieldName === field.fieldName) {
-					repetitionsCounter++;
-				}
-			},
-			true,
-			true
-		);
-
-		return repetitionsCounter === maximumRepetitions;
-	}, [fieldName, maximumRepetitions, pages]);
-
-	const configureErrorMessage = useCallback((message) => {
-		setErrorMessage(message);
-		setDisplayErrors(!!message);
-		setValid(!message);
-	}, []);
-
-	const disableSubmitButton = useCallback((disable = true) => {
-		document.getElementById('ddm-form-submit').disabled = disable;
-	}, []);
-
-	const handleGuestUploadFileChanged = useCallback(
-		(errorMessage, event, value) => {
-			configureErrorMessage(errorMessage);
-
-			onChange(event, value ? value : '{}');
-		},
-		[configureErrorMessage, onChange]
-	);
-
-	const isExceededUploadRequestSizeLimit = useCallback(
-		(fileSize) => {
-			const uploadRequestSizeLimit =
-				Liferay.PropsValues.UPLOAD_SERVLET_REQUEST_IMPL_MAX_SIZE;
-
-			if (fileSize <= uploadRequestSizeLimit) {
-				return false;
-			}
-
-			const errorMessage = Liferay.Util.sub(
-				Liferay.Language.get(
-					'please-enter-a-file-with-a-valid-file-size-no-larger-than-x'
-				),
-				[Liferay.Util.formatStorage(uploadRequestSizeLimit)]
-			);
-
-			handleGuestUploadFileChanged(errorMessage, {}, null);
-
-			return true;
-		},
-		[handleGuestUploadFileChanged]
-	);
-
-	const [transformedFileEntryTitle, transformedFileEntryURL] = useMemo(() => {
-		let title = fileEntryTitle;
-		let url = fileEntryURL;
-
-		if (value && typeof value === 'string') {
-			try {
-				const fileEntry = JSON.parse(value);
-
-				title = fileEntry.title;
-
-				if (fileEntry.url) {
-					url = fileEntry.url;
-				}
-			}
-			catch (error) {
-				console.warn('Unable to parse JSON', value);
-			}
-		}
-
-		return value ? [title, url] : [];
-	}, [fileEntryTitle, fileEntryURL, value]);
-
-	const handleChangeUserUpload = useCallback(
-		(event, value) => {
-			onChange(event, value ?? '{}');
-		},
-		[onChange]
-	);
-
-	const handleClearGuestUpload = useCallback(
-		(event) => {
-			onFocus(event);
-
-			onChange(event, '{}');
-
-			const guestUploadInput = document.getElementById(
-				`${name}inputFileGuestUpload`
-			);
-
-			if (guestUploadInput) {
-				guestUploadInput.value = '';
-			}
-
-			onBlur(event);
-		},
-		[name, onBlur, onChange, onFocus]
-	);
-
-	const handleSelectGuestUpload = useCallback(
-		(event) => {
-			onFocus(event);
-
-			const file = event.target.files[0];
-
-			if (isExceededUploadRequestSizeLimit(file.size)) {
-				onBlur(event);
-
-				return;
-			}
-
-			const data = {
-				[`${portletNamespace}file`]: file,
-			};
-
-			axios
-				.post(guestUploadURL, convertToFormData(data), {
-					onUploadProgress: (event) => {
-						const progress = Math.round(
-							(event.loaded * 100) / event.total
-						);
-
-						setProgress(progress);
-
-						disableSubmitButton();
-					},
-				})
-				.then((response) => {
-					const {error, file} = response.data;
-
-					disableSubmitButton(false);
-
-					if (error) {
-						handleGuestUploadFileChanged(
-							error.message,
-							event,
-							null
-						);
-					}
-					else {
-						handleGuestUploadFileChanged(
-							'',
-							event,
-							JSON.stringify(file)
-						);
-					}
-
-					setProgress(0);
-				})
-				.catch(() => {
-					disableSubmitButton(false);
-
-					setProgress(0);
-				})
-				.finally(() => {
-					onBlur(event);
-				});
-		},
-		[
-			disableSubmitButton,
-			guestUploadURL,
-			handleGuestUploadFileChanged,
-			isExceededUploadRequestSizeLimit,
-			portletNamespace,
-			onBlur,
-			onFocus,
-		]
-	);
-
-	useEffect(() => {
-		if ((!allowGuestUsers && !isSignedIn) || showUploadPermissionMessage) {
-			const ddmFormUploadPermissionMessage = document.querySelector(
-				`.ddm-form-upload-permission-message`
-			);
-
-			if (ddmFormUploadPermissionMessage) {
-				ddmFormUploadPermissionMessage.classList.remove('hide');
-			}
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
-
-	const hasCustomError =
-		(!isSignedIn && !allowGuestUsers) ||
-		maximumSubmissionLimitReached ||
-		showUploadPermissionMessage;
 
 	return (
 		<FieldBase
@@ -302,41 +64,40 @@ const Main = ({
 			displayErrors={hasCustomError ? true : displayErrors}
 			errorMessage={errorMessage}
 			id={id}
+			maximumRepetitions={maximumRepetitions}
 			name={name}
-			overMaximumRepetitionsLimit={
-				maximumRepetitions > 0 ? checkMaximumRepetitions() : false
-			}
 			readOnly={hasCustomError ? true : readOnly}
 			valid={hasCustomError ? false : valid}
 		>
 			<div className="liferay-ddm-form-field-document-library">
-				{allowGuestUsers && !isSignedIn ? (
+				{guestUploadURL ? (
 					<GuestUpload
-						handleClear={handleClearGuestUpload}
-						handleSelect={handleSelectGuestUpload}
+						maxFileSize={guestUploadMaxFileSize}
 						name={name}
-						progress={progress}
+						onBlur={onBlur}
+						onChange={onChange}
+						onFocus={onFocus}
 						readOnly={hasCustomError ? true : readOnly}
-						title={transformedFileEntryTitle}
+						title={fileEntryTitle}
+						url={guestUploadURL}
 					/>
 				) : (
 					<>
-						{transformedFileEntryURL && readOnly ? (
+						{fileEntryURL && readOnly ? (
 							<DownloadCard
-								title={transformedFileEntryTitle}
-								url={transformedFileEntryURL}
+								title={fileEntryTitle}
+								url={fileEntryURL}
 							/>
 						) : (
 							<UserUpload
 								editingLanguageId={editingLanguageId}
-								handleChange={handleChangeUserUpload}
-								itemSelectorURL={itemSelectorURL}
 								name={name}
 								onBlur={onBlur}
+								onChange={onChange}
 								onFocus={onFocus}
-								portletNamespace={portletNamespace}
 								readOnly={hasCustomError ? true : readOnly}
-								title={transformedFileEntryTitle}
+								title={fileEntryTitle}
+								url={itemSelectorURL}
 							/>
 						)}
 					</>

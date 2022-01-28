@@ -14,19 +14,24 @@
 
 import ClayButton from '@clayui/button';
 import {ClayInput} from '@clayui/form';
+
+// @ts-ignore
+
+import {useConfig} from 'data-engine-js-components-web';
 import React, {useCallback} from 'react';
 
 const UserUpload: React.FC<IProps> = ({
 	editingLanguageId,
-	handleChange,
-	itemSelectorURL,
 	name,
 	onBlur,
+	onChange,
 	onFocus,
-	portletNamespace,
 	readOnly,
 	title,
+	url,
 }) => {
+	const {portletNamespace} = useConfig();
+
 	const onClickSelect = useCallback(
 		(event) => {
 			onFocus(event);
@@ -35,7 +40,25 @@ const UserUpload: React.FC<IProps> = ({
 				onClose: () => onBlur(event),
 				onSelect: (selectedItem: any) => {
 					if (selectedItem?.value) {
-						handleChange(selectedItem, selectedItem.value);
+						try {
+							const fileEntry = JSON.parse(selectedItem.value);
+
+							onChange(
+								event,
+								[
+									fileEntry.title,
+									fileEntry.url,
+									selectedItem.value,
+								],
+								['fileEntryTitle', 'fileEntryURL', 'value']
+							);
+						}
+						catch (error) {
+							console.warn(
+								'Unable to parse JSON',
+								selectedItem.value
+							);
+						}
 					}
 				},
 				selectEventName: `${portletNamespace}selectDocumentLibrary`,
@@ -43,10 +66,10 @@ const UserUpload: React.FC<IProps> = ({
 					Liferay.Language.get('select-x'),
 					Liferay.Language.get('document')
 				),
-				url: itemSelectorURL,
+				url,
 			});
 		},
-		[handleChange, itemSelectorURL, onBlur, onFocus, portletNamespace]
+		[onBlur, onChange, onFocus, portletNamespace, url]
 	);
 
 	return (
@@ -83,7 +106,13 @@ const UserUpload: React.FC<IProps> = ({
 						<ClayButton
 							aria-label={Liferay.Language.get('unselect-file')}
 							displayType="secondary"
-							onClick={(event) => handleChange(event, undefined)}
+							onClick={(event) =>
+								onChange(
+									event,
+									['', '', ''],
+									['fileEntryTitle', 'fileEntryURL', 'value']
+								)
+							}
 							type="button"
 						>
 							{Liferay.Language.get('clear')}
@@ -99,12 +128,11 @@ export default UserUpload;
 
 interface IProps {
 	editingLanguageId: Locale;
-	handleChange: (event: any, value?: string) => void;
-	itemSelectorURL: string;
 	name: string;
 	onBlur: (event: any) => void;
+	onChange: (event: any, values: string[], keys: string[]) => void;
 	onFocus: (event: any) => void;
-	portletNamespace: string;
 	readOnly: boolean;
 	title: string;
+	url: string;
 }
