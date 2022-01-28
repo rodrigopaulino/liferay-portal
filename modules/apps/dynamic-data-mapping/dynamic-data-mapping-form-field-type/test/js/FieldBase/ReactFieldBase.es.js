@@ -13,7 +13,7 @@
  */
 
 import {act, fireEvent, render} from '@testing-library/react';
-import {PageProvider} from 'data-engine-js-components-web';
+import {FormProvider} from 'data-engine-js-components-web';
 import React from 'react';
 
 import '@testing-library/jest-dom/extend-expect';
@@ -23,9 +23,29 @@ import {FieldBase} from '../../../src/main/resources/META-INF/resources/FieldBas
 const spritemap = 'icons.svg';
 
 const FieldBaseWithProvider = (props) => (
-	<PageProvider value={{editingLanguageId: 'en_US'}}>
+	<FormProvider
+		value={{
+			editingLanguageId: 'en_US',
+			pages: [
+				{
+					rows: [
+						{
+							columns: [
+								{
+									fields: [
+										{fieldName: 'repeatedField'},
+										{fieldName: 'repeatedField'},
+									],
+								},
+							],
+						},
+					],
+				},
+			],
+		}}
+	>
 		<FieldBase {...props} />
-	</PageProvider>
+	</FormProvider>
 );
 
 describe('ReactFieldBase', () => {
@@ -180,11 +200,12 @@ describe('ReactFieldBase', () => {
 		expect(container).toMatchSnapshot();
 	});
 
-	it('does not render the add button when repeatable is true and the maximum limit of repetions is reached', () => {
+	it('does not render the add button when repeatable is true and the maximum limit of repetitions is reached', () => {
 		const {container} = render(
 			<FieldBaseWithProvider
+				fieldName="repeatedField"
 				label="Text"
-				overMaximumRepetitionsLimit={true}
+				maximumRepetitions={1}
 				repeatable={true}
 				showLabel={false}
 				spritemap={spritemap}
