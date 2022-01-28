@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ReactFieldBase does not render the add button when repeatable is true and the maximum limit of repetions is reached 1`] = `
+exports[`ReactFieldBase does not render the add button when repeatable is true and the maximum limit of repetitions is reached 1`] = `
 <div>
   <div
     class="form-group hide"
