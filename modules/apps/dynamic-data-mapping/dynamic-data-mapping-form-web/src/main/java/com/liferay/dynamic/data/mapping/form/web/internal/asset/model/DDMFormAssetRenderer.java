@@ -29,6 +29,7 @@ import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordLocalServic
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceVersionLocalService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesMerger;
+import com.liferay.dynamic.data.mapping.util.DocumentLibraryDDMFormFieldHelper;
 import com.liferay.petra.portlet.url.builder.PortletURLBuilder;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -68,7 +69,9 @@ public class DDMFormAssetRenderer
 		DDMFormInstanceVersionLocalService ddmFormInstanceVersionLocalService,
 		DDMFormRenderer ddmFormRenderer,
 		DDMFormValuesFactory ddmFormValuesFactory,
-		DDMFormValuesMerger ddmFormValuesMerger, Portal portal) {
+		DDMFormValuesMerger ddmFormValuesMerger,
+		DocumentLibraryDDMFormFieldHelper documentLibraryDDMFormFieldHelper,
+		Portal portal) {
 
 		_ddmFormInstanceRecord = ddmFormInstanceRecord;
 		_ddmFormInstanceRecordLocalService = ddmFormInstanceRecordLocalService;
@@ -80,6 +83,7 @@ public class DDMFormAssetRenderer
 		_ddmFormRenderer = ddmFormRenderer;
 		_ddmFormValuesFactory = ddmFormValuesFactory;
 		_ddmFormValuesMerger = ddmFormValuesMerger;
+		_documentLibraryDDMFormFieldHelper = documentLibraryDDMFormFieldHelper;
 		_portal = portal;
 
 		DDMFormInstance ddmFormInstance = null;
@@ -274,7 +278,8 @@ public class DDMFormAssetRenderer
 					httpServletRequest, httpServletResponse,
 					_ddmFormInstanceRecordLocalService,
 					_ddmFormInstanceVersionLocalService, _ddmFormRenderer,
-					_ddmFormValuesFactory, _ddmFormValuesMerger);
+					_ddmFormValuesFactory, _ddmFormValuesMerger,
+					_documentLibraryDDMFormFieldHelper);
 
 		httpServletRequest.setAttribute(
 			WebKeys.PORTLET_DISPLAY_CONTEXT,
@@ -298,6 +303,8 @@ public class DDMFormAssetRenderer
 	private final DDMFormRenderer _ddmFormRenderer;
 	private final DDMFormValuesFactory _ddmFormValuesFactory;
 	private final DDMFormValuesMerger _ddmFormValuesMerger;
+	private final DocumentLibraryDDMFormFieldHelper
+		_documentLibraryDDMFormFieldHelper;
 	private final Portal _portal;
 
 }

@@ -26,15 +26,24 @@ import com.liferay.dynamic.data.mapping.model.DDMStructureLayout;
 import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLayoutLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMStructureVersionLocalService;
+import com.liferay.dynamic.data.mapping.util.DocumentLibraryDDMFormFieldHelper;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.security.auth.GuestOrUserUtil;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextFactory;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.WebKeys;
 
 import java.util.Locale;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -73,6 +82,26 @@ public class DataLayoutRendererImpl implements DataLayoutRenderer {
 				ddmStructure.getGroupId()));
 	}
 
+	private Folder _getDDMFormFolder(
+			long groupId, HttpServletRequest httpServletRequest)
+		throws Exception {
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		User user = themeDisplay.getUser();
+
+		ServiceContext serviceContext = ServiceContextFactory.getInstance(
+			httpServletRequest);
+
+		return _documentLibraryDDMFormFieldHelper.getUploadFolder(
+			themeDisplay.getCompanyId(),
+			ParamUtil.getBoolean(serviceContext, "mountPoint"),
+			serviceContext.getUuid(), groupId, themeDisplay.isSignedIn(),
+			user.getUserId(), user.getLocale(), user.getScreenName());
+	}
+
 	private DDMFormRenderingContext _toDDMFormRenderingContext(
 			Long dataLayoutId,
 			DataLayoutRendererContext dataLayoutRendererContext,
@@ -88,6 +117,16 @@ public class DataLayoutRendererImpl implements DataLayoutRenderer {
 			ddmFormRenderingContext.addProperty(
 				"defaultLanguageId",
 				dataLayoutRendererContext.getDefaultLanguageId());
+		}
+
+		Folder folder = _getDDMFormFolder(
+			groupId, dataLayoutRendererContext.getHttpServletRequest());
+
+		if (folder != null) {
+			ddmFormRenderingContext.addProperty(
+				"folderId", folder.getFolderId());
+			ddmFormRenderingContext.addProperty(
+				"repositoryId", folder.getRepositoryId());
 		}
 
 		ddmFormRenderingContext.addProperty(
@@ -153,6 +192,10 @@ public class DataLayoutRendererImpl implements DataLayoutRenderer {
 
 	@Reference
 	private DDMStructureVersionLocalService _ddmStructureVersionLocalService;
+
+	@Reference
+	private DocumentLibraryDDMFormFieldHelper
+		_documentLibraryDDMFormFieldHelper;
 
 	@Reference
 	private Portal _portal;

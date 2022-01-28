@@ -69,6 +69,7 @@ import com.liferay.dynamic.data.mapping.storage.DDMStorageAdapterTracker;
 import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
 import com.liferay.dynamic.data.mapping.util.DDMFormLayoutFactory;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesMerger;
+import com.liferay.dynamic.data.mapping.util.DocumentLibraryDDMFormFieldHelper;
 import com.liferay.dynamic.data.mapping.util.comparator.DDMFormInstanceModifiedDateComparator;
 import com.liferay.dynamic.data.mapping.util.comparator.DDMFormInstanceNameComparator;
 import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
@@ -173,6 +174,7 @@ public class DDMFormAdminDisplayContext {
 		DDMStorageAdapterTracker ddmStorageAdapterTracker,
 		DDMStructureLocalService ddmStructureLocalService,
 		DDMStructureService ddmStructureService,
+		DocumentLibraryDDMFormFieldHelper documentLibraryDDMFormFieldHelper,
 		FFDateTimeDDMFormFieldTypeConfiguration
 			ffDateTimeDDMFormFieldTypeConfiguration,
 		FFSubmissionsSettingsConfigurationActivator
@@ -202,6 +204,7 @@ public class DDMFormAdminDisplayContext {
 		_ddmStorageAdapterTracker = ddmStorageAdapterTracker;
 		_ddmStructureLocalService = ddmStructureLocalService;
 		_ddmStructureService = ddmStructureService;
+		_documentLibraryDDMFormFieldHelper = documentLibraryDDMFormFieldHelper;
 		_ffDateTimeDDMFormFieldTypeConfiguration =
 			ffDateTimeDDMFormFieldTypeConfiguration;
 		_ffSubmissionsSettingsConfigurationActivator =
@@ -530,7 +533,8 @@ public class DDMFormAdminDisplayContext {
 			PortalUtil.getHttpServletResponse(renderResponse),
 			_ddmFormInstanceRecordLocalService,
 			_ddmFormInstanceVersionLocalService, ddmFormRenderer,
-			_ddmFormValuesFactory, _ddmFormValuesMerger);
+			_ddmFormValuesFactory, _ddmFormValuesMerger,
+			_documentLibraryDDMFormFieldHelper);
 	}
 
 	public DDMFormViewFormInstanceRecordsDisplayContext
@@ -1827,6 +1831,8 @@ public class DDMFormAdminDisplayContext {
 	private final DDMStructureLocalService _ddmStructureLocalService;
 	private final DDMStructureService _ddmStructureService;
 	private String _displayStyle;
+	private final DocumentLibraryDDMFormFieldHelper
+		_documentLibraryDDMFormFieldHelper;
 	private final FFDateTimeDDMFormFieldTypeConfiguration
 		_ffDateTimeDDMFormFieldTypeConfiguration;
 	private final FFSubmissionsSettingsConfigurationActivator
