@@ -23,6 +23,7 @@ const globalLanguageDirection = Liferay.Language.direction;
 const spritemap = 'icons.svg';
 
 const defaultDocumentLibraryConfig = {
+	containsAddFolderPermission: true,
 	name: 'uploadField',
 	spritemap,
 };
@@ -113,7 +114,7 @@ describe('Field DocumentLibrary', () => {
 		render(
 			<DocumentLibraryWithProvider
 				{...defaultDocumentLibraryConfig}
-				allowGuestUsers={true}
+				guestUploadURL="someURL"
 				readOnly={true}
 			/>
 		);
@@ -253,7 +254,7 @@ describe('Field DocumentLibrary', () => {
 		expect(container).toMatchSnapshot();
 	});
 
-	it('shows guest upload field if allowGuestUsers property is enabled', () => {
+	it('shows guest upload field if guestUploadURL was provided', () => {
 		const mockIsSignedIn = jest.fn();
 
 		Liferay.ThemeDisplay.isSignedIn = mockIsSignedIn;
@@ -261,7 +262,7 @@ describe('Field DocumentLibrary', () => {
 		render(
 			<DocumentLibraryWithProvider
 				{...defaultDocumentLibraryConfig}
-				allowGuestUsers={true}
+				guestUploadURL="someURL"
 				value='{"id":"123"}'
 			/>
 		);
@@ -277,7 +278,7 @@ describe('Field DocumentLibrary', () => {
 		expect(guestUploadFieldInput).not.toBe(null);
 	});
 
-	it('hide guest upload field if allowGuestUsers property is disabled', () => {
+	it('hide guest upload field if no guestUploadURL was provided', () => {
 		const mockIsSignedIn = jest.fn();
 
 		Liferay.ThemeDisplay.isSignedIn = mockIsSignedIn;
@@ -285,7 +286,6 @@ describe('Field DocumentLibrary', () => {
 		render(
 			<DocumentLibraryWithProvider
 				{...defaultDocumentLibraryConfig}
-				allowGuestUsers={false}
 				value='{"id":"123"}'
 			/>
 		);
@@ -301,7 +301,7 @@ describe('Field DocumentLibrary', () => {
 		expect(guestUploadFieldInput).toBe(null);
 	});
 
-	it('disables guest upload field if maximumSubmissionLimitReached property is true', () => {
+	it('disables guest upload field if guestUploadLimitReached property is true', () => {
 		const mockIsSignedIn = jest.fn();
 
 		Liferay.ThemeDisplay.isSignedIn = mockIsSignedIn;
@@ -309,8 +309,8 @@ describe('Field DocumentLibrary', () => {
 		render(
 			<DocumentLibraryWithProvider
 				{...defaultDocumentLibraryConfig}
-				allowGuestUsers={true}
-				maximumSubmissionLimitReached={true}
+				guestUploadLimitReached={true}
+				guestUploadURL="someURL"
 			/>
 		);
 
