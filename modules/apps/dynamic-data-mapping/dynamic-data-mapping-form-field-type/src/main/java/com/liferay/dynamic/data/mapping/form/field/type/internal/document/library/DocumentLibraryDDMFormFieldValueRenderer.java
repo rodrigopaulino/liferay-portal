@@ -14,16 +14,11 @@
 
 package com.liferay.dynamic.data.mapping.form.field.type.internal.document.library;
 
-import com.liferay.document.library.kernel.service.DLAppService;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueRenderer;
 import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.json.JSONObject;
-import com.liferay.portal.kernel.language.LanguageUtil;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Locale;
@@ -55,30 +50,11 @@ public class DocumentLibraryDDMFormFieldValueRenderer
 			return StringPool.BLANK;
 		}
 
-		try {
-			FileEntry fileEntry = dlAppService.getFileEntryByUuidAndGroupId(
-				uuid, groupId);
-
-			return fileEntry.getTitle();
-		}
-		catch (Exception exception) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(exception, exception);
-			}
-
-			return LanguageUtil.format(
-				locale, "is-temporarily-unavailable", "content");
-		}
+		return jsonObject.getString("title");
 	}
-
-	@Reference
-	protected DLAppService dlAppService;
 
 	@Reference
 	protected DocumentLibraryDDMFormFieldValueAccessor
 		documentLibraryDDMFormFieldValueAccessor;
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		DocumentLibraryDDMFormFieldValueRenderer.class);
 
 }
