@@ -31,13 +31,20 @@ import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordLocalServic
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceVersionLocalService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesMerger;
+import com.liferay.dynamic.data.mapping.util.DocumentLibraryDDMFormFieldHelper;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.model.User;
+import com.liferay.portal.kernel.repository.model.Folder;
+import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.service.ServiceContextFactory;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.util.Locale;
@@ -63,7 +70,8 @@ public class DDMFormViewFormInstanceRecordDisplayContext {
 		DDMFormInstanceVersionLocalService ddmFormInstanceVersionLocalService,
 		DDMFormRenderer ddmFormRenderer,
 		DDMFormValuesFactory ddmFormValuesFactory,
-		DDMFormValuesMerger ddmFormValuesMerger) {
+		DDMFormValuesMerger ddmFormValuesMerger,
+		DocumentLibraryDDMFormFieldHelper documentLibraryDDMFormFieldHelper) {
 
 		_httpServletResponse = httpServletResponse;
 		_ddmFormInstanceRecordLocalService = ddmFormInstanceRecordLocalService;
@@ -72,6 +80,7 @@ public class DDMFormViewFormInstanceRecordDisplayContext {
 		_ddmFormRenderer = ddmFormRenderer;
 		_ddmFormValuesFactory = ddmFormValuesFactory;
 		_ddmFormValuesMerger = ddmFormValuesMerger;
+		_documentLibraryDDMFormFieldHelper = documentLibraryDDMFormFieldHelper;
 
 		_ddmFormAdminRequestHelper = new DDMFormAdminRequestHelper(
 			httpServletRequest);
@@ -101,6 +110,16 @@ public class DDMFormViewFormInstanceRecordDisplayContext {
 		DDMFormRenderingContext ddmFormRenderingContext =
 			createDDMFormRenderingContext(
 				structureVersion.getDDMForm(), readOnly);
+
+		Folder folder = _getDDMFormFolder(
+			formInstance.getGroupId(), _ddmFormAdminRequestHelper.getRequest());
+
+		if (folder != null) {
+			ddmFormRenderingContext.addProperty(
+				"folderId", folder.getFolderId());
+			ddmFormRenderingContext.addProperty(
+				"repositoryId", folder.getRepositoryId());
+		}
 
 		DDMFormValues formValues = getDDMFormValues(
 			renderRequest, formInstanceRecord, structureVersion);
@@ -217,6 +236,26 @@ public class DDMFormViewFormInstanceRecordDisplayContext {
 		return mergedFormValues;
 	}
 
+	private Folder _getDDMFormFolder(
+			long groupId, HttpServletRequest httpServletRequest)
+		throws Exception {
+
+		ThemeDisplay themeDisplay =
+			(ThemeDisplay)httpServletRequest.getAttribute(
+				WebKeys.THEME_DISPLAY);
+
+		User user = themeDisplay.getUser();
+
+		ServiceContext serviceContext = ServiceContextFactory.getInstance(
+			httpServletRequest);
+
+		return _documentLibraryDDMFormFieldHelper.getUploadFolder(
+			themeDisplay.getCompanyId(),
+			ParamUtil.getBoolean(serviceContext, "mountPoint"),
+			serviceContext.getUuid(), groupId, themeDisplay.isSignedIn(),
+			user.getUserId(), user.getLocale(), user.getScreenName());
+	}
+
 	private boolean _isDDMFormFieldRemoved(
 		Map<String, DDMFormField> latestFormFieldMap, String fieldName) {
 
@@ -285,6 +324,8 @@ public class DDMFormViewFormInstanceRecordDisplayContext {
 	private final DDMFormRenderer _ddmFormRenderer;
 	private final DDMFormValuesFactory _ddmFormValuesFactory;
 	private final DDMFormValuesMerger _ddmFormValuesMerger;
+	private final DocumentLibraryDDMFormFieldHelper
+		_documentLibraryDDMFormFieldHelper;
 	private final HttpServletResponse _httpServletResponse;
 
 }

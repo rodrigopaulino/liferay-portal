@@ -32,6 +32,7 @@ import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceVersionLocalService;
 import com.liferay.dynamic.data.mapping.storage.DDMStorageAdapterTracker;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesMerger;
+import com.liferay.dynamic.data.mapping.util.DocumentLibraryDDMFormFieldHelper;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidationException;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
@@ -226,7 +227,7 @@ public class DDMFormPortlet extends MVCPortlet {
 			_ddmFormInstanceVersionLocalService, _ddmFormRenderer,
 			_ddmFormValuesFactory, _ddmFormValuesMerger,
 			_ddmFormWebConfigurationActivator.getDDMFormWebConfiguration(),
-			_ddmStorageAdapterTracker,
+			_ddmStorageAdapterTracker, _documentLibraryDDMFormFieldHelper,
 			_ffSubmissionsSettingsConfigurationActivator, _groupLocalService,
 			_jsonFactory, _objectFieldLocalService,
 			_objectRelationshipLocalService, _portal, renderRequest,
@@ -316,6 +317,10 @@ public class DDMFormPortlet extends MVCPortlet {
 
 	@Reference
 	private DDMStorageAdapterTracker _ddmStorageAdapterTracker;
+
+	@Reference
+	private DocumentLibraryDDMFormFieldHelper
+		_documentLibraryDDMFormFieldHelper;
 
 	@Reference
 	private FFSubmissionsSettingsConfigurationActivator

@@ -218,14 +218,16 @@ boolean limitToOneSubmissionPerUser = DDMFormInstanceSubmissionLimitStatusUtil.i
 							</div>
 						</c:if>
 
-						<div class="ddm-form-upload-permission-message hide mt-4">
-							<clay:container-fluid>
-								<clay:alert
-									displayType="warning"
-									message="you-do-not-have-the-permission-to-access-the-upload-fields-on-this-form"
-								/>
-							</clay:container-fluid>
-						</div>
+						<c:if test="<%= ddmFormDisplayContext.showDDMFormUploadPermissionMessage() %>">
+							<div class="ddm-form-upload-permission-message mt-4">
+								<clay:container-fluid>
+									<clay:alert
+										displayType="warning"
+										message="you-do-not-have-the-permission-to-access-the-upload-fields-on-this-form"
+									/>
+								</clay:container-fluid>
+							</div>
+						</c:if>
 
 						<clay:container-fluid>
 							<react:component

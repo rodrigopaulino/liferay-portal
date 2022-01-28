@@ -462,14 +462,6 @@ public class DDMFormFieldTemplateContextFactory {
 		return rows.stream();
 	}
 
-	private boolean _isFieldSetField(DDMFormField ddmFormField) {
-		if (StringUtil.equals(ddmFormField.getType(), "fieldset")) {
-			return true;
-		}
-
-		return false;
-	}
-
 	private void _setDDMFormFieldFieldSetTemplateContextContributedParameters(
 		DDMFormField ddmFormField,
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
@@ -543,9 +535,21 @@ public class DDMFormFieldTemplateContextFactory {
 			_createDDDMFormFieldRenderingContext(
 				changedProperties, ddmFormFieldTemplateContext);
 
-		if (_isFieldSetField(ddmFormField)) {
+		if (StringUtil.equals(
+				ddmFormField.getType(), DDMFormFieldTypeConstants.FIELDSET)) {
+
 			_setDDMFormFieldFieldSetTemplateContextContributedParameters(
 				ddmFormField, ddmFormFieldRenderingContext);
+		}
+		else if (StringUtil.equals(
+					ddmFormField.getType(),
+					DDMFormFieldTypeConstants.DOCUMENT_LIBRARY)) {
+
+			ddmFormFieldRenderingContext.setProperty(
+				"folderId", _ddmFormRenderingContext.getProperty("folderId"));
+			ddmFormFieldRenderingContext.setProperty(
+				"repositoryId",
+				_ddmFormRenderingContext.getProperty("repositoryId"));
 		}
 
 		Map<String, Object> contributedParameters =

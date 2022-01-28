@@ -27,6 +27,7 @@ import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordLocalServic
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordVersionLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceVersionLocalService;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesMerger;
+import com.liferay.dynamic.data.mapping.util.DocumentLibraryDDMFormFieldHelper;
 import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
@@ -143,7 +144,7 @@ public class DDMFormAssetRendererFactory
 			_ddmFormInstanceRecordModelResourcePermission,
 			formInstanceRecordVersion, _ddmFormInstanceVersionLocalService,
 			_ddmFormRenderer, _ddmFormValuesFactory, _ddmFormValuesMerger,
-			_portal);
+			_documentLibraryDDMFormFieldHelper, _portal);
 
 		ddmFormAssetRenderer.setAssetRendererType(type);
 		ddmFormAssetRenderer.setServletContext(_servletContext);
@@ -183,6 +184,10 @@ public class DDMFormAssetRendererFactory
 
 	@Reference
 	private DDMFormValuesMerger _ddmFormValuesMerger;
+
+	@Reference
+	private DocumentLibraryDDMFormFieldHelper
+		_documentLibraryDDMFormFieldHelper;
 
 	@Reference
 	private Portal _portal;

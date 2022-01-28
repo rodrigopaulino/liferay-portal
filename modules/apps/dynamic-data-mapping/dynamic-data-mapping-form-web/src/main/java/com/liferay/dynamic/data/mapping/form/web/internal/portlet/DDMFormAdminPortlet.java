@@ -39,6 +39,7 @@ import com.liferay.dynamic.data.mapping.service.DDMStructureService;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.DDMStorageAdapterTracker;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesMerger;
+import com.liferay.dynamic.data.mapping.util.DocumentLibraryDDMFormFieldHelper;
 import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.portal.configuration.metatype.bnd.util.ConfigurableUtil;
@@ -180,7 +181,7 @@ public class DDMFormAdminPortlet extends MVCPortlet {
 					_ddmFormWebConfigurationActivator.
 						getDDMFormWebConfiguration(),
 					_ddmStorageAdapterTracker, _ddmStructureLocalService,
-					_ddmStructureService,
+					_ddmStructureService, _documentLibraryDDMFormFieldHelper,
 					_ffDateTimeDDMFormFieldTypeConfiguration,
 					_ffSubmissionsSettingsConfigurationActivator, _jsonFactory,
 					_npmResolver, _objectDefinitionLocalService, _portal));
@@ -205,7 +206,7 @@ public class DDMFormAdminPortlet extends MVCPortlet {
 					_ddmFormWebConfigurationActivator.
 						getDDMFormWebConfiguration(),
 					_ddmStorageAdapterTracker, _ddmStructureLocalService,
-					_ddmStructureService,
+					_ddmStructureService, _documentLibraryDDMFormFieldHelper,
 					_ffDateTimeDDMFormFieldTypeConfiguration,
 					_ffSubmissionsSettingsConfigurationActivator, _jsonFactory,
 					_npmResolver, _objectDefinitionLocalService, _portal));
@@ -290,6 +291,10 @@ public class DDMFormAdminPortlet extends MVCPortlet {
 
 	@Reference
 	private DDMStructureService _ddmStructureService;
+
+	@Reference
+	private DocumentLibraryDDMFormFieldHelper
+		_documentLibraryDDMFormFieldHelper;
 
 	private FFDateTimeDDMFormFieldTypeConfiguration
 		_ffDateTimeDDMFormFieldTypeConfiguration;
