@@ -26,6 +26,7 @@ import com.liferay.dynamic.data.mapping.model.DDMFormInstanceSettings;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceVersion;
 import com.liferay.dynamic.data.mapping.model.DDMFormSuccessPageSettings;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
+import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
 import com.liferay.dynamic.data.mapping.model.impl.DDMFormInstanceImpl;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceLocalService;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordService;
@@ -34,6 +35,7 @@ import com.liferay.dynamic.data.mapping.service.DDMFormInstanceService;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceVersionLocalService;
 import com.liferay.dynamic.data.mapping.storage.DDMStorageAdapterTracker;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesMerger;
+import com.liferay.dynamic.data.mapping.util.DocumentLibraryDDMFormFieldHelper;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -630,6 +632,7 @@ public class DDMFormDisplayContextTest extends PowerMockito {
 			mock(DDMFormRenderer.class), mock(DDMFormValuesFactory.class),
 			mock(DDMFormValuesMerger.class), _ddmFormWebConfiguration,
 			mock(DDMStorageAdapterTracker.class),
+			mock(DocumentLibraryDDMFormFieldHelper.class),
 			mock(FFSubmissionsSettingsConfigurationActivator.class),
 			mock(GroupLocalService.class), new JSONFactoryImpl(), null, null,
 			mock(Portal.class), renderRequest, new MockRenderResponse(),
@@ -731,9 +734,21 @@ public class DDMFormDisplayContextTest extends PowerMockito {
 		return ddmFormInstanceSettings;
 	}
 
+	private void _mockDDMFormInstanceVersion() throws PortalException {
+		DDMStructureVersion ddmStructureVersion = _mockDDMStructureVersion();
+
+		when(
+			_ddmFormInstanceVersion.getStructureVersion()
+		).thenReturn(
+			ddmStructureVersion
+		);
+	}
+
 	private DDMFormInstanceVersionLocalService
 			_mockDDMFormInstanceVersionLocalService()
 		throws PortalException {
+
+		_mockDDMFormInstanceVersion();
 
 		when(
 			_ddmFormInstanceVersionLocalService.getLatestFormInstanceVersion(
@@ -760,6 +775,24 @@ public class DDMFormDisplayContextTest extends PowerMockito {
 		);
 
 		return ddmStructure;
+	}
+
+	private DDMStructureVersion _mockDDMStructureVersion() {
+		DDMStructureVersion ddmStructureVersion = mock(
+			DDMStructureVersion.class);
+
+		Locale defaultLocale = LocaleUtil.fromLanguageId(_DEFAULT_LANGUAGE_ID);
+
+		DDMForm ddmForm = _createDDMForm(
+			new HashSet<>(Arrays.asList(defaultLocale)), defaultLocale);
+
+		when(
+			ddmStructureVersion.getDDMForm()
+		).thenReturn(
+			ddmForm
+		);
+
+		return ddmStructureVersion;
 	}
 
 	private void _mockLanguageGet(String key, String value) {

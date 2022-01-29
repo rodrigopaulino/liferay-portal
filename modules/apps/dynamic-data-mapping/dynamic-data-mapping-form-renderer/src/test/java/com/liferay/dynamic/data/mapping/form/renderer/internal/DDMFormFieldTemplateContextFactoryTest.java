@@ -20,6 +20,7 @@ import com.liferay.dynamic.data.mapping.form.field.type.BaseDDMFormFieldRenderer
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldRenderer;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTemplateContextContributor;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
+import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
@@ -46,6 +47,7 @@ import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.test.rule.LiferayUnitTestRule;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -82,6 +84,64 @@ public class DDMFormFieldTemplateContextFactoryTest extends PowerMockito {
 	public void setUp() {
 		_setUpDDMFormTemplateContextFactoryUtil();
 		setUpLanguageUtil();
+	}
+
+	@Test
+	public void testFolderPropertiesInDocumentLibraryField() {
+		DDMForm ddmForm = DDMFormTestUtil.createDDMForm();
+
+		DDMFormField ddmFormField = DDMFormTestUtil.createDDMFormField(
+			"Field1", null, DDMFormFieldTypeConstants.DOCUMENT_LIBRARY,
+			"string", false, false, false);
+
+		ddmForm.addDDMFormField(ddmFormField);
+
+		DDMFormFieldTemplateContextFactory ddmFormFieldTemplateContextFactory =
+			_createDDMFormFieldTemplateContextFactory(
+				ddmForm, ddmFormField.getName(), new HashMap<>(),
+				Collections.singletonList(
+					DDMFormValuesTestUtil.createUnlocalizedDDMFormFieldValue(
+						"Field1", "Value 1")),
+				false, _getTextDDMFormFieldRenderer(),
+				_getDocumentLibraryDDMFormFieldTemplateContextContributor());
+
+		List<Object> fields = ddmFormFieldTemplateContextFactory.create();
+
+		Map<String, Object> fieldTemplateContext =
+			(Map<String, Object>)fields.get(0);
+
+		Assert.assertEquals(
+			MapUtil.getString(fieldTemplateContext, "folderId"), _FOLDER_ID);
+		Assert.assertEquals(
+			MapUtil.getString(fieldTemplateContext, "repositoryId"),
+			_REPOSITORY_ID);
+	}
+
+	@Test
+	public void testFolderPropertiesInTextField() {
+		DDMForm ddmForm = DDMFormTestUtil.createDDMForm();
+
+		DDMFormField ddmFormField = DDMFormTestUtil.createTextDDMFormField(
+			"Field1", false, false, false);
+
+		ddmForm.addDDMFormField(ddmFormField);
+
+		DDMFormFieldTemplateContextFactory ddmFormFieldTemplateContextFactory =
+			_createDDMFormFieldTemplateContextFactory(
+				ddmForm, ddmFormField.getName(), new HashMap<>(),
+				Collections.singletonList(
+					DDMFormValuesTestUtil.createUnlocalizedDDMFormFieldValue(
+						"Field1", "Value 1")),
+				false, _getTextDDMFormFieldRenderer(),
+				_getTextDDMFormFieldTemplateContextContributor());
+
+		List<Object> fields = ddmFormFieldTemplateContextFactory.create();
+
+		Map<String, Object> fieldTemplateContext =
+			(Map<String, Object>)fields.get(0);
+
+		Assert.assertFalse(fieldTemplateContext.containsKey("folderId"));
+		Assert.assertFalse(fieldTemplateContext.containsKey("repositoryId"));
 	}
 
 	@Test
@@ -366,6 +426,8 @@ public class DDMFormFieldTemplateContextFactoryTest extends PowerMockito {
 		DDMFormRenderingContext ddmFormRenderingContext =
 			new DDMFormRenderingContext();
 
+		ddmFormRenderingContext.addProperty("folderId", _FOLDER_ID);
+		ddmFormRenderingContext.addProperty("repositoryId", _REPOSITORY_ID);
 		ddmFormRenderingContext.setHttpServletRequest(_httpServletRequest);
 		ddmFormRenderingContext.setLocale(_LOCALE);
 		ddmFormRenderingContext.setPortletNamespace(_PORTLET_NAMESPACE);
@@ -388,6 +450,27 @@ public class DDMFormFieldTemplateContextFactoryTest extends PowerMockito {
 			ddmFormFieldTypeServicesTracker);
 
 		return ddmFormFieldTemplateContextFactory;
+	}
+
+	private DDMFormFieldTemplateContextContributor
+		_getDocumentLibraryDDMFormFieldTemplateContextContributor() {
+
+		return new DDMFormFieldTemplateContextContributor() {
+
+			public Map<String, Object> getParameters(
+				DDMFormField ddmFormField,
+				DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
+
+				return HashMapBuilder.<String, Object>put(
+					"folderId",
+					ddmFormFieldRenderingContext.getProperty("folderId")
+				).put(
+					"repositoryId",
+					ddmFormFieldRenderingContext.getProperty("repositoryId")
+				).build();
+			}
+
+		};
 	}
 
 	private DDMFormFieldRenderer _getTextDDMFormFieldRenderer() {
@@ -446,9 +529,13 @@ public class DDMFormFieldTemplateContextFactoryTest extends PowerMockito {
 	private static final String _FIELD_NAME_FORMAT =
 		"_PORTLET_NAMESPACE_ddm$$%s$%s$%d$$%s";
 
+	private static final String _FOLDER_ID = StringUtil.randomId();
+
 	private static final Locale _LOCALE = LocaleUtil.US;
 
 	private static final String _PORTLET_NAMESPACE = "_PORTLET_NAMESPACE_";
+
+	private static final String _REPOSITORY_ID = StringUtil.randomId();
 
 	@Mock
 	private DDMFormEvaluator _ddmFormEvaluator;

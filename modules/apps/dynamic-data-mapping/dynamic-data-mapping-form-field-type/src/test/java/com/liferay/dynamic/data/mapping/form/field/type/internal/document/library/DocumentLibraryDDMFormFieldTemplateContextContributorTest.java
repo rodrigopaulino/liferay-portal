@@ -14,9 +14,7 @@
 
 package com.liferay.dynamic.data.mapping.form.field.type.internal.document.library;
 
-import com.liferay.document.library.kernel.model.DLFolderConstants;
 import com.liferay.document.library.kernel.service.DLAppService;
-import com.liferay.dynamic.data.mapping.constants.DDMFormConstants;
 import com.liferay.dynamic.data.mapping.constants.DDMPortletKeys;
 import com.liferay.dynamic.data.mapping.form.field.type.BaseDDMFormFieldTypeSettingsTestCase;
 import com.liferay.dynamic.data.mapping.form.item.selector.criterion.DDMUserPersonalFolderItemSelectorCriterion;
@@ -28,21 +26,16 @@ import com.liferay.portal.json.JSONFactoryImpl;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONFactoryUtil;
 import com.liferay.portal.kernel.json.JSONUtil;
-import com.liferay.portal.kernel.model.Company;
 import com.liferay.portal.kernel.model.Group;
-import com.liferay.portal.kernel.model.Repository;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactory;
 import com.liferay.portal.kernel.portlet.RequestBackedPortletURLFactoryUtil;
-import com.liferay.portal.kernel.portletfilerepository.PortletFileRepository;
 import com.liferay.portal.kernel.repository.model.FileEntry;
 import com.liferay.portal.kernel.repository.model.Folder;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermissionUtil;
-import com.liferay.portal.kernel.service.CompanyLocalService;
 import com.liferay.portal.kernel.service.GroupLocalService;
-import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.test.portlet.MockLiferayPortletURL;
 import com.liferay.portal.kernel.test.util.RandomTestUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -52,9 +45,7 @@ import com.liferay.portal.kernel.util.Props;
 import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.util.HtmlImpl;
 
-import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -96,7 +87,6 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributorTest
 	public void setUp() throws Exception {
 		super.setUp();
 
-		_setUpCompanyLocalService();
 		_setUpDLAppService();
 		_setUpFileEntry();
 		_setUpGroupLocalService();
@@ -107,9 +97,7 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributorTest
 		_setUpModelResourcePermissionUtil();
 		_setUpParamUtil();
 		_setUpPortal();
-		_setUpPortletFileRepository();
 		_setUpRequestBackedPortletURLFactoryUtil();
-		_setUpUserLocalService();
 	}
 
 	@Test
@@ -153,12 +141,14 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributorTest
 
 		ddmFormField.setProperty("allowGuestUsers", true);
 
+		DDMFormFieldRenderingContext ddmFormFieldRenderingContext =
+			_createDDMFormFieldRenderingContext();
+
+		ddmFormFieldRenderingContext.setProperty("folderId", _FORMS_FOLDER_ID);
+
 		Map<String, Object> parameters =
 			documentLibraryDDMFormFieldTemplateContextContributor.getParameters(
-				ddmFormField, _createDDMFormFieldRenderingContext());
-
-		Assert.assertTrue((boolean)parameters.get("allowGuestUsers"));
-		Assert.assertEquals(_FORMS_FOLDER_ID, parameters.get("folderId"));
+				ddmFormField, ddmFormFieldRenderingContext);
 
 		String guestUploadURL = String.valueOf(
 			parameters.get("guestUploadURL"));
@@ -214,43 +204,8 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributorTest
 				new DDMFormField("field", "document_library"),
 				_createDDMFormFieldRenderingContext());
 
-		Assert.assertEquals(_PRIVATE_FOLDER_ID, parameters.get("folderId"));
 		Assert.assertFalse(parameters.containsKey("guestUploadURL"));
 		Assert.assertTrue(parameters.containsKey("itemSelectorURL"));
-	}
-
-	@Test
-	public void testGetParametersForUserWithoutPermission() throws Exception {
-		when(
-			ModelResourcePermissionUtil.contains(
-				Matchers.any(), Matchers.any(PermissionChecker.class),
-				Matchers.eq(_GROUP_ID), Matchers.eq(_FORMS_FOLDER_ID),
-				Matchers.eq(ActionKeys.ADD_FOLDER))
-		).thenReturn(
-			false
-		);
-
-		ThemeDisplay themeDisplay = _mockThemeDisplay();
-
-		when(
-			themeDisplay.isSignedIn()
-		).thenReturn(
-			Boolean.TRUE
-		);
-
-		DocumentLibraryDDMFormFieldTemplateContextContributor
-			documentLibraryDDMFormFieldTemplateContextContributor = _createSpy(
-				themeDisplay);
-
-		Map<String, Object> parameters =
-			documentLibraryDDMFormFieldTemplateContextContributor.getParameters(
-				new DDMFormField("field", "document_library"),
-				_createDDMFormFieldRenderingContext());
-
-		Assert.assertFalse(parameters.containsKey("folderId"));
-		Assert.assertFalse(parameters.containsKey("itemSelectorURL"));
-		Assert.assertTrue(
-			(boolean)parameters.get("showUploadPermissionMessage"));
 	}
 
 	@Test
@@ -357,6 +312,12 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributorTest
 	public void testGetParametersWithNullGroupShouldContainItemSelectorURL() {
 		_mockGroupLocalServiceFetchGroup(null);
 
+		when(
+			_scopeGroup.getGroupId()
+		).thenReturn(
+			_GROUP_ID
+		);
+
 		ThemeDisplay themeDisplay = _mockThemeDisplay();
 
 		when(
@@ -422,15 +383,7 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributorTest
 					_documentLibraryDDMFormFieldTemplateContextContributor);
 
 		PowerMockitoStubber powerMockitoStubber = PowerMockito.doReturn(
-			_resourceBundle);
-
-		powerMockitoStubber.when(
-			documentLibraryDDMFormFieldTemplateContextContributor
-		).getResourceBundle(
-			Matchers.any(Locale.class)
-		);
-
-		powerMockitoStubber = PowerMockito.doReturn(themeDisplay);
+			themeDisplay);
 
 		powerMockitoStubber.when(
 			documentLibraryDDMFormFieldTemplateContextContributor
@@ -439,18 +392,6 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributorTest
 		);
 
 		return documentLibraryDDMFormFieldTemplateContextContributor;
-	}
-
-	private Company _mockCompany() {
-		Company company = mock(Company.class);
-
-		when(
-			company.getMx()
-		).thenReturn(
-			"liferay.com"
-		);
-
-		return company;
 	}
 
 	private void _mockDDMFormPortletItemSelector() {
@@ -479,23 +420,19 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributorTest
 	}
 
 	private void _mockGroupLocalServiceFetchGroup(Group group) {
+		if (group != null) {
+			when(
+				group.getGroupId()
+			).thenReturn(
+				_GROUP_ID
+			);
+		}
+
 		when(
 			_groupLocalService.fetchGroup(_GROUP_ID)
 		).thenReturn(
 			group
 		);
-	}
-
-	private Repository _mockRepository() {
-		Repository repository = mock(Repository.class);
-
-		when(
-			repository.getRepositoryId()
-		).thenReturn(
-			_REPOSITORY_ID
-		);
-
-		return repository;
 	}
 
 	private RequestBackedPortletURLFactory
@@ -562,27 +499,6 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributorTest
 		);
 
 		return user;
-	}
-
-	private void _setUpCompanyLocalService() throws Exception {
-		CompanyLocalService companyLocalService = mock(
-			CompanyLocalService.class);
-
-		Company company = _mockCompany();
-
-		when(
-			companyLocalService.getCompany(_COMPANY_ID)
-		).thenReturn(
-			company
-		);
-
-		MemberMatcher.field(
-			DocumentLibraryDDMFormFieldTemplateContextContributor.class,
-			"_companyLocalService"
-		).set(
-			_documentLibraryDDMFormFieldTemplateContextContributor,
-			companyLocalService
-		);
 	}
 
 	private void _setUpDLAppService() throws Exception {
@@ -725,35 +641,6 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributorTest
 		);
 	}
 
-	private void _setUpPortletFileRepository() throws Exception {
-		MemberMatcher.field(
-			DocumentLibraryDDMFormFieldTemplateContextContributor.class,
-			"_portletFileRepository"
-		).set(
-			_documentLibraryDDMFormFieldTemplateContextContributor,
-			_portletFileRepository
-		);
-
-		Folder folder = _mockFolder(_FORMS_FOLDER_ID);
-
-		when(
-			_portletFileRepository.getPortletFolder(
-				_REPOSITORY_ID, DLFolderConstants.DEFAULT_PARENT_FOLDER_ID,
-				DDMFormConstants.DDM_FORM_UPLOADED_FILES_FOLDER_NAME)
-		).thenReturn(
-			folder
-		);
-
-		Repository repository = _mockRepository();
-
-		when(
-			_portletFileRepository.fetchPortletRepository(
-				_GROUP_ID, DDMFormConstants.SERVICE_NAME)
-		).thenReturn(
-			repository
-		);
-	}
-
 	private void _setUpRequestBackedPortletURLFactoryUtil() {
 		mockStatic(RequestBackedPortletURLFactoryUtil.class);
 
@@ -762,27 +649,6 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributorTest
 				Matchers.any(HttpServletRequest.class))
 		).thenReturn(
 			_requestBackedPortletURLFactory
-		);
-	}
-
-	private void _setUpUserLocalService() throws Exception {
-		MemberMatcher.field(
-			DocumentLibraryDDMFormFieldTemplateContextContributor.class,
-			"_userLocalService"
-		).set(
-			_documentLibraryDDMFormFieldTemplateContextContributor,
-			_userLocalService
-		);
-
-		User user = _mockUser();
-
-		when(
-			_userLocalService.getUserByEmailAddress(
-				_COMPANY_ID,
-				DDMFormConstants.DDM_FORM_DEFAULT_USER_SCREEN_NAME +
-					"@liferay.com")
-		).thenReturn(
-			user
 		);
 	}
 
@@ -833,19 +699,10 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributorTest
 	@Mock
 	private Portal _portal;
 
-	@Mock
-	private PortletFileRepository _portletFileRepository;
-
 	private final RequestBackedPortletURLFactory
 		_requestBackedPortletURLFactory = _mockRequestBackedPortletURLFactory();
 
 	@Mock
-	private ResourceBundle _resourceBundle;
-
-	@Mock
 	private Group _scopeGroup;
-
-	@Mock
-	private UserLocalService _userLocalService;
 
 }
