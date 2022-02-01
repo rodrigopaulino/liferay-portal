@@ -41,6 +41,7 @@ import com.liferay.dynamic.data.mapping.storage.DDMStorageAdapterTracker;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormValuesTestUtil;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesMerger;
+import com.liferay.dynamic.data.mapping.util.DocumentLibraryDDMFormFieldHelper;
 import com.liferay.frontend.js.loader.modules.extender.npm.NPMResolver;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -370,6 +371,7 @@ public class DDMFormAdminDisplayContextTest extends PowerMockito {
 			mock(DDMStorageAdapterTracker.class),
 			mock(DDMStructureLocalService.class),
 			mock(DDMStructureService.class),
+			mock(DocumentLibraryDDMFormFieldHelper.class),
 			mock(FFDateTimeDDMFormFieldTypeConfiguration.class),
 			mock(FFSubmissionsSettingsConfigurationActivator.class),
 			mock(JSONFactory.class), mock(NPMResolver.class), null,

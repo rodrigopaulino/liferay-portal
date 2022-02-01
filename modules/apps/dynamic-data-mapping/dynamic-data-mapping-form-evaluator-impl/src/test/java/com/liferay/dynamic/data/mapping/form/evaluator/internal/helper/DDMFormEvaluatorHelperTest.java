@@ -74,6 +74,7 @@ import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
 import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.PortalUtil;
+import com.liferay.portal.kernel.util.StringUtil;
 
 import java.math.BigDecimal;
 
@@ -154,22 +155,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 			DDMFormValuesTestUtil.createDDMFormFieldValue(
 				"field1_2", "field1", new UnlocalizedValue("10")));
 
-		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
-			evaluate(ddmForm, ddmFormValues);
-
-		Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
-			ddmFormFieldsPropertyChanges =
-				ddmFormEvaluatorEvaluateResponse.
-					getDDMFormFieldsPropertyChanges();
-
-		Assert.assertEquals(
-			ddmFormFieldsPropertyChanges.toString(), 1,
-			ddmFormFieldsPropertyChanges.size());
-
-		Map<String, Object> ddmFormFieldPropertyChanges =
-			ddmFormFieldsPropertyChanges.get(
-				new DDMFormEvaluatorFieldContextKey(
-					"field0", "field0_instanceId"));
+		Map<String, Object> ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field0", "field0_instanceId");
 
 		Assert.assertTrue((boolean)ddmFormFieldPropertyChanges.get("readOnly"));
 	}
@@ -216,22 +203,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 			true
 		);
 
-		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
-			evaluate(ddmForm, ddmFormValues);
-
-		Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
-			ddmFormFieldsPropertyChanges =
-				ddmFormEvaluatorEvaluateResponse.
-					getDDMFormFieldsPropertyChanges();
-
-		Assert.assertEquals(
-			ddmFormFieldsPropertyChanges.toString(), 1,
-			ddmFormFieldsPropertyChanges.size());
-
-		Map<String, Object> ddmFormFieldPropertyChanges =
-			ddmFormFieldsPropertyChanges.get(
-				new DDMFormEvaluatorFieldContextKey(
-					"field0", "field0_instanceId"));
+		Map<String, Object> ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field0", "field0_instanceId");
 
 		Assert.assertTrue((boolean)ddmFormFieldPropertyChanges.get("readOnly"));
 	}
@@ -335,19 +308,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 			DDMFormValuesTestUtil.createDDMFormFieldValue(
 				"field1_instanceId", "field1", new UnlocalizedValue("")));
 
-		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
-			evaluate(ddmForm, ddmFormValues);
-
-		DDMFormEvaluatorFieldContextKey ddmFormEvaluatorFieldContextKey =
-			new DDMFormEvaluatorFieldContextKey("field1", "field1_instanceId");
-
-		Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
-			ddmFormFieldsPropertyChanges =
-				ddmFormEvaluatorEvaluateResponse.
-					getDDMFormFieldsPropertyChanges();
-
-		Map<String, Object> ddmFormFieldPropertyChanges =
-			ddmFormFieldsPropertyChanges.get(ddmFormEvaluatorFieldContextKey);
+		Map<String, Object> ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field1", "field1_instanceId");
 
 		Assert.assertEquals(
 			expectedValue1, ddmFormFieldPropertyChanges.get("value"));
@@ -357,13 +319,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 				"field0_instanceId", "field0",
 				new UnlocalizedValue("field0_value2")));
 
-		ddmFormEvaluatorEvaluateResponse = evaluate(ddmForm, ddmFormValues);
-
-		ddmFormFieldsPropertyChanges =
-			ddmFormEvaluatorEvaluateResponse.getDDMFormFieldsPropertyChanges();
-
-		ddmFormFieldPropertyChanges = ddmFormFieldsPropertyChanges.get(
-			ddmFormEvaluatorFieldContextKey);
+		ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field1", "field1_instanceId");
 
 		Assert.assertEquals(
 			expectedValue2, ddmFormFieldPropertyChanges.get("value"));
@@ -373,13 +330,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 				"field0_instanceId", "field0",
 				new UnlocalizedValue("field0_value")));
 
-		ddmFormEvaluatorEvaluateResponse = evaluate(ddmForm, ddmFormValues);
-
-		ddmFormFieldsPropertyChanges =
-			ddmFormEvaluatorEvaluateResponse.getDDMFormFieldsPropertyChanges();
-
-		ddmFormFieldPropertyChanges = ddmFormFieldsPropertyChanges.get(
-			ddmFormEvaluatorFieldContextKey);
+		ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field1", "field1_instanceId");
 
 		Assert.assertEquals(
 			expectedValue1, ddmFormFieldPropertyChanges.get("value"));
@@ -400,18 +352,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 			_createDDMFormFieldValueWithConfirmationValue(
 				"field0_instanceId", "field0", "1.2", "1,3"));
 
-		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
-			evaluate(ddmForm, ddmFormValues);
-
-		Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
-			ddmFormFieldsPropertyChanges =
-				ddmFormEvaluatorEvaluateResponse.
-					getDDMFormFieldsPropertyChanges();
-
-		Map<String, Object> ddmFormFieldPropertyChanges =
-			ddmFormFieldsPropertyChanges.get(
-				new DDMFormEvaluatorFieldContextKey(
-					"field0", "field0_instanceId"));
+		Map<String, Object> ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field0", "field0_instanceId");
 
 		Assert.assertFalse((boolean)ddmFormFieldPropertyChanges.get("valid"));
 	}
@@ -435,18 +377,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 
 		ddmFormValues.addDDMFormFieldValue(ddmFormFieldValue);
 
-		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
-			evaluate(ddmForm, ddmFormValues);
-
-		Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
-			ddmFormFieldsPropertyChanges =
-				ddmFormEvaluatorEvaluateResponse.
-					getDDMFormFieldsPropertyChanges();
-
-		Map<String, Object> ddmFormFieldPropertyChanges =
-			ddmFormFieldsPropertyChanges.get(
-				new DDMFormEvaluatorFieldContextKey(
-					"field0", "field0_instanceId"));
+		Map<String, Object> ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field0", "field0_instanceId");
 
 		Assert.assertFalse((boolean)ddmFormFieldPropertyChanges.get("valid"));
 	}
@@ -475,18 +407,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 				DDMFormValuesTestUtil.createLocalizedValue(
 					"123456789", LocaleUtil.US)));
 
-		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
-			evaluate(ddmForm, ddmFormValues);
-
-		Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
-			ddmFormFieldsPropertyChanges =
-				ddmFormEvaluatorEvaluateResponse.
-					getDDMFormFieldsPropertyChanges();
-
-		Map<String, Object> ddmFormFieldPropertyChanges =
-			ddmFormFieldsPropertyChanges.get(
-				new DDMFormEvaluatorFieldContextKey(
-					"field0", "field0_instanceId"));
+		Map<String, Object> ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field0", "field0_instanceId");
 
 		Assert.assertEquals(
 			"Input format is not satisfied.",
@@ -556,22 +478,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 			DDMFormValuesTestUtil.createDDMFormFieldValue(
 				"field1_1", "field1", new UnlocalizedValue("5")));
 
-		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
-			evaluate(ddmForm, ddmFormValues);
-
-		Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
-			ddmFormFieldsPropertyChanges =
-				ddmFormEvaluatorEvaluateResponse.
-					getDDMFormFieldsPropertyChanges();
-
-		Assert.assertEquals(
-			ddmFormFieldsPropertyChanges.toString(), 1,
-			ddmFormFieldsPropertyChanges.size());
-
-		Map<String, Object> ddmFormFieldPropertyChanges =
-			ddmFormFieldsPropertyChanges.get(
-				new DDMFormEvaluatorFieldContextKey(
-					"field0", "field0_instanceId"));
+		Map<String, Object> ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field0", "field0_instanceId");
 
 		Assert.assertFalse((boolean)ddmFormFieldPropertyChanges.get("visible"));
 	}
@@ -604,22 +512,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 			false
 		);
 
-		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
-			evaluate(ddmForm, ddmFormValues);
-
-		Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
-			ddmFormFieldsPropertyChanges =
-				ddmFormEvaluatorEvaluateResponse.
-					getDDMFormFieldsPropertyChanges();
-
-		Assert.assertEquals(
-			ddmFormFieldsPropertyChanges.toString(), 1,
-			ddmFormFieldsPropertyChanges.size());
-
-		Map<String, Object> ddmFormFieldPropertyChanges =
-			ddmFormFieldsPropertyChanges.get(
-				new DDMFormEvaluatorFieldContextKey(
-					"field0", "field0_instanceId"));
+		Map<String, Object> ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field0", "field0_instanceId");
 
 		Assert.assertFalse((boolean)ddmFormFieldPropertyChanges.get("visible"));
 	}
@@ -755,22 +649,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 			DDMFormValuesTestUtil.createDDMFormFieldValue(
 				"field0_instanceId", "field0", new UnlocalizedValue("false")));
 
-		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
-			evaluate(ddmForm, ddmFormValues);
-
-		Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
-			ddmFormFieldsPropertyChanges =
-				ddmFormEvaluatorEvaluateResponse.
-					getDDMFormFieldsPropertyChanges();
-
-		Assert.assertEquals(
-			ddmFormFieldsPropertyChanges.toString(), 1,
-			ddmFormFieldsPropertyChanges.size());
-
-		Map<String, Object> ddmFormFieldPropertyChanges =
-			ddmFormFieldsPropertyChanges.get(
-				new DDMFormEvaluatorFieldContextKey(
-					"field0", "field0_instanceId"));
+		Map<String, Object> ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field0", "field0_instanceId");
 
 		Assert.assertEquals(
 			"This field is required.",
@@ -803,22 +683,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 			DDMFormValuesTestUtil.createDDMFormFieldValue(
 				"field1_instanceId", "field1", new UnlocalizedValue("")));
 
-		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
-			evaluate(ddmForm, ddmFormValues);
-
-		Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
-			ddmFormFieldsPropertyChanges =
-				ddmFormEvaluatorEvaluateResponse.
-					getDDMFormFieldsPropertyChanges();
-
-		Assert.assertEquals(
-			ddmFormFieldsPropertyChanges.toString(), 1,
-			ddmFormFieldsPropertyChanges.size());
-
-		Map<String, Object> ddmFormFieldPropertyChanges =
-			ddmFormFieldsPropertyChanges.get(
-				new DDMFormEvaluatorFieldContextKey(
-					"field1", "field1_instanceId"));
+		Map<String, Object> ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field1", "field1_instanceId");
 
 		Assert.assertNull(ddmFormFieldPropertyChanges.get("errorMessage"));
 		Assert.assertNull(ddmFormFieldPropertyChanges.get("valid"));
@@ -851,22 +717,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 			DDMFormValuesTestUtil.createDDMFormFieldValue(
 				"field1_instanceId", "field1", new UnlocalizedValue("")));
 
-		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
-			evaluate(ddmForm, ddmFormValues);
-
-		Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
-			ddmFormFieldsPropertyChanges =
-				ddmFormEvaluatorEvaluateResponse.
-					getDDMFormFieldsPropertyChanges();
-
-		Assert.assertEquals(
-			ddmFormFieldsPropertyChanges.toString(), 1,
-			ddmFormFieldsPropertyChanges.size());
-
-		Map<String, Object> ddmFormFieldPropertyChanges =
-			ddmFormFieldsPropertyChanges.get(
-				new DDMFormEvaluatorFieldContextKey(
-					"field1", "field1_instanceId"));
+		Map<String, Object> ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field1", "field1_instanceId");
 
 		Assert.assertEquals(
 			"This field is required.",
@@ -892,22 +744,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 			DDMFormValuesTestUtil.createDDMFormFieldValue(
 				"field0_instanceId", "field0", new UnlocalizedValue("\n")));
 
-		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
-			evaluate(ddmForm, ddmFormValues);
-
-		Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
-			ddmFormFieldsPropertyChanges =
-				ddmFormEvaluatorEvaluateResponse.
-					getDDMFormFieldsPropertyChanges();
-
-		Assert.assertEquals(
-			ddmFormFieldsPropertyChanges.toString(), 1,
-			ddmFormFieldsPropertyChanges.size());
-
-		Map<String, Object> ddmFormFieldPropertyChanges =
-			ddmFormFieldsPropertyChanges.get(
-				new DDMFormEvaluatorFieldContextKey(
-					"field0", "field0_instanceId"));
+		Map<String, Object> ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field0", "field0_instanceId");
 
 		Assert.assertEquals(
 			"This field is required.",
@@ -939,18 +777,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 			DDMFormValuesTestUtil.createDDMFormFieldValue(
 				"field1_instanceId", "field1", new UnlocalizedValue("")));
 
-		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
-			evaluate(ddmForm, ddmFormValues);
-
-		Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
-			ddmFormFieldsPropertyChanges =
-				ddmFormEvaluatorEvaluateResponse.
-					getDDMFormFieldsPropertyChanges();
-
-		Map<String, Object> ddmFormFieldPropertyChanges =
-			ddmFormFieldsPropertyChanges.get(
-				new DDMFormEvaluatorFieldContextKey(
-					"field1", "field1_instanceId"));
+		Map<String, Object> ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field1", "field1_instanceId");
 
 		Assert.assertEquals(
 			new BigDecimal(18), ddmFormFieldPropertyChanges.get("value"));
@@ -1067,18 +895,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 			DDMFormValuesTestUtil.createDDMFormFieldValue(
 				"field1_2", "field1", new UnlocalizedValue("2")));
 
-		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
-			evaluate(ddmForm, ddmFormValues);
-
-		Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
-			ddmFormFieldsPropertyChanges =
-				ddmFormEvaluatorEvaluateResponse.
-					getDDMFormFieldsPropertyChanges();
-
-		Map<String, Object> ddmFormFieldPropertyChanges =
-			ddmFormFieldsPropertyChanges.get(
-				new DDMFormEvaluatorFieldContextKey(
-					"field0", "field0_instanceId"));
+		Map<String, Object> ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field0", "field0_instanceId");
 
 		Assert.assertEquals(
 			new BigDecimal(4), ddmFormFieldPropertyChanges.get("value"));
@@ -1237,6 +1055,81 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 	}
 
 	@Test
+	public void testUploadValidation() throws Exception {
+		DDMForm ddmForm = new DDMForm();
+
+		DDMFormField ddmFormField = _createDDMFormField(
+			"field0", "document_library", FieldConstants.STRING);
+
+		ddmFormField.setProperty("containsAddFolderPermission", false);
+
+		ddmForm.addDDMFormField(ddmFormField);
+
+		DDMFormValues ddmFormValues = DDMFormValuesTestUtil.createDDMFormValues(
+			ddmForm);
+
+		ddmFormValues.addDDMFormFieldValue(
+			DDMFormValuesTestUtil.createDDMFormFieldValue(
+				"field0_instanceId", "field0", new UnlocalizedValue("\n")));
+
+		Map<String, Object> ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field0", "field0_instanceId");
+
+		Assert.assertEquals(
+			"containsAddFolderPermissionMessage",
+			ddmFormFieldPropertyChanges.get("errorMessage"));
+		Assert.assertFalse((boolean)ddmFormFieldPropertyChanges.get("valid"));
+
+		ddmFormField.setProperty("containsAddFolderPermission", true);
+
+		String guestUploadErrorMessage = StringUtil.randomString();
+
+		ddmFormField.setProperty(
+			"guestUploadErrorMessage", guestUploadErrorMessage);
+
+		ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field0", "field0_instanceId");
+
+		Assert.assertEquals(
+			guestUploadErrorMessage,
+			ddmFormFieldPropertyChanges.get("errorMessage"));
+		Assert.assertFalse((boolean)ddmFormFieldPropertyChanges.get("valid"));
+
+		ddmFormField.setProperty("guestUploadErrorMessage", StringPool.BLANK);
+		ddmFormField.setProperty("guestUploadFileSizeExceeded", true);
+
+		ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field0", "field0_instanceId");
+
+		Assert.assertEquals(
+			"guestUploadFileSizeExceededMessage",
+			ddmFormFieldPropertyChanges.get("errorMessage"));
+		Assert.assertFalse((boolean)ddmFormFieldPropertyChanges.get("valid"));
+
+		ddmFormField.setProperty("guestUploadFileSizeExceeded", false);
+		ddmFormField.setProperty("guestUploadForbidden", true);
+
+		ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field0", "field0_instanceId");
+
+		Assert.assertEquals(
+			"guestUploadForbiddenMessage",
+			ddmFormFieldPropertyChanges.get("errorMessage"));
+		Assert.assertFalse((boolean)ddmFormFieldPropertyChanges.get("valid"));
+
+		ddmFormField.setProperty("guestUploadForbidden", false);
+		ddmFormField.setProperty("guestUploadLimitReached", true);
+
+		ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field0", "field0_instanceId");
+
+		Assert.assertEquals(
+			"guestUploadLimitReachedMessage",
+			ddmFormFieldPropertyChanges.get("errorMessage"));
+		Assert.assertFalse((boolean)ddmFormFieldPropertyChanges.get("valid"));
+	}
+
+	@Test
 	public void testValidationExpression() throws Exception {
 		DDMForm ddmForm = new DDMForm();
 
@@ -1251,22 +1144,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 			DDMFormValuesTestUtil.createDDMFormFieldValue(
 				"field0_instanceId", "field0", new UnlocalizedValue("1")));
 
-		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
-			evaluate(ddmForm, ddmFormValues);
-
-		Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
-			ddmFormFieldsPropertyChanges =
-				ddmFormEvaluatorEvaluateResponse.
-					getDDMFormFieldsPropertyChanges();
-
-		Assert.assertEquals(
-			ddmFormFieldsPropertyChanges.toString(), 1,
-			ddmFormFieldsPropertyChanges.size());
-
-		Map<String, Object> ddmFormFieldPropertyChanges =
-			ddmFormFieldsPropertyChanges.get(
-				new DDMFormEvaluatorFieldContextKey(
-					"field0", "field0_instanceId"));
+		Map<String, Object> ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field0", "field0_instanceId");
 
 		Assert.assertEquals(
 			"This field should be zero.",
@@ -1314,22 +1193,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 				DDMFormValuesTestUtil.createLocalizedValue(
 					yesterdayLocalDate.toString(), LocaleUtil.US)));
 
-		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
-			evaluate(ddmForm, ddmFormValues);
-
-		Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
-			ddmFormFieldsPropertyChanges =
-				ddmFormEvaluatorEvaluateResponse.
-					getDDMFormFieldsPropertyChanges();
-
-		Assert.assertEquals(
-			ddmFormFieldsPropertyChanges.toString(), 1,
-			ddmFormFieldsPropertyChanges.size());
-
-		Map<String, Object> ddmFormFieldPropertyChanges =
-			ddmFormFieldsPropertyChanges.get(
-				new DDMFormEvaluatorFieldContextKey(
-					"field0", "field0_instanceId"));
+		Map<String, Object> ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field0", "field0_instanceId");
 
 		Assert.assertEquals(
 			"This field is invalid.",
@@ -1449,22 +1314,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 			DDMFormValuesTestUtil.createDDMFormFieldValue(
 				"field0_instanceId", "field0", new UnlocalizedValue("1")));
 
-		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
-			evaluate(ddmForm, ddmFormValues);
-
-		Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
-			ddmFormFieldsPropertyChanges =
-				ddmFormEvaluatorEvaluateResponse.
-					getDDMFormFieldsPropertyChanges();
-
-		Assert.assertEquals(
-			ddmFormFieldsPropertyChanges.toString(), 1,
-			ddmFormFieldsPropertyChanges.size());
-
-		Map<String, Object> ddmFormFieldPropertyChanges =
-			ddmFormFieldsPropertyChanges.get(
-				new DDMFormEvaluatorFieldContextKey(
-					"field0", "field0_instanceId"));
+		Map<String, Object> ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field0", "field0_instanceId");
 
 		Assert.assertEquals(
 			"This field is invalid.",
@@ -1506,18 +1357,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 			DDMFormValuesTestUtil.createDDMFormFieldValue(
 				"field0_instanceId", "field0", new UnlocalizedValue("0")));
 
-		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
-			evaluate(ddmForm, ddmFormValues);
-
-		Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
-			ddmFormFieldsPropertyChanges =
-				ddmFormEvaluatorEvaluateResponse.
-					getDDMFormFieldsPropertyChanges();
-
-		Map<String, Object> ddmFormFieldPropertyChanges =
-			ddmFormFieldsPropertyChanges.get(
-				new DDMFormEvaluatorFieldContextKey(
-					"field0", "field0_instanceId"));
+		Map<String, Object> ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field0", "field0_instanceId");
 
 		Assert.assertEquals(
 			"This field should not be zero.",
@@ -1614,22 +1455,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 			DDMFormValuesTestUtil.createDDMFormFieldValue(
 				"field0_instanceId", "field0", new UnlocalizedValue("5")));
 
-		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
-			evaluate(ddmForm, ddmFormValues);
-
-		Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
-			ddmFormFieldsPropertyChanges =
-				ddmFormEvaluatorEvaluateResponse.
-					getDDMFormFieldsPropertyChanges();
-
-		Assert.assertEquals(
-			ddmFormFieldsPropertyChanges.toString(), 1,
-			ddmFormFieldsPropertyChanges.size());
-
-		Map<String, Object> ddmFormFieldPropertyChanges =
-			ddmFormFieldsPropertyChanges.get(
-				new DDMFormEvaluatorFieldContextKey(
-					"field0", "field0_instanceId"));
+		Map<String, Object> ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field0", "field0_instanceId");
 
 		Assert.assertEquals(
 			"The value should be greater than 10.",
@@ -1758,22 +1585,8 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 			DDMFormValuesTestUtil.createDDMFormFieldValue(
 				"field1_instanceId", "field1", new UnlocalizedValue("")));
 
-		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
-			evaluate(ddmForm, ddmFormValues);
-
-		Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
-			ddmFormFieldsPropertyChanges =
-				ddmFormEvaluatorEvaluateResponse.
-					getDDMFormFieldsPropertyChanges();
-
-		Assert.assertEquals(
-			ddmFormFieldsPropertyChanges.toString(), 1,
-			ddmFormFieldsPropertyChanges.size());
-
-		Map<String, Object> ddmFormFieldPropertyChanges =
-			ddmFormFieldsPropertyChanges.get(
-				new DDMFormEvaluatorFieldContextKey(
-					"field1", "field1_instanceId"));
+		Map<String, Object> ddmFormFieldPropertyChanges = _evaluate(
+			ddmForm, ddmFormValues, "field1", "field1_instanceId");
 
 		Assert.assertTrue((boolean)ddmFormFieldPropertyChanges.get("visible"));
 	}
@@ -2009,6 +1822,23 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 		return ddmFormField;
 	}
 
+	private Map<String, Object> _evaluate(
+			DDMForm ddmForm, DDMFormValues ddmFormValues, String fieldName,
+			String instanceId)
+		throws Exception {
+
+		DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse =
+			evaluate(ddmForm, ddmFormValues);
+
+		Map<DDMFormEvaluatorFieldContextKey, Map<String, Object>>
+			ddmFormFieldsPropertyChanges =
+				ddmFormEvaluatorEvaluateResponse.
+					getDDMFormFieldsPropertyChanges();
+
+		return ddmFormFieldsPropertyChanges.get(
+			new DDMFormEvaluatorFieldContextKey(fieldName, instanceId));
+	}
+
 	private Map<String, Object> _getDDMFormFieldPropertyChangesByKey(
 			DDMFormEvaluatorEvaluateResponse ddmFormEvaluatorEvaluateResponse,
 			DDMFormEvaluatorFieldContextKey ddmFormEvaluatorFieldContextKey)
@@ -2109,11 +1939,32 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 		_language = Mockito.mock(Language.class);
 
 		Mockito.when(
+			_language.format(
+				Matchers.any(Locale.class),
+				Matchers.eq(
+					"please-enter-a-file-with-a-valid-file-size-no-larger-" +
+						"than-x"),
+				Matchers.anyString())
+		).thenReturn(
+			"guestUploadFileSizeExceededMessage"
+		);
+
+		Mockito.when(
 			_language.get(
 				Matchers.any(Locale.class),
 				Matchers.eq("input-format-is-not-satisfied"))
 		).thenReturn(
 			"Input format is not satisfied."
+		);
+
+		Mockito.when(
+			_language.get(
+				Matchers.any(Locale.class),
+				Matchers.eq(
+					"the-maximum-number-of-submissions-allowed-for-this-form-" +
+						"has-been-reached"))
+		).thenReturn(
+			"guestUploadLimitReachedMessage"
 		);
 
 		Mockito.when(
@@ -2130,6 +1981,24 @@ public class DDMFormEvaluatorHelperTest extends PowerMockito {
 				Matchers.eq("this-field-is-required"))
 		).thenReturn(
 			"This field is required."
+		);
+
+		Mockito.when(
+			_language.get(
+				Matchers.any(Locale.class),
+				Matchers.eq(
+					"you-need-to-be-assigned-to-the-same-site-where-the-form-" +
+						"was-created-to-use-this-field"))
+		).thenReturn(
+			"containsAddFolderPermissionMessage"
+		);
+
+		Mockito.when(
+			_language.get(
+				Matchers.any(Locale.class),
+				Matchers.eq("you-need-to-be-signed-in-to-edit-this-field"))
+		).thenReturn(
+			"guestUploadForbiddenMessage"
 		);
 
 		languageUtil.setLanguage(_language);
