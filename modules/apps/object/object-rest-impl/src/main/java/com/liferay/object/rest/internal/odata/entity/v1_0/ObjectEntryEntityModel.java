@@ -114,14 +114,6 @@ public class ObjectEntryEntityModel implements EntityModel {
 						"nestedFieldArray.value_keyword#" +
 							objectField.getName()));
 		}
-		else if (Objects.equals(objectField.getDBType(), "Boolean")) {
-			return Optional.of(
-				new BooleanEntityField(
-					objectField.getName(),
-					locale ->
-						"nestedFieldArray.value_boolean#" +
-							objectField.getName()));
-		}
 		else if (Objects.equals(objectField.getDBType(), "BigDecimal") ||
 				 Objects.equals(objectField.getDBType(), "Double")) {
 
@@ -130,6 +122,24 @@ public class ObjectEntryEntityModel implements EntityModel {
 					objectField.getName(),
 					locale ->
 						"nestedFieldArray.value_double#" +
+							objectField.getName()));
+		}
+		else if (Objects.equals(objectField.getDBType(), "Boolean")) {
+			return Optional.of(
+				new BooleanEntityField(
+					objectField.getName(),
+					locale ->
+						"nestedFieldArray.value_boolean#" +
+							objectField.getName()));
+		}
+		else if (Objects.equals(objectField.getDBType(), "Clob") ||
+				 Objects.equals(objectField.getDBType(), "String")) {
+
+			return Optional.of(
+				new StringEntityField(
+					objectField.getName(),
+					locale ->
+						"nestedFieldArray.value_keyword_lowercase#" +
 							objectField.getName()));
 		}
 		else if (Objects.equals(objectField.getDBType(), "Date")) {
@@ -156,14 +166,6 @@ public class ObjectEntryEntityModel implements EntityModel {
 					objectField.getName(),
 					locale ->
 						"nestedFieldArray.value_long#" +
-							objectField.getName()));
-		}
-		else if (Objects.equals(objectField.getDBType(), "String")) {
-			return Optional.of(
-				new StringEntityField(
-					objectField.getName(),
-					locale ->
-						"nestedFieldArray.value_keyword_lowercase#" +
 							objectField.getName()));
 		}
 
