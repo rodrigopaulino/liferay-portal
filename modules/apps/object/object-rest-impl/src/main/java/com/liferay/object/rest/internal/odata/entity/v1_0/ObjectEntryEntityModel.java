@@ -158,7 +158,9 @@ public class ObjectEntryEntityModel implements EntityModel {
 						"nestedFieldArray.value_long#" +
 							objectField.getName()));
 		}
-		else if (Objects.equals(objectField.getDBType(), "String")) {
+		else if (Objects.equals(objectField.getDBType(), "Clob") ||
+				 Objects.equals(objectField.getDBType(), "String")) {
+
 			return Optional.of(
 				new StringEntityField(
 					objectField.getName(),
