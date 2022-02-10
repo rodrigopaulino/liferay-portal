@@ -269,6 +269,13 @@ public class ObjectViewLocalServiceWrapper
 	}
 
 	@Override
+	public com.liferay.object.model.ObjectView getDefaultObjectView(
+		long objectDefinitionId) {
+
+		return _objectViewLocalService.getDefaultObjectView(objectDefinitionId);
+	}
+
+	@Override
 	public com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery
 		getExportActionableDynamicQuery(
 			com.liferay.exportimport.kernel.lar.PortletDataContext

@@ -239,6 +239,10 @@ public class ObjectViewLocalServiceUtil {
 		return getService().getActionableDynamicQuery();
 	}
 
+	public static ObjectView getDefaultObjectView(long objectDefinitionId) {
+		return getService().getDefaultObjectView(objectDefinitionId);
+	}
+
 	public static com.liferay.portal.kernel.dao.orm.ExportActionableDynamicQuery
 		getExportActionableDynamicQuery(
 			com.liferay.exportimport.kernel.lar.PortletDataContext
