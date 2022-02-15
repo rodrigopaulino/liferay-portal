@@ -215,6 +215,31 @@ public class ObjectEntryKeywordQueryContributor
 
 			queryConfig.addHighlightFieldNames(fieldName);
 		}
+		else if (Objects.equals(objectField.getDBType(), "Clob") ||
+				 Objects.equals(objectField.getDBType(), "String")) {
+
+			if (Validator.isBlank(objectField.getIndexedLanguageId())) {
+				String fieldName = "nestedFieldArray.value_text";
+
+				nestedBooleanQuery.add(
+					new MatchQuery(fieldName, token), BooleanClauseOccur.MUST);
+
+				queryConfig.addHighlightFieldNames(fieldName);
+			}
+			else if (Objects.equals(
+						objectField.getIndexedLanguageId(),
+						LocaleUtil.toLanguageId(searchContext.getLocale()))) {
+
+				String fieldName =
+					"nestedFieldArray.value_" +
+						objectField.getIndexedLanguageId();
+
+				nestedBooleanQuery.add(
+					new MatchQuery(fieldName, token), BooleanClauseOccur.MUST);
+
+				queryConfig.addHighlightFieldNames(fieldName);
+			}
+		}
 		else if (Objects.equals(objectField.getDBType(), "BigDecimal")) {
 			_addNumericClause(
 				"nestedFieldArray.value_double", nestedBooleanQuery,
@@ -264,29 +289,6 @@ public class ObjectEntryKeywordQueryContributor
 			_addNumericClause(
 				"nestedFieldArray.value_long", nestedBooleanQuery, objectField,
 				token);
-		}
-		else if (Objects.equals(objectField.getDBType(), "String")) {
-			if (Validator.isBlank(objectField.getIndexedLanguageId())) {
-				String fieldName = "nestedFieldArray.value_text";
-
-				nestedBooleanQuery.add(
-					new MatchQuery(fieldName, token), BooleanClauseOccur.MUST);
-
-				queryConfig.addHighlightFieldNames(fieldName);
-			}
-			else if (Objects.equals(
-						objectField.getIndexedLanguageId(),
-						LocaleUtil.toLanguageId(searchContext.getLocale()))) {
-
-				String fieldName =
-					"nestedFieldArray.value_" +
-						objectField.getIndexedLanguageId();
-
-				nestedBooleanQuery.add(
-					new MatchQuery(fieldName, token), BooleanClauseOccur.MUST);
-
-				queryConfig.addHighlightFieldNames(fieldName);
-			}
 		}
 
 		if (nestedBooleanQuery.hasClauses()) {
