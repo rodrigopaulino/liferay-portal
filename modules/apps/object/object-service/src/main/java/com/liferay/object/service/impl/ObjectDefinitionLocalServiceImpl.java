@@ -41,6 +41,7 @@ import com.liferay.object.service.ObjectDefinitionLocalServiceUtil;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
+import com.liferay.object.service.ObjectViewLocalService;
 import com.liferay.object.service.base.ObjectDefinitionLocalServiceBaseImpl;
 import com.liferay.object.service.persistence.ObjectEntryPersistence;
 import com.liferay.object.service.persistence.ObjectFieldPersistence;
@@ -458,8 +459,8 @@ public class ObjectDefinitionLocalServiceImpl
 				_listTypeEntryLocalService, _modelSearchRegistrarHelper, this,
 				_objectEntryLocalService, _objectFieldLocalService,
 				_objectRelationshipLocalService, _objectScopeProviderRegistry,
-				_persistedModelLocalServiceRegistry, _resourceActions,
-				_workflowStatusModelPreFilterContributor));
+				_objectViewLocalService, _persistedModelLocalServiceRegistry,
+				_resourceActions, _workflowStatusModelPreFilterContributor));
 
 		_objectDefinitionDeployerServiceTracker = new ServiceTracker<>(
 			_bundleContext, ObjectDefinitionDeployer.class,
@@ -1197,6 +1198,9 @@ public class ObjectDefinitionLocalServiceImpl
 
 	@Reference
 	private ObjectScopeProviderRegistry _objectScopeProviderRegistry;
+
+	@Reference
+	private ObjectViewLocalService _objectViewLocalService;
 
 	@Reference
 	private PersistedModelLocalServiceRegistry
