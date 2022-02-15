@@ -244,15 +244,24 @@ public class ObjectEntriesTableFDSView extends BaseTableFDSView {
 				_objectFieldLocalService.fetchObjectField(
 					objectDefinition.getTitleObjectFieldId());
 
-			_addFDSTableSchemaField(
-				null, fdsTableSchemaBuilder,
-				_getFieldName(
-					objectField.getListTypeDefinitionId(),
-					StringBundler.concat(
-						StringUtil.replaceLast(objectField.getName(), "Id", ""),
-						StringPool.PERIOD, titleObjectField.getName())),
-				objectField.getLabel(locale, true), false,
-				titleObjectField.getDBType());
+			if (titleObjectField == null) {
+				_addFDSTableSchemaField(
+					null, fdsTableSchemaBuilder, objectField.getName(),
+					objectField.getLabel(locale, true), false,
+					objectField.getDBType());
+			}
+			else {
+				_addFDSTableSchemaField(
+					null, fdsTableSchemaBuilder,
+					_getFieldName(
+						titleObjectField.getListTypeDefinitionId(),
+						StringBundler.concat(
+							StringUtil.replaceLast(
+								objectField.getName(), "Id", ""),
+							StringPool.PERIOD, titleObjectField.getName())),
+					objectField.getLabel(locale, true), false,
+					titleObjectField.getDBType());
+			}
 		}
 	}
 
