@@ -245,27 +245,9 @@ public class ObjectEntryKeywordQueryContributor
 				queryConfig.addHighlightFieldNames(fieldName);
 			}
 		}
-		else if (Objects.equals(objectField.getDBType(), "Date")) {
-			_addNumericClause(
-				"nestedFieldArray.value_date", nestedBooleanQuery, objectField,
-				token);
-		}
-		else if (Objects.equals(objectField.getDBType(), "Double")) {
-			_addNumericClause(
-				"nestedFieldArray.value_double", nestedBooleanQuery,
-				objectField, token);
-		}
-		else if (Objects.equals(objectField.getDBType(), "Integer")) {
-			_addNumericClause(
-				"nestedFieldArray.value_integer", nestedBooleanQuery,
-				objectField, token);
-		}
-		else if (Objects.equals(objectField.getDBType(), "Long")) {
-			_addNumericClause(
-				"nestedFieldArray.value_long", nestedBooleanQuery, objectField,
-				token);
-		}
-		else if (Objects.equals(objectField.getDBType(), "String")) {
+		else if (Objects.equals(objectField.getDBType(), "Clob") ||
+				 Objects.equals(objectField.getDBType(), "String")) {
+
 			if (Validator.isBlank(objectField.getIndexedLanguageId())) {
 				String fieldName = "nestedFieldArray.value_text";
 
@@ -287,6 +269,26 @@ public class ObjectEntryKeywordQueryContributor
 
 				queryConfig.addHighlightFieldNames(fieldName);
 			}
+		}
+		else if (Objects.equals(objectField.getDBType(), "Date")) {
+			_addNumericClause(
+				"nestedFieldArray.value_date", nestedBooleanQuery, objectField,
+				token);
+		}
+		else if (Objects.equals(objectField.getDBType(), "Double")) {
+			_addNumericClause(
+				"nestedFieldArray.value_double", nestedBooleanQuery,
+				objectField, token);
+		}
+		else if (Objects.equals(objectField.getDBType(), "Integer")) {
+			_addNumericClause(
+				"nestedFieldArray.value_integer", nestedBooleanQuery,
+				objectField, token);
+		}
+		else if (Objects.equals(objectField.getDBType(), "Long")) {
+			_addNumericClause(
+				"nestedFieldArray.value_long", nestedBooleanQuery, objectField,
+				token);
 		}
 
 		if (nestedBooleanQuery.hasClauses()) {
