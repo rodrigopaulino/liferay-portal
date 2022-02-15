@@ -216,6 +216,7 @@ public class ObjectEntryManagerImpl implements ObjectEntryManager {
 				searchContext.setAttribute(
 					"objectDefinitionId",
 					objectDefinition.getObjectDefinitionId());
+				searchContext.setAttribute("useObjectView", Boolean.TRUE);
 				searchContext.setCompanyId(companyId);
 				searchContext.setGroupIds(new long[] {groupId});
 

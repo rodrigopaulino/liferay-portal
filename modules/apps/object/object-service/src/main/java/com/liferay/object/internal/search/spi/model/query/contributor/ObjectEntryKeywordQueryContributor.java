@@ -15,7 +15,10 @@
 package com.liferay.object.internal.search.spi.model.query.contributor;
 
 import com.liferay.object.model.ObjectField;
+import com.liferay.object.model.ObjectView;
+import com.liferay.object.model.ObjectViewColumn;
 import com.liferay.object.service.ObjectFieldLocalService;
+import com.liferay.object.service.ObjectViewLocalService;
 import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
@@ -50,6 +53,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Marco Leo
@@ -59,9 +64,11 @@ public class ObjectEntryKeywordQueryContributor
 	implements KeywordQueryContributor {
 
 	public ObjectEntryKeywordQueryContributor(
-		ObjectFieldLocalService objectFieldLocalService) {
+		ObjectFieldLocalService objectFieldLocalService,
+		ObjectViewLocalService objectViewLocalService) {
 
 		_objectFieldLocalService = objectFieldLocalService;
+		_objectViewLocalService = objectViewLocalService;
 	}
 
 	@Override
@@ -98,8 +105,42 @@ public class ObjectEntryKeywordQueryContributor
 			}
 		}
 
+		boolean addObjectEntryTitle = true;
+		List<ObjectField> objectFields = null;
+
+		if (GetterUtil.getBoolean(
+				searchContext.getAttribute("useObjectView"))) {
+
+			ObjectView defaultObjectView =
+				_objectViewLocalService.getDefaultObjectView(
+					objectDefinitionId);
+
+			if (defaultObjectView != null) {
+				addObjectEntryTitle = false;
+
+				List<ObjectViewColumn> objectViewColumns =
+					defaultObjectView.getObjectViewColumns();
+
+				Stream<ObjectViewColumn> stream = objectViewColumns.stream();
+
+				objectFields = stream.map(
+					objectViewColumn ->
+						_objectFieldLocalService.fetchObjectField(
+							defaultObjectView.getObjectDefinitionId(),
+							objectViewColumn.getObjectFieldName())
+				).collect(
+					Collectors.toList()
+				);
+			}
+		}
+
+		if (objectFields == null) {
+			objectFields = _objectFieldLocalService.getObjectFields(
+				objectDefinitionId);
+		}
+
 		for (String token : _tokenizeKeywords(keywords)) {
-			if (!Validator.isBlank(token)) {
+			if (addObjectEntryTitle && !Validator.isBlank(token)) {
 				try {
 					booleanQuery.add(
 						new TermQueryImpl(Field.ENTRY_CLASS_PK, token),
@@ -121,9 +162,6 @@ public class ObjectEntryKeywordQueryContributor
 					throw new SystemException(parseException);
 				}
 			}
-
-			List<ObjectField> objectFields =
-				_objectFieldLocalService.getObjectFields(objectDefinitionId);
 
 			for (ObjectField objectField : objectFields) {
 				try {
@@ -181,7 +219,7 @@ public class ObjectEntryKeywordQueryContributor
 			SearchContext searchContext)
 		throws ParseException {
 
-		if (!objectField.isIndexed()) {
+		if ((objectField == null) || !objectField.isIndexed()) {
 			return;
 		}
 
@@ -405,6 +443,7 @@ public class ObjectEntryKeywordQueryContributor
 	private static final Pattern _pattern = Pattern.compile("\\d{14}");
 
 	private final ObjectFieldLocalService _objectFieldLocalService;
+	private final ObjectViewLocalService _objectViewLocalService;
 
 	private class KeywordTokenizer {
 
