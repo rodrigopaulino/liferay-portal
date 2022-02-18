@@ -428,7 +428,9 @@ public class DDMStructureLocalServiceImpl
 		// Resources
 
 		_resourceLocalService.copyModelResources(
-			structure.getCompanyId(), DDMStructure.class.getName(),
+			structure.getCompanyId(),
+			_ddmPermissionSupport.getStructureModelResourceName(
+				structure.getClassName()),
 			structure.getPrimaryKey(), newStructure.getPrimaryKey());
 
 		// Structure version
