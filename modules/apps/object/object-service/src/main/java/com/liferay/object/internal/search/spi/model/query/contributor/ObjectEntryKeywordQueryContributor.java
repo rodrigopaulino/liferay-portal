@@ -14,7 +14,6 @@
 
 package com.liferay.object.internal.search.spi.model.query.contributor;
 
-import com.liferay.object.internal.configuration.activator.FFObjectViewKeywordQueryConfigurationActivator;
 import com.liferay.object.model.ObjectField;
 import com.liferay.object.model.ObjectView;
 import com.liferay.object.model.ObjectViewColumn;
@@ -65,13 +64,9 @@ public class ObjectEntryKeywordQueryContributor
 	implements KeywordQueryContributor {
 
 	public ObjectEntryKeywordQueryContributor(
-		FFObjectViewKeywordQueryConfigurationActivator
-			ffObjectViewKeywordQueryConfigurationActivator,
 		ObjectFieldLocalService objectFieldLocalService,
 		ObjectViewLocalService objectViewLocalService) {
 
-		_ffObjectViewKeywordQueryConfigurationActivator =
-			ffObjectViewKeywordQueryConfigurationActivator;
 		_objectFieldLocalService = objectFieldLocalService;
 		_objectViewLocalService = objectViewLocalService;
 	}
@@ -113,8 +108,7 @@ public class ObjectEntryKeywordQueryContributor
 		boolean addObjectEntryTitle = true;
 		List<ObjectField> objectFields = null;
 
-		if (_ffObjectViewKeywordQueryConfigurationActivator.enabled() &&
-			GetterUtil.getBoolean(
+		if (GetterUtil.getBoolean(
 				searchContext.getAttribute("useObjectView"))) {
 
 			ObjectView defaultObjectView =
@@ -448,8 +442,6 @@ public class ObjectEntryKeywordQueryContributor
 
 	private static final Pattern _pattern = Pattern.compile("\\d{14}");
 
-	private final FFObjectViewKeywordQueryConfigurationActivator
-		_ffObjectViewKeywordQueryConfigurationActivator;
 	private final ObjectFieldLocalService _objectFieldLocalService;
 	private final ObjectViewLocalService _objectViewLocalService;
 
