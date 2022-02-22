@@ -75,36 +75,7 @@ public class ObjectEntryDTOConverter
 			com.liferay.object.model.ObjectEntry objectEntry)
 		throws Exception {
 
-		ObjectDefinition objectDefinition = _getObjectDefinition(
-			dtoConverterContext, objectEntry);
-
-		return new ObjectEntry() {
-			{
-				actions = dtoConverterContext.getActions();
-				creator = CreatorUtil.toCreator(
-					_portal, dtoConverterContext.getUriInfoOptional(),
-					_userLocalService.fetchUser(objectEntry.getUserId()));
-				dateCreated = objectEntry.getCreateDate();
-				dateModified = objectEntry.getModifiedDate();
-				externalReferenceCode = objectEntry.getExternalReferenceCode();
-				id = objectEntry.getObjectEntryId();
-				properties = _toProperties(
-					dtoConverterContext, objectDefinition, objectEntry);
-				scopeKey = _getScopeKey(objectDefinition, objectEntry);
-				status = new Status() {
-					{
-						code = objectEntry.getStatus();
-						label = WorkflowConstants.getStatusLabel(
-							objectEntry.getStatus());
-						label_i18n = LanguageUtil.get(
-							LanguageResources.getResourceBundle(
-								dtoConverterContext.getLocale()),
-							WorkflowConstants.getStatusLabel(
-								objectEntry.getStatus()));
-					}
-				};
-			}
-		};
+		return _toDTO(dtoConverterContext, objectEntry, null);
 	}
 
 	private DTOConverterContext _getDTOConverterContext(
@@ -163,10 +134,50 @@ public class ObjectEntryDTOConverter
 		return null;
 	}
 
+	private ObjectEntry _toDTO(
+			DTOConverterContext dtoConverterContext,
+			com.liferay.object.model.ObjectEntry objectEntry,
+			com.liferay.object.model.ObjectEntry parentObjectEntry)
+		throws Exception {
+
+		ObjectDefinition objectDefinition = _getObjectDefinition(
+			dtoConverterContext, objectEntry);
+
+		return new ObjectEntry() {
+			{
+				actions = dtoConverterContext.getActions();
+				creator = CreatorUtil.toCreator(
+					_portal, dtoConverterContext.getUriInfoOptional(),
+					_userLocalService.fetchUser(objectEntry.getUserId()));
+				dateCreated = objectEntry.getCreateDate();
+				dateModified = objectEntry.getModifiedDate();
+				externalReferenceCode = objectEntry.getExternalReferenceCode();
+				id = objectEntry.getObjectEntryId();
+				properties = _toProperties(
+					dtoConverterContext, objectDefinition, objectEntry,
+					parentObjectEntry);
+				scopeKey = _getScopeKey(objectDefinition, objectEntry);
+				status = new Status() {
+					{
+						code = objectEntry.getStatus();
+						label = WorkflowConstants.getStatusLabel(
+							objectEntry.getStatus());
+						label_i18n = LanguageUtil.get(
+							LanguageResources.getResourceBundle(
+								dtoConverterContext.getLocale()),
+							WorkflowConstants.getStatusLabel(
+								objectEntry.getStatus()));
+					}
+				};
+			}
+		};
+	}
+
 	private Map<String, Object> _toProperties(
 			DTOConverterContext dtoConverterContext,
 			ObjectDefinition objectDefinition,
-			com.liferay.object.model.ObjectEntry objectEntry)
+			com.liferay.object.model.ObjectEntry objectEntry,
+			com.liferay.object.model.ObjectEntry parentObjectEntry)
 		throws Exception {
 
 		Map<String, Object> map = new HashMap<>();
@@ -206,8 +217,9 @@ public class ObjectEntryDTOConverter
 						}
 					});
 			}
-			else if (Objects.equals(
-						objectField.getRelationshipType(), "oneToMany")) {
+			else if ((parentObjectEntry == null) &&
+					 Objects.equals(
+						 objectField.getRelationshipType(), "oneToMany")) {
 
 				long objectEntryId = 0;
 
@@ -238,11 +250,12 @@ public class ObjectEntryDTOConverter
 
 						map.put(
 							StringUtil.replaceLast(objectFieldName, "Id", ""),
-							toDTO(
+							_toDTO(
 								_getDTOConverterContext(
 									dtoConverterContext, objectEntryId),
 								_objectEntryLocalService.getObjectEntry(
-									objectEntryId)));
+									objectEntryId),
+								objectEntry));
 					}
 				}
 
