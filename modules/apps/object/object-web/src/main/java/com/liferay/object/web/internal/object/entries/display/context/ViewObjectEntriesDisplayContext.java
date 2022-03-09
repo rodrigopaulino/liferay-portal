@@ -233,7 +233,7 @@ public class ViewObjectEntriesDisplayContext {
 			}
 		).distinct(
 		).collect(
-			Collectors.joining("&nestedFields=")
+			Collectors.joining(StringPool.COMMA)
 		);
 
 		if (Validator.isNull(queryString)) {
