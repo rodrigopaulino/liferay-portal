@@ -44,7 +44,7 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.test.ReflectionTestUtil;
 import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
-import com.liferay.portal.kernel.util.HtmlParser;
+import com.liferay.portal.kernel.util.Html;
 import com.liferay.portal.kernel.util.LinkedHashMapBuilder;
 import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.LocaleUtil;
@@ -354,10 +354,10 @@ public class DDMFormInstanceRecordExporterImplTest extends PowerMockito {
 		);
 
 		ReflectionTestUtil.setFieldValue(
-			ddmFormInstanceRecordExporterImpl, "_htmlParser", _htmlParser);
+			ddmFormInstanceRecordExporterImpl, "_html", _html);
 
 		when(
-			_htmlParser.extractText("value1")
+			_html.unescape("value1")
 		).thenReturn(
 			"value1"
 		);
@@ -381,8 +381,8 @@ public class DDMFormInstanceRecordExporterImplTest extends PowerMockito {
 		);
 
 		Mockito.verify(
-			_htmlParser, Mockito.times(1)
-		).extractText(
+			_html, Mockito.times(1)
+		).unescape(
 			"value1"
 		);
 	}
@@ -792,7 +792,7 @@ public class DDMFormInstanceRecordExporterImplTest extends PowerMockito {
 		_ddmFormInstanceVersionLocalService;
 
 	@Mock
-	private HtmlParser _htmlParser;
+	private Html _html;
 
 	@Mock
 	private Language _language;
