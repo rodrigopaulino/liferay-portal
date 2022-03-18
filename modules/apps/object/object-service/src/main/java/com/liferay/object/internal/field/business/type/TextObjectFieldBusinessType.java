@@ -16,11 +16,18 @@ package com.liferay.object.internal.field.business.type;
 
 import com.liferay.dynamic.data.mapping.form.field.type.constants.DDMFormFieldTypeConstants;
 import com.liferay.object.constants.ObjectFieldConstants;
+import com.liferay.object.exception.ObjectFieldSettingsValidationException;
 import com.liferay.object.field.business.type.ObjectFieldBusinessType;
+import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.language.LanguageUtil;
+import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
+import com.liferay.portal.kernel.util.SetUtil;
+import com.liferay.portal.kernel.util.Validator;
 
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import org.osgi.service.component.annotations.Component;
 
@@ -33,6 +40,11 @@ import org.osgi.service.component.annotations.Component;
 	service = {ObjectFieldBusinessType.class, TextObjectFieldBusinessType.class}
 )
 public class TextObjectFieldBusinessType implements ObjectFieldBusinessType {
+
+	@Override
+	public Set<String> getAllowedSettings() {
+		return SetUtil.fromArray("maxLength");
+	}
 
 	@Override
 	public String getDBType() {
@@ -63,6 +75,27 @@ public class TextObjectFieldBusinessType implements ObjectFieldBusinessType {
 	@Override
 	public String getName() {
 		return ObjectFieldConstants.BUSINESS_TYPE_TEXT;
+	}
+
+	@Override
+	public void validateObjectFieldSettings(
+			String objectFieldName, Map<String, String> objectFieldSettings)
+		throws PortalException {
+
+		ObjectFieldBusinessType.super.validateObjectFieldSettings(
+			objectFieldName, objectFieldSettings);
+
+		String maxLengthString = objectFieldSettings.get("maxLength");
+
+		if (Validator.isNotNull(maxLengthString)) {
+			int maxLength = GetterUtil.getInteger(maxLengthString);
+
+			if ((maxLength < 1) || (maxLength > 280)) {
+				throw new ObjectFieldSettingsValidationException.
+					MustSetValidValue(
+						objectFieldName, "maxLength", maxLengthString);
+			}
+		}
 	}
 
 }
