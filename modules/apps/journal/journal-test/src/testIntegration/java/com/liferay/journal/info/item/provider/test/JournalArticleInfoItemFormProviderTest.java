@@ -397,7 +397,7 @@ public class JournalArticleInfoItemFormProviderTest {
 			infoItemFieldValues.getInfoFieldValue("HTML");
 
 		Assert.assertEquals(
-			"<p><strong>Bold text</strong></p>",
+			"<p>\n  <strong>Bold text</strong></p>",
 			htmlInfoFieldValue.getValue(LocaleUtil.getDefault()));
 	}
 
