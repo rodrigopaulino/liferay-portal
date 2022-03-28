@@ -65,7 +65,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -305,8 +307,6 @@ public class ObjectFieldLocalServiceImpl
 			_validateName(objectFieldId, objectDefinition, name);
 		}
 
-		String oldBusinessType = objectField.getBusinessType();
-
 		_setBusinessTypeAndDBType(businessType, dbType, objectField);
 
 		objectField.setListTypeDefinitionId(listTypeDefinitionId);
@@ -318,10 +318,6 @@ public class ObjectFieldLocalServiceImpl
 		objectField.setRequired(required);
 
 		objectField = objectFieldPersistence.update(objectField);
-
-		if (!Objects.equals(objectField.getBusinessType(), oldBusinessType)) {
-			_objectFieldSettingPersistence.removeByObjectFieldId(objectFieldId);
-		}
 
 		_addOrUpdateObjectFieldSettings(objectField, objectFieldSettings);
 
@@ -381,6 +377,27 @@ public class ObjectFieldLocalServiceImpl
 
 		objectFieldBusinessType.validateObjectFieldSettings(
 			objectField.getName(), objectFieldSettings);
+
+		List<ObjectFieldSetting> oldObjectFieldSettings =
+			_objectFieldSettingPersistence.findByObjectFieldId(
+				objectField.getObjectFieldId());
+
+		for (ObjectFieldSetting oldObjectFieldSetting :
+				oldObjectFieldSettings) {
+
+			Stream<ObjectFieldSetting> stream = objectFieldSettings.stream();
+
+			Optional<ObjectFieldSetting> objectFieldSettingOptional =
+				stream.filter(
+					newObjectFieldSetting -> Objects.equals(
+						newObjectFieldSetting.getName(),
+						oldObjectFieldSetting.getName())
+				).findFirst();
+
+			if (!objectFieldSettingOptional.isPresent()) {
+				_objectFieldSettingPersistence.remove(oldObjectFieldSetting);
+			}
+		}
 
 		for (ObjectFieldSetting newObjectFieldSetting : objectFieldSettings) {
 			ObjectFieldSetting oldObjectFieldSetting =
