@@ -81,7 +81,7 @@ public class AttachmentObjectFieldBusinessType
 		}
 
 		return SetUtil.fromArray(
-			"showFilesInDocumentsAndMedia", "storageFolder");
+			"showFilesInDocumentsAndMedia", "storageDLFolderPath");
 	}
 
 	@Override
@@ -181,7 +181,7 @@ public class AttachmentObjectFieldBusinessType
 		_validateObjectFieldSettingFileSource(
 			objectFieldSettingsValuesMap.get("fileSource"), objectFieldName,
 			objectFieldSettingsValuesMap.get("showFilesInDocumentsAndMedia"),
-			objectFieldSettingsValuesMap.get("storageFolder"));
+			objectFieldSettingsValuesMap.get("storageDLFolderPath"));
 		_validateObjectFieldSettingMaximumFileSize(
 			objectFieldName,
 			objectFieldSettingsValuesMap.get("maximumFileSize"));
@@ -267,7 +267,7 @@ public class AttachmentObjectFieldBusinessType
 
 	private void _validateObjectFieldSettingFileSource(
 			String fileSource, String objectFieldName,
-			String showFilesInDocumentsAndMedia, String storageFolder)
+			String showFilesInDocumentsAndMedia, String storageDLFolderPath)
 		throws PortalException {
 
 		if (Objects.equals(fileSource, "documentsAndMedia")) {
@@ -278,7 +278,8 @@ public class AttachmentObjectFieldBusinessType
 			}
 
 			_validateObjectFieldSettingFileSourceDocumentsAndMedia(
-				objectFieldName, showFilesInDocumentsAndMedia, storageFolder);
+				objectFieldName, showFilesInDocumentsAndMedia,
+				storageDLFolderPath);
 		}
 		else if (Objects.equals(fileSource, "userComputer")) {
 			if (!GetterUtil.getBoolean(
@@ -288,7 +289,8 @@ public class AttachmentObjectFieldBusinessType
 			}
 
 			_validateObjectFieldSettingFileSourceUserComputer(
-				objectFieldName, showFilesInDocumentsAndMedia, storageFolder);
+				objectFieldName, showFilesInDocumentsAndMedia,
+				storageDLFolderPath);
 		}
 		else {
 			throw new ObjectFieldSettingValueException.InvalidValue(
@@ -298,7 +300,7 @@ public class AttachmentObjectFieldBusinessType
 
 	private void _validateObjectFieldSettingFileSourceDocumentsAndMedia(
 			String objectFieldName, String showFilesInDocumentsAndMedia,
-			String storageFolder)
+			String storageDLFolderPath)
 		throws PortalException {
 
 		Set<String> notAllowedObjectFieldSettingsNames = new HashSet<>();
@@ -308,8 +310,8 @@ public class AttachmentObjectFieldBusinessType
 				"showFilesInDocumentsAndMedia");
 		}
 
-		if (Validator.isNotNull(storageFolder)) {
-			notAllowedObjectFieldSettingsNames.add("storageFolder");
+		if (Validator.isNotNull(storageDLFolderPath)) {
+			notAllowedObjectFieldSettingsNames.add("storageDLFolderPath");
 		}
 
 		if (!notAllowedObjectFieldSettingsNames.isEmpty()) {
@@ -320,29 +322,31 @@ public class AttachmentObjectFieldBusinessType
 
 	private void _validateObjectFieldSettingFileSourceUserComputer(
 			String objectFieldName, String showFilesInDocumentsAndMedia,
-			String storageFolder)
+			String storageDLFolderPath)
 		throws PortalException {
 
 		if (StringUtil.equalsIgnoreCase(
 				showFilesInDocumentsAndMedia, StringPool.FALSE)) {
 
-			if (Validator.isNotNull(storageFolder)) {
+			if (Validator.isNotNull(storageDLFolderPath)) {
 				throw new ObjectFieldSettingNameException.NotAllowedNames(
-					objectFieldName, Collections.singleton("storageFolder"));
+					objectFieldName,
+					Collections.singleton("storageDLFolderPath"));
 			}
 		}
 		else if (StringUtil.equalsIgnoreCase(
 					showFilesInDocumentsAndMedia, StringPool.TRUE)) {
 
-			if (Validator.isNull(storageFolder)) {
+			if (Validator.isNull(storageDLFolderPath)) {
 				throw new ObjectFieldSettingValueException.
 					MissingRequiredValues(
 						objectFieldName,
-						Collections.singleton("storageFolder"));
+						Collections.singleton("storageDLFolderPath"));
 			}
 
 			for (String directoryName :
-					StringUtil.split(storageFolder, CharPool.FORWARD_SLASH)) {
+					StringUtil.split(
+						storageDLFolderPath, CharPool.FORWARD_SLASH)) {
 
 				DLValidatorUtil.validateDirectoryName(directoryName);
 			}
