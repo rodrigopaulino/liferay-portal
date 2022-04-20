@@ -12,4 +12,26 @@
  * details.
  */
 
-export {IFeatureFlag} from './core/hooks/useFlag';
+import React, {createContext, useContext} from 'react';
+
+const FeatureFlag = createContext<{[key: string]: boolean}>({});
+
+export function FeatureFlagProvider({children, featureFlags}: IProps) {
+	return (
+		<FeatureFlag.Provider value={featureFlags}>
+			{children}
+		</FeatureFlag.Provider>
+	);
+}
+
+export function useFlag() {
+	return useContext(FeatureFlag);
+}
+
+export interface IFeatureFlag {
+	featureFlags: {[key: string]: boolean};
+}
+
+interface IProps extends IFeatureFlag {
+	children: React.ReactNode;
+}
