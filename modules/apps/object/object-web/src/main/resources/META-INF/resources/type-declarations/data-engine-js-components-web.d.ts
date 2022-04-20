@@ -17,11 +17,26 @@ declare module 'data-engine-js-components-web' {
 		errorMessage,
 		helpMessage,
 		warningMessage,
-	}: IProps): JSX.Element;
-}
+	}: {
+		errorMessage?: string;
+		helpMessage?: string;
+		warningMessage?: string;
+	}): JSX.Element;
 
-interface IProps {
-	errorMessage?: string;
-	helpMessage?: string;
-	warningMessage?: string;
+	function FeatureFlagProvider({
+		children,
+		featureFlags,
+	}: IFeatureFlagProviderProps): JSX.Element;
+
+	function useFlag(): {
+		[key: string]: boolean;
+	};
+
+	interface IFeatureFlag {
+		featureFlags: {[key: string]: boolean};
+	}
+
+	interface IFeatureFlagProviderProps extends IFeatureFlag {
+		children: React.ReactNode;
+	}
 }

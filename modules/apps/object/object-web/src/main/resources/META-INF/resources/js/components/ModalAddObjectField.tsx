@@ -16,6 +16,7 @@ import ClayAlert from '@clayui/alert';
 import ClayButton from '@clayui/button';
 import ClayForm from '@clayui/form';
 import ClayModal, {ClayModalProvider, useModal} from '@clayui/modal';
+import {FeatureFlagProvider, IFeatureFlag} from 'data-engine-js-components-web';
 import {fetch} from 'frontend-js-web';
 import React, {useEffect, useState} from 'react';
 
@@ -32,7 +33,6 @@ const headers = new Headers({
 });
 
 function ModalAddObjectField({
-	allowMaxLength,
 	apiURL,
 	objectFieldTypes,
 	observer,
@@ -112,7 +112,6 @@ function ModalAddObjectField({
 					/>
 
 					<ObjectFieldFormBase
-						allowMaxLength={allowMaxLength}
 						errors={errors}
 						handleChange={handleChange}
 						objectField={values}
@@ -143,8 +142,8 @@ function ModalAddObjectField({
 }
 
 export default function ModalWithProvider({
-	allowMaxLength,
 	apiURL,
+	featureFlags,
 	objectFieldTypes,
 }: IProps) {
 	const [isVisible, setVisibility] = useState<boolean>(false);
@@ -157,28 +156,26 @@ export default function ModalWithProvider({
 	}, []);
 
 	return (
-		<ClayModalProvider>
-			{isVisible && (
-				<ModalAddObjectField
-					allowMaxLength={allowMaxLength}
-					apiURL={apiURL}
-					objectFieldTypes={objectFieldTypes}
-					observer={observer}
-					onClose={onClose}
-				/>
-			)}
-		</ClayModalProvider>
+		<FeatureFlagProvider featureFlags={featureFlags}>
+			<ClayModalProvider>
+				{isVisible && (
+					<ModalAddObjectField
+						apiURL={apiURL}
+						objectFieldTypes={objectFieldTypes}
+						observer={observer}
+						onClose={onClose}
+					/>
+				)}
+			</ClayModalProvider>
+		</FeatureFlagProvider>
 	);
 }
 
-interface IModal extends IProps {
-	allowMaxLength: boolean;
+interface IModal {
+	apiURL: string;
+	objectFieldTypes: ObjectFieldType[];
 	observer: any;
 	onClose: () => void;
 }
 
-interface IProps {
-	allowMaxLength: boolean;
-	apiURL: string;
-	objectFieldTypes: ObjectFieldType[];
-}
+interface IProps extends IModal, IFeatureFlag {}

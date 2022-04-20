@@ -15,6 +15,11 @@
 import ClayButton from '@clayui/button';
 import ClayForm, {ClayRadio, ClayRadioGroup, ClayToggle} from '@clayui/form';
 import ClayIcon from '@clayui/icon';
+import {
+	FeatureFlagProvider,
+	IFeatureFlag,
+	useFlag,
+} from 'data-engine-js-components-web';
 import {fetch} from 'frontend-js-web';
 import React, {useEffect, useMemo, useRef, useState} from 'react';
 import {createTextMaskInputElement} from 'text-mask-core';
@@ -58,13 +63,12 @@ function closeSidePanel() {
 	parentWindow.Liferay.fire('close-side-panel');
 }
 
-export default function EditObjectField({
-	allowMaxLength,
+export function EditObjectField({
 	isApproved,
 	objectField: initialValues,
 	objectFieldTypes,
 	readOnly,
-}: IProps) {
+}: IEditObjectFieldProps) {
 	const onSubmit = async ({id, ...objectField}: ObjectField) => {
 		const response = await fetch(
 			`/o/object-admin/v1.0/object-fields/${id}`,
@@ -126,6 +130,8 @@ export default function EditObjectField({
 			),
 		});
 
+	const flags = useFlag();
+
 	return (
 		<ClayForm
 			className="lfr-objects__edit-object-field"
@@ -145,7 +151,6 @@ export default function EditObjectField({
 				/>
 
 				<ObjectFieldFormBase
-					allowMaxLength={allowMaxLength}
 					disabled={disabled}
 					errors={errors}
 					handleChange={handleChange}
@@ -163,7 +168,7 @@ export default function EditObjectField({
 						/>
 					)}
 
-					{allowMaxLength &&
+					{flags['LPS-146889'] &&
 						(values.businessType === 'Text' ||
 							values.businessType === 'LongText') && (
 							<MaxLengthProperties
@@ -439,10 +444,25 @@ function AttachmentProperties({
 	);
 }
 
+export default function main({featureFlags, ...otherProps}: IProps) {
+	return (
+		<FeatureFlagProvider featureFlags={featureFlags}>
+			<EditObjectField {...otherProps} />
+		</FeatureFlagProvider>
+	);
+}
+
 interface IAttachmentPropertiesProps {
 	errors: ObjectFieldErrors;
 	objectFieldSettings: ObjectFieldSetting[];
 	onSettingsChange: (setting: ObjectFieldSetting) => void;
+}
+
+interface IEditObjectFieldProps {
+	isApproved: boolean;
+	objectField: ObjectField;
+	objectFieldTypes: ObjectFieldType[];
+	readOnly: boolean;
 }
 
 interface IMaxLengthPropertiesProps {
@@ -454,13 +474,7 @@ interface IMaxLengthPropertiesProps {
 	setValues: (values: Partial<ObjectField>) => void;
 }
 
-interface IProps {
-	allowMaxLength?: boolean;
-	isApproved: boolean;
-	objectField: ObjectField;
-	objectFieldTypes: ObjectFieldType[];
-	readOnly: boolean;
-}
+interface IProps extends IEditObjectFieldProps, IFeatureFlag {}
 
 interface ISearchableProps {
 	disabled: boolean;

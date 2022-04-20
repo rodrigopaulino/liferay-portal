@@ -29,7 +29,10 @@ ObjectField objectField = (ObjectField)request.getAttribute(ObjectWebKeys.OBJECT
 		module="js/components/EditObjectField"
 		props='<%=
 			HashMapBuilder.<String, Object>put(
-				"allowMaxLength", GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-146889"))
+				"featureFlags",
+				HashMapBuilder.<String, Object>put(
+					"LPS-146889", GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-146889"))
+				).build()
 			).put(
 				"isApproved", objectDefinition.isApproved()
 			).put(

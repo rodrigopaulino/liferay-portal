@@ -14,19 +14,23 @@
 
 /// <reference types="react" />
 
+import {IFeatureFlag} from 'data-engine-js-components-web';
 import './EditObjectField.scss';
-export default function EditObjectField({
-	allowMaxLength,
+export declare function EditObjectField({
 	isApproved,
 	objectField: initialValues,
 	objectFieldTypes,
 	readOnly,
+}: IEditObjectFieldProps): JSX.Element;
+export default function main({
+	featureFlags,
+	...otherProps
 }: IProps): JSX.Element;
-interface IProps {
-	allowMaxLength?: boolean;
+interface IEditObjectFieldProps {
 	isApproved: boolean;
 	objectField: ObjectField;
 	objectFieldTypes: ObjectFieldType[];
 	readOnly: boolean;
 }
+interface IProps extends IEditObjectFieldProps, IFeatureFlag {}
 export {};

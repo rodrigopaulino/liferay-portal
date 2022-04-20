@@ -14,14 +14,17 @@
 
 /// <reference types="react" />
 
+import {IFeatureFlag} from 'data-engine-js-components-web';
 export default function ModalWithProvider({
-	allowMaxLength,
 	apiURL,
+	featureFlags,
 	objectFieldTypes,
 }: IProps): JSX.Element;
-interface IProps {
-	allowMaxLength: boolean;
+interface IModal {
 	apiURL: string;
 	objectFieldTypes: ObjectFieldType[];
+	observer: any;
+	onClose: () => void;
 }
+interface IProps extends IModal, IFeatureFlag {}
 export {};

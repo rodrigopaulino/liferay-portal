@@ -13,6 +13,7 @@
  */
 
 import {ClayToggle} from '@clayui/form';
+import {useFlag} from 'data-engine-js-components-web';
 import {fetch} from 'frontend-js-web';
 import React, {ChangeEventHandler, ReactNode, useMemo, useState} from 'react';
 
@@ -71,7 +72,6 @@ async function fetchPickList() {
 }
 
 export default function ObjectFieldFormBase({
-	allowMaxLength,
 	children,
 	disabled,
 	errors,
@@ -80,6 +80,7 @@ export default function ObjectFieldFormBase({
 	objectFieldTypes,
 	setValues,
 }: IProps) {
+	const flags = useFlag();
 	const businessTypeMap = useMemo(() => {
 		const businessTypeMap = new Map<string, ObjectFieldType>();
 
@@ -127,7 +128,7 @@ export default function ObjectFieldFormBase({
 
 			case 'LongText':
 			case 'Text':
-				if (allowMaxLength) {
+				if (flags['LPS-146889']) {
 					objectFieldSettings = [
 						{
 							name: 'showCounter',
@@ -342,7 +343,6 @@ interface IPickList {
 }
 
 interface IProps {
-	allowMaxLength?: boolean;
 	children?: ReactNode;
 	disabled?: boolean;
 	errors: ObjectFieldErrors;
