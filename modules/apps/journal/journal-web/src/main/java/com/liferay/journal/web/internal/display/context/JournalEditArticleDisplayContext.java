@@ -14,7 +14,21 @@
 
 package com.liferay.journal.web.internal.display.context;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+
+import javax.portlet.RenderResponse;
+import javax.servlet.http.HttpServletRequest;
+
 import com.liferay.dynamic.data.mapping.form.values.factory.DDMFormValuesFactory;
+import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.service.DDMStructureLocalServiceUtil;
@@ -23,6 +37,7 @@ import com.liferay.dynamic.data.mapping.service.DDMTemplateServiceUtil;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.Fields;
 import com.liferay.dynamic.data.mapping.util.DDMFormValuesToMapConverter;
+import com.liferay.dynamic.data.mapping.util.DDMUtil;
 import com.liferay.dynamic.data.mapping.util.FieldsToDDMFormValuesConverter;
 import com.liferay.journal.constants.JournalArticleConstants;
 import com.liferay.journal.constants.JournalFolderConstants;
@@ -61,20 +76,6 @@ import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-
-import javax.portlet.RenderResponse;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author Eudaldo Alonso
@@ -269,6 +270,27 @@ public class JournalEditArticleDisplayContext {
 			ddmStructure, fields);
 
 		return _ddmFormValues;
+	}
+
+	public DDMFormValues getValuesFromRequest() {
+		String serializedDDMFormValues = ParamUtil.getString(
+				_httpServletRequest, "ddmFormValues");
+
+		if (Validator.isNotNull(serializedDDMFormValues)) {
+			try {
+				DDMForm ddmForm = DDMUtil.getDDMForm(getClassNameId(), getClassPK());
+
+				return DDMUtil.getDDMFormValues(
+					ddmForm, serializedDDMFormValues);
+			}
+			catch (PortalException portalException) {
+				if (_log.isDebugEnabled()) {
+					_log.debug(portalException);
+				}
+			}
+		}
+
+		return null;
 	}
 
 	public DDMStructure getDDMStructure() {
@@ -698,7 +720,7 @@ public class JournalEditArticleDisplayContext {
 				DDMFormValuesToMapConverter.class.getName());
 
 		return ddmFormValuesToMapConverter.convert(
-			getDDMFormValues(ddmStructure), ddmStructure);
+			getValuesFromRequest(), ddmStructure);
 	}
 
 	public double getVersion() {
