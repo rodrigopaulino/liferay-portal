@@ -44,6 +44,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import javax.portlet.ResourceURL;
+
 import javax.servlet.http.HttpServletRequest;
 
 /**
@@ -217,13 +219,16 @@ public class ObjectDefinitionsActionsDisplayContext
 	}
 
 	public String getObjectDefinitionsRelationshipsURL() {
-		return ResourceURLBuilder.createResourceURL(
+		ResourceURL resourceURL = ResourceURLBuilder.createResourceURL(
 			objectRequestHelper.getLiferayPortletResponse()
-		).setParameter(
-			"objectDefinitionId", String.valueOf(getObjectDefinitionId())
 		).setResourceID(
 			"/object_definitions/get_object_definitions_relationships"
-		).buildString();
+		).buildResourceURL();
+
+		resourceURL.setParameter(
+			"objectDefinitionId", String.valueOf(getObjectDefinitionId()));
+
+		return resourceURL.toString();
 	}
 
 	@Override
