@@ -20,13 +20,10 @@ import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.petra.sql.dsl.expression.Predicate;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.odata.filter.Filter;
 import com.liferay.portal.odata.filter.FilterParser;
 import com.liferay.portal.odata.filter.FilterParserProvider;
 import com.liferay.portal.odata.filter.expression.Expression;
-
-import java.util.Locale;
 
 /**
  * @author Marco Leo
@@ -36,15 +33,14 @@ public class PredicateUtil {
 
 	public static Predicate toPredicate(
 		FilterParserProvider filterParserProvider, String filterString,
-		Locale locale, long objectDefinitionId,
+		long objectDefinitionId,
 		ObjectFieldLocalService objectFieldLocalService) {
 
 		try {
-			EntityModel entityModel = new ObjectEntryEntityModel(
-				objectFieldLocalService.getObjectFields(objectDefinitionId));
-
 			FilterParser filterParser = filterParserProvider.provide(
-				entityModel);
+				new ObjectEntryEntityModel(
+					objectFieldLocalService.getObjectFields(
+						objectDefinitionId)));
 
 			Filter oDataFilter = new Filter(filterParser.parse(filterString));
 
@@ -52,8 +48,7 @@ public class PredicateUtil {
 
 			return (Predicate)expression.accept(
 				new PredicateExpressionVisitorImpl(
-					entityModel, locale, objectDefinitionId,
-					objectFieldLocalService));
+					objectDefinitionId, objectFieldLocalService));
 		}
 		catch (Exception exception) {
 			_log.error(exception);

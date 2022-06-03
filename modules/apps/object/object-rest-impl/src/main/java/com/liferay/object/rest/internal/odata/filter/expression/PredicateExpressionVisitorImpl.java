@@ -14,6 +14,8 @@
 
 package com.liferay.object.rest.internal.odata.filter.expression;
 
+import com.liferay.object.constants.ObjectFieldConstants;
+import com.liferay.object.model.ObjectField;
 import com.liferay.object.service.ObjectFieldLocalService;
 import com.liferay.petra.reflect.ReflectionUtil;
 import com.liferay.petra.sql.dsl.Column;
@@ -22,38 +24,21 @@ import com.liferay.petra.sql.dsl.expression.Predicate;
 import com.liferay.petra.string.StringBundler;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.exception.PortalException;
-import com.liferay.portal.kernel.log.Log;
-import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.FastDateFormatFactoryUtil;
+import com.liferay.portal.kernel.util.DateFormatFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.StringUtil;
-import com.liferay.portal.odata.entity.CollectionEntityField;
-import com.liferay.portal.odata.entity.ComplexEntityField;
-import com.liferay.portal.odata.entity.EntityField;
-import com.liferay.portal.odata.entity.EntityModel;
 import com.liferay.portal.odata.filter.expression.BinaryExpression;
-import com.liferay.portal.odata.filter.expression.CollectionPropertyExpression;
-import com.liferay.portal.odata.filter.expression.ComplexPropertyExpression;
 import com.liferay.portal.odata.filter.expression.Expression;
 import com.liferay.portal.odata.filter.expression.ExpressionVisitException;
 import com.liferay.portal.odata.filter.expression.ExpressionVisitor;
-import com.liferay.portal.odata.filter.expression.LambdaFunctionExpression;
-import com.liferay.portal.odata.filter.expression.LambdaVariableExpression;
 import com.liferay.portal.odata.filter.expression.ListExpression;
 import com.liferay.portal.odata.filter.expression.LiteralExpression;
 import com.liferay.portal.odata.filter.expression.MemberExpression;
 import com.liferay.portal.odata.filter.expression.MethodExpression;
 import com.liferay.portal.odata.filter.expression.PrimitivePropertyExpression;
-import com.liferay.portal.odata.filter.expression.PropertyExpression;
 import com.liferay.portal.odata.filter.expression.UnaryExpression;
-import com.liferay.portal.util.PropsValues;
 
-import java.text.Format;
-
-import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -64,11 +49,9 @@ public class PredicateExpressionVisitorImpl
 	implements ExpressionVisitor<Object> {
 
 	public PredicateExpressionVisitorImpl(
-		EntityModel entityModel, Locale locale, long objectDefinitionId,
+		long objectDefinitionId,
 		ObjectFieldLocalService objectFieldLocalService) {
 
-		_entityModel = entityModel;
-		_locale = locale;
 		_objectDefinitionId = objectDefinitionId;
 		_objectFieldLocalService = objectFieldLocalService;
 	}
@@ -77,108 +60,19 @@ public class PredicateExpressionVisitorImpl
 	public Predicate visitBinaryExpressionOperation(
 		BinaryExpression.Operation operation, Object left, Object right) {
 
-		Optional<Predicate> filterOptional = _getPredicateOptional(
-			operation, left, right, _locale);
+		Optional<Predicate> predicateOptional = _getPredicateOptional(
+			operation, left, right);
 
-		return filterOptional.orElseThrow(
+		return predicateOptional.orElseThrow(
 			() -> new UnsupportedOperationException(
 				"Unsupported method visitBinaryExpressionOperation with " +
 					"operation " + operation));
 	}
 
 	@Override
-	public Object visitCollectionPropertyExpression(
-			CollectionPropertyExpression collectionPropertyExpression)
-		throws ExpressionVisitException {
-
-		LambdaFunctionExpression lambdaFunctionExpression =
-			collectionPropertyExpression.getLambdaFunctionExpression();
-
-		Map<String, EntityField> entityFieldsMap =
-			_entityModel.getEntityFieldsMap();
-
-		return lambdaFunctionExpression.accept(
-			new PredicateExpressionVisitorImpl(
-				_getLambdaEntityModel(
-					(CollectionEntityField)entityFieldsMap.get(
-						collectionPropertyExpression.getName()),
-					lambdaFunctionExpression.getVariableName()),
-				_locale, _objectDefinitionId, _objectFieldLocalService));
-	}
-
-	@Override
-	public Object visitComplexPropertyExpression(
-		ComplexPropertyExpression complexPropertyExpression) {
-
-		Map<String, EntityField> entityFieldsMap =
-			_entityModel.getEntityFieldsMap();
-
-		ComplexEntityField complexEntityField =
-			(ComplexEntityField)entityFieldsMap.get(
-				complexPropertyExpression.getName());
-
-		PropertyExpression propertyExpression =
-			complexPropertyExpression.getPropertyExpression();
-
-		Map<String, EntityField> complexEntityFieldEntityFieldsMap =
-			complexEntityField.getEntityFieldsMap();
-
-		return complexEntityFieldEntityFieldsMap.get(
-			propertyExpression.getName());
-	}
-
-	@Override
-	public Object visitLambdaFunctionExpression(
-			LambdaFunctionExpression.Type type, String variable,
-			Expression expression)
-		throws ExpressionVisitException {
-
-		if (type == LambdaFunctionExpression.Type.ANY) {
-			return _any(expression);
-		}
-
-		throw new UnsupportedOperationException(
-			"Unsupported type visitLambdaFunctionExpression with type " + type);
-	}
-
-	@Override
-	public EntityField visitLambdaVariableExpression(
-			LambdaVariableExpression lambdaVariableExpression)
-		throws ExpressionVisitException {
-
-		Map<String, EntityField> entityFieldsMap =
-			_entityModel.getEntityFieldsMap();
-
-		EntityField entityField = entityFieldsMap.get(
-			lambdaVariableExpression.getVariableName());
-
-		if (entityField == null) {
-			throw new ExpressionVisitException(
-				"Invoked visitLambdaVariableExpression when no entity field " +
-					"is stored for lambda variable name " +
-						lambdaVariableExpression.getVariableName());
-		}
-
-		return entityField;
-	}
-
-	@Override
 	public Predicate visitListExpressionOperation(
 			ListExpression.Operation operation, Object left, List<Object> right)
 		throws ExpressionVisitException {
-
-		if (operation == ListExpression.Operation.IN) {
-			Object[] objects = new Object[right.size()];
-
-			objects = right.toArray(objects);
-
-			com.liferay.petra.sql.dsl.expression.Expression<Object>
-				petraExpression =
-					(com.liferay.petra.sql.dsl.expression.Expression<Object>)
-						left;
-
-			return petraExpression.in(objects);
-		}
 
 		throw new UnsupportedOperationException(
 			"Unsupported method visitListExpressionOperation with operation " +
@@ -187,20 +81,23 @@ public class PredicateExpressionVisitorImpl
 
 	@Override
 	public Object visitLiteralExpression(LiteralExpression literalExpression) {
-
-		// TODO BOOLEAN, DOUBLE, NULL
-
 		if (Objects.equals(
-				LiteralExpression.Type.DATE, literalExpression.getType()) ||
-			Objects.equals(
-				LiteralExpression.Type.DATE_TIME,
-				literalExpression.getType())) {
+				LiteralExpression.Type.BOOLEAN, literalExpression.getType())) {
 
-			// TODO
+			return GetterUtil.getBoolean(literalExpression.getText());
+		}
+		else if (Objects.equals(
+					LiteralExpression.Type.DATE, literalExpression.getType())) {
 
-			if (_log.isDebugEnabled()) {
-				_log.debug(_format);
-			}
+			return GetterUtil.getDate(
+				literalExpression.getText(),
+				DateFormatFactoryUtil.getSimpleDateFormat("yyyy-MM-dd"));
+		}
+		else if (Objects.equals(
+					LiteralExpression.Type.DOUBLE,
+					literalExpression.getType())) {
+
+			return GetterUtil.getDouble(literalExpression.getText());
 		}
 		else if (Objects.equals(
 					LiteralExpression.Type.INTEGER,
@@ -209,10 +106,15 @@ public class PredicateExpressionVisitorImpl
 			return GetterUtil.getInteger(literalExpression.getText());
 		}
 		else if (Objects.equals(
+					LiteralExpression.Type.NULL, literalExpression.getType())) {
+
+			return null;
+		}
+		else if (Objects.equals(
 					LiteralExpression.Type.STRING,
 					literalExpression.getType())) {
 
-			return _normalize(literalExpression.getText());
+			return StringUtil.unquote(literalExpression.getText());
 		}
 
 		return literalExpression.getText();
@@ -239,8 +141,7 @@ public class PredicateExpressionVisitorImpl
 						"type ", type, " and ", expressions.size(), "params"));
 			}
 
-			return _contains(
-				(EntityField)expressions.get(0), expressions.get(1), _locale);
+			return _contains(expressions.get(0), expressions.get(1));
 		}
 
 		if (type == MethodExpression.Type.STARTS_WITH) {
@@ -251,8 +152,7 @@ public class PredicateExpressionVisitorImpl
 						"type ", type, " and ", expressions.size(), "params"));
 			}
 
-			return _startsWith(
-				(EntityField)expressions.get(0), expressions.get(1), _locale);
+			return _startsWith(expressions.get(0), expressions.get(1));
 		}
 
 		throw new UnsupportedOperationException(
@@ -264,10 +164,7 @@ public class PredicateExpressionVisitorImpl
 	public Object visitPrimitivePropertyExpression(
 		PrimitivePropertyExpression primitivePropertyExpression) {
 
-		Map<String, EntityField> entityFieldsMap =
-			_entityModel.getEntityFieldsMap();
-
-		return entityFieldsMap.get(primitivePropertyExpression.getName());
+		return primitivePropertyExpression.getName();
 	}
 
 	@Override
@@ -283,53 +180,42 @@ public class PredicateExpressionVisitorImpl
 				operation);
 	}
 
-	private Object _any(Expression expression) throws ExpressionVisitException {
-		return expression.accept(this);
-	}
-
-	private Predicate _contains(
-		EntityField entityField, Object fieldValue, Locale locale) {
-
-		Column<?, ?> column = _getColumn(entityField.getFilterableName(locale));
+	private Predicate _contains(Object fieldName, Object fieldValue) {
+		Column<?, ?> column = _getColumn(GetterUtil.getString(fieldName));
 
 		return column.like(
-			"*" + entityField.getFilterableValue(fieldValue) + "*");
+			StringPool.PERCENT + fieldValue + StringPool.PERCENT);
 	}
 
-	private Column<?, ?> _getColumn(String columnName) {
+	private Column<?, ?> _getColumn(String objectFieldName) {
 		try {
 			Table<?> table = _objectFieldLocalService.getTable(
-				_objectDefinitionId, columnName);
+				_objectDefinitionId, objectFieldName);
 
-			return table.getColumn(columnName);
+			ObjectField objectField = _objectFieldLocalService.getObjectField(
+				_objectDefinitionId, objectFieldName);
+
+			if (Objects.equals(
+					objectField.getBusinessType(),
+					ObjectFieldConstants.BUSINESS_TYPE_ATTACHMENT) ||
+				Objects.equals(
+					objectField.getBusinessType(),
+					ObjectFieldConstants.BUSINESS_TYPE_RICH_TEXT)) {
+
+				throw new UnsupportedOperationException(
+					"Unsupported operation with " +
+						objectField.getBusinessType() + " field");
+			}
+
+			return table.getColumn(objectField.getDBColumnName());
 		}
 		catch (PortalException portalException) {
 			return ReflectionUtil.throwException(portalException);
 		}
 	}
 
-	private EntityModel _getLambdaEntityModel(
-		CollectionEntityField collectionEntityField, String variableName) {
-
-		return new EntityModel() {
-
-			@Override
-			public Map<String, EntityField> getEntityFieldsMap() {
-				return Collections.singletonMap(
-					variableName, collectionEntityField.getEntityField());
-			}
-
-			@Override
-			public String getName() {
-				return collectionEntityField.getName();
-			}
-
-		};
-	}
-
 	private Optional<Predicate> _getPredicateOptional(
-		BinaryExpression.Operation operation, Object left, Object right,
-		Locale locale) {
+		BinaryExpression.Operation operation, Object left, Object right) {
 
 		Predicate predicate = null;
 
@@ -344,28 +230,26 @@ public class PredicateExpressionVisitorImpl
 			return Optional.of(predicate);
 		}
 
-		EntityField entityField = (EntityField)left;
-
-		Column<?, Object> leftColumn = (Column<?, Object>)_getColumn(
-			entityField.getFilterableName(locale));
+		Column<?, Object> column = (Column<?, Object>)_getColumn(
+			GetterUtil.getString(left));
 
 		if (Objects.equals(BinaryExpression.Operation.EQ, operation)) {
-			predicate = leftColumn.eq(right);
+			predicate = column.eq(right);
 		}
 		else if (Objects.equals(BinaryExpression.Operation.GE, operation)) {
-			predicate = leftColumn.gte(right);
+			predicate = column.gte(right);
 		}
 		else if (Objects.equals(BinaryExpression.Operation.GT, operation)) {
-			predicate = leftColumn.gt(right);
+			predicate = column.gt(right);
 		}
 		else if (Objects.equals(BinaryExpression.Operation.LE, operation)) {
-			predicate = leftColumn.lte(right);
+			predicate = column.lte(right);
 		}
 		else if (Objects.equals(BinaryExpression.Operation.LT, operation)) {
-			predicate = leftColumn.lt(right);
+			predicate = column.lt(right);
 		}
 		else if (Objects.equals(BinaryExpression.Operation.NE, operation)) {
-			predicate = leftColumn.neq(right);
+			predicate = column.neq(right);
 		}
 		else {
 			return Optional.empty();
@@ -374,31 +258,12 @@ public class PredicateExpressionVisitorImpl
 		return Optional.of(predicate);
 	}
 
-	private Object _normalize(String string) {
-		string = StringUtil.toLowerCase(string);
-		string = StringUtil.unquote(string);
+	private Predicate _startsWith(Object fieldName, Object fieldValue) {
+		Column<?, ?> column = _getColumn(GetterUtil.getString(fieldName));
 
-		return StringUtil.replace(
-			string, StringPool.DOUBLE_APOSTROPHE, StringPool.APOSTROPHE);
+		return column.like(fieldValue + StringPool.PERCENT);
 	}
 
-	private Predicate _startsWith(
-		EntityField entityField, Object fieldValue, Locale locale) {
-
-		Column<?, ?> column = _getColumn(entityField.getFilterableName(locale));
-
-		return column.like(entityField.getFilterableValue(fieldValue) + "*");
-	}
-
-	private static final Log _log = LogFactoryUtil.getLog(
-		PredicateExpressionVisitorImpl.class);
-
-	private static final Format _format =
-		FastDateFormatFactoryUtil.getSimpleDateFormat(
-			PropsValues.INDEX_DATE_FORMAT_PATTERN);
-
-	private final EntityModel _entityModel;
-	private final Locale _locale;
 	private final long _objectDefinitionId;
 	private final ObjectFieldLocalService _objectFieldLocalService;
 

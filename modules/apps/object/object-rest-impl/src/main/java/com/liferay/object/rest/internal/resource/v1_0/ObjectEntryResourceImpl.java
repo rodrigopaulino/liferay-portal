@@ -221,7 +221,6 @@ public class ObjectEntryResourceImpl extends BaseObjectEntryResourceImpl {
 				PredicateUtil.toPredicate(
 					_filterParserProvider,
 					ParamUtil.getString(contextHttpServletRequest, "filter"),
-					contextAcceptLanguage.getPreferredLocale(),
 					_objectDefinition.getObjectDefinitionId(),
 					_objectFieldLocalService),
 				search, sorts);
@@ -275,7 +274,6 @@ public class ObjectEntryResourceImpl extends BaseObjectEntryResourceImpl {
 				PredicateUtil.toPredicate(
 					_filterParserProvider,
 					ParamUtil.getString(contextHttpServletRequest, "filter"),
-					contextAcceptLanguage.getPreferredLocale(),
 					_objectDefinition.getObjectDefinitionId(),
 					_objectFieldLocalService),
 				search, sorts);

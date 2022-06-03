@@ -185,7 +185,6 @@ public class ObjectDefinitionGraphQLDTOContributor
 					_filterParserProvider,
 					ParamUtil.getString(
 						dtoConverterContext.getHttpServletRequest(), "filter"),
-					dtoConverterContext.getLocale(),
 					_objectDefinition.getObjectDefinitionId(),
 					_objectFieldLocalService),
 				search, sorts);
