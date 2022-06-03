@@ -403,7 +403,6 @@ public class DefaultObjectEntryManagerImpl implements ObjectEntryManager {
 				dtoConverterContext, pagination,
 				PredicateUtil.toPredicate(
 					_filterParserProvider, filterString,
-					dtoConverterContext.getLocale(),
 					objectDefinition.getObjectDefinitionId(),
 					_objectFieldLocalService),
 				search, sorts);
