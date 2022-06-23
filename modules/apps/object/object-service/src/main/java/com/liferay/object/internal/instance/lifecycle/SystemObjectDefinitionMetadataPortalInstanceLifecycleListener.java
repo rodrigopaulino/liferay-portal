@@ -187,6 +187,13 @@ public class SystemObjectDefinitionMetadataPortalInstanceLifecycleListener
 		SystemObjectDefinitionMetadata systemObjectDefinitionMetadata) {
 
 		if (Objects.equals(
+				systemObjectDefinitionMetadata.getName(), "Address") &&
+			!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-156121"))) {
+
+			return;
+		}
+
+		if (Objects.equals(
 				systemObjectDefinitionMetadata.getName(),
 				"CommercePricingClass") &&
 			!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-151766"))) {
