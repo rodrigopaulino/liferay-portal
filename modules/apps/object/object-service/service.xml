@@ -446,6 +446,7 @@
 		<column name="name" type="String" />
 		<column name="reverse" type="boolean" />
 		<column name="type" type="String" />
+		<column name="parameterObjectFieldId" type="long" />
 
 		<!-- Finder methods -->
 
@@ -669,6 +670,7 @@
 		<exception>ObjectLayoutBoxCategorizationType</exception>
 		<exception>ObjectLayoutColumnSize</exception>
 		<exception>ObjectRelationshipName</exception>
+		<exception>ObjectRelationshipParameterObjectFieldId</exception>
 		<exception>ObjectRelationshipReverse</exception>
 		<exception>ObjectRelationshipType</exception>
 		<exception>ObjectValidationRuleEngine</exception>
