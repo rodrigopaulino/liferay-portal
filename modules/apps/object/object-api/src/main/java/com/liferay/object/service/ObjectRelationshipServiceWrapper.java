@@ -51,6 +51,19 @@ public class ObjectRelationshipServiceWrapper
 	}
 
 	@Override
+	public com.liferay.object.model.ObjectRelationship addObjectRelationship(
+			long objectDefinitionId1, long objectDefinitionId2,
+			String deletionType,
+			java.util.Map<java.util.Locale, String> labelMap, String name,
+			String type, Long parameterObjectFieldId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _objectRelationshipService.addObjectRelationship(
+			objectDefinitionId1, objectDefinitionId2, deletionType, labelMap,
+			name, type, parameterObjectFieldId);
+	}
+
+	@Override
 	public void addObjectRelationshipMappingTableValues(
 			long objectRelationshipId, long primaryKey1, long primaryKey2,
 			com.liferay.portal.kernel.service.ServiceContext serviceContext)
@@ -114,6 +127,18 @@ public class ObjectRelationshipServiceWrapper
 
 		return _objectRelationshipService.updateObjectRelationship(
 			objectRelationshipId, deletionType, labelMap);
+	}
+
+	@Override
+	public com.liferay.object.model.ObjectRelationship updateObjectRelationship(
+			long objectRelationshipId, String deletionType,
+			java.util.Map<java.util.Locale, String> labelMap,
+			Long parameterObjectFieldId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _objectRelationshipService.updateObjectRelationship(
+			objectRelationshipId, deletionType, labelMap,
+			parameterObjectFieldId);
 	}
 
 	@Override

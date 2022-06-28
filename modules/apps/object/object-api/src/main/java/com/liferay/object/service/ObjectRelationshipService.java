@@ -60,6 +60,12 @@ public interface ObjectRelationshipService extends BaseService {
 			String type)
 		throws PortalException;
 
+	public ObjectRelationship addObjectRelationship(
+			long objectDefinitionId1, long objectDefinitionId2,
+			String deletionType, Map<Locale, String> labelMap, String name,
+			String type, Long parameterObjectFieldId)
+		throws PortalException;
+
 	public void addObjectRelationshipMappingTableValues(
 			long objectRelationshipId, long primaryKey1, long primaryKey2,
 			ServiceContext serviceContext)
@@ -93,6 +99,11 @@ public interface ObjectRelationshipService extends BaseService {
 	public ObjectRelationship updateObjectRelationship(
 			long objectRelationshipId, String deletionType,
 			Map<Locale, String> labelMap)
+		throws PortalException;
+
+	public ObjectRelationship updateObjectRelationship(
+			long objectRelationshipId, String deletionType,
+			Map<Locale, String> labelMap, Long parameterObjectFieldId)
 		throws PortalException;
 
 }

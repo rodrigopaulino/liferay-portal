@@ -95,6 +95,51 @@ public class ObjectRelationshipServiceHttp {
 		}
 	}
 
+	public static com.liferay.object.model.ObjectRelationship
+			addObjectRelationship(
+				HttpPrincipal httpPrincipal, long objectDefinitionId1,
+				long objectDefinitionId2, String deletionType,
+				java.util.Map<java.util.Locale, String> labelMap, String name,
+				String type, Long parameterObjectFieldId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		try {
+			MethodKey methodKey = new MethodKey(
+				ObjectRelationshipServiceUtil.class, "addObjectRelationship",
+				_addObjectRelationshipParameterTypes1);
+
+			MethodHandler methodHandler = new MethodHandler(
+				methodKey, objectDefinitionId1, objectDefinitionId2,
+				deletionType, labelMap, name, type, parameterObjectFieldId);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception exception) {
+				if (exception instanceof
+						com.liferay.portal.kernel.exception.PortalException) {
+
+					throw (com.liferay.portal.kernel.exception.PortalException)
+						exception;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(
+					exception);
+			}
+
+			return (com.liferay.object.model.ObjectRelationship)returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException
+					systemException) {
+
+			_log.error(systemException, systemException);
+
+			throw systemException;
+		}
+	}
+
 	public static void addObjectRelationshipMappingTableValues(
 			HttpPrincipal httpPrincipal, long objectRelationshipId,
 			long primaryKey1, long primaryKey2,
@@ -105,7 +150,7 @@ public class ObjectRelationshipServiceHttp {
 			MethodKey methodKey = new MethodKey(
 				ObjectRelationshipServiceUtil.class,
 				"addObjectRelationshipMappingTableValues",
-				_addObjectRelationshipMappingTableValuesParameterTypes1);
+				_addObjectRelationshipMappingTableValuesParameterTypes2);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, objectRelationshipId, primaryKey1, primaryKey2,
@@ -143,7 +188,7 @@ public class ObjectRelationshipServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				ObjectRelationshipServiceUtil.class, "deleteObjectRelationship",
-				_deleteObjectRelationshipParameterTypes2);
+				_deleteObjectRelationshipParameterTypes3);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, objectRelationshipId);
@@ -184,7 +229,7 @@ public class ObjectRelationshipServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				ObjectRelationshipServiceUtil.class, "getObjectRelationship",
-				_getObjectRelationshipParameterTypes3);
+				_getObjectRelationshipParameterTypes4);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, objectRelationshipId);
@@ -226,7 +271,7 @@ public class ObjectRelationshipServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				ObjectRelationshipServiceUtil.class, "getObjectRelationship",
-				_getObjectRelationshipParameterTypes4);
+				_getObjectRelationshipParameterTypes5);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, objectDefinitionId1, name);
@@ -268,7 +313,7 @@ public class ObjectRelationshipServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				ObjectRelationshipServiceUtil.class, "getObjectRelationships",
-				_getObjectRelationshipsParameterTypes5);
+				_getObjectRelationshipsParameterTypes6);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, objectDefinitionId1, start, end);
@@ -312,10 +357,55 @@ public class ObjectRelationshipServiceHttp {
 		try {
 			MethodKey methodKey = new MethodKey(
 				ObjectRelationshipServiceUtil.class, "updateObjectRelationship",
-				_updateObjectRelationshipParameterTypes6);
+				_updateObjectRelationshipParameterTypes7);
 
 			MethodHandler methodHandler = new MethodHandler(
 				methodKey, objectRelationshipId, deletionType, labelMap);
+
+			Object returnObj = null;
+
+			try {
+				returnObj = TunnelUtil.invoke(httpPrincipal, methodHandler);
+			}
+			catch (Exception exception) {
+				if (exception instanceof
+						com.liferay.portal.kernel.exception.PortalException) {
+
+					throw (com.liferay.portal.kernel.exception.PortalException)
+						exception;
+				}
+
+				throw new com.liferay.portal.kernel.exception.SystemException(
+					exception);
+			}
+
+			return (com.liferay.object.model.ObjectRelationship)returnObj;
+		}
+		catch (com.liferay.portal.kernel.exception.SystemException
+					systemException) {
+
+			_log.error(systemException, systemException);
+
+			throw systemException;
+		}
+	}
+
+	public static com.liferay.object.model.ObjectRelationship
+			updateObjectRelationship(
+				HttpPrincipal httpPrincipal, long objectRelationshipId,
+				String deletionType,
+				java.util.Map<java.util.Locale, String> labelMap,
+				Long parameterObjectFieldId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		try {
+			MethodKey methodKey = new MethodKey(
+				ObjectRelationshipServiceUtil.class, "updateObjectRelationship",
+				_updateObjectRelationshipParameterTypes8);
+
+			MethodHandler methodHandler = new MethodHandler(
+				methodKey, objectRelationshipId, deletionType, labelMap,
+				parameterObjectFieldId);
 
 			Object returnObj = null;
 
@@ -353,20 +443,27 @@ public class ObjectRelationshipServiceHttp {
 			long.class, long.class, String.class, java.util.Map.class,
 			String.class, String.class
 		};
+	private static final Class<?>[] _addObjectRelationshipParameterTypes1 =
+		new Class[] {
+			long.class, long.class, String.class, java.util.Map.class,
+			String.class, String.class, Long.class
+		};
 	private static final Class<?>[]
-		_addObjectRelationshipMappingTableValuesParameterTypes1 = new Class[] {
+		_addObjectRelationshipMappingTableValuesParameterTypes2 = new Class[] {
 			long.class, long.class, long.class,
 			com.liferay.portal.kernel.service.ServiceContext.class
 		};
-	private static final Class<?>[] _deleteObjectRelationshipParameterTypes2 =
-		new Class[] {long.class};
-	private static final Class<?>[] _getObjectRelationshipParameterTypes3 =
+	private static final Class<?>[] _deleteObjectRelationshipParameterTypes3 =
 		new Class[] {long.class};
 	private static final Class<?>[] _getObjectRelationshipParameterTypes4 =
+		new Class[] {long.class};
+	private static final Class<?>[] _getObjectRelationshipParameterTypes5 =
 		new Class[] {long.class, String.class};
-	private static final Class<?>[] _getObjectRelationshipsParameterTypes5 =
+	private static final Class<?>[] _getObjectRelationshipsParameterTypes6 =
 		new Class[] {long.class, int.class, int.class};
-	private static final Class<?>[] _updateObjectRelationshipParameterTypes6 =
+	private static final Class<?>[] _updateObjectRelationshipParameterTypes7 =
 		new Class[] {long.class, String.class, java.util.Map.class};
+	private static final Class<?>[] _updateObjectRelationshipParameterTypes8 =
+		new Class[] {long.class, String.class, java.util.Map.class, Long.class};
 
 }
