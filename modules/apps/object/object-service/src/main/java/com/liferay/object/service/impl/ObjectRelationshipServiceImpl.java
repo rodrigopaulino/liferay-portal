@@ -52,6 +52,18 @@ public class ObjectRelationshipServiceImpl
 			String type)
 		throws PortalException {
 
+		return addObjectRelationship(
+			objectDefinitionId1, objectDefinitionId2, deletionType, labelMap,
+			name, type, null);
+	}
+
+	@Override
+	public ObjectRelationship addObjectRelationship(
+			long objectDefinitionId1, long objectDefinitionId2,
+			String deletionType, Map<Locale, String> labelMap, String name,
+			String type, Long parameterObjectFieldId)
+		throws PortalException {
+
 		ObjectDefinition objectDefinition =
 			_objectDefinitionPersistence.findByPrimaryKey(objectDefinitionId1);
 
@@ -61,7 +73,7 @@ public class ObjectRelationshipServiceImpl
 
 		return objectRelationshipLocalService.addObjectRelationship(
 			getUserId(), objectDefinitionId1, objectDefinitionId2, deletionType,
-			labelMap, name, type);
+			labelMap, name, type, parameterObjectFieldId);
 	}
 
 	@Override
@@ -150,6 +162,16 @@ public class ObjectRelationshipServiceImpl
 			Map<Locale, String> labelMap)
 		throws PortalException {
 
+		return updateObjectRelationship(
+			objectRelationshipId, deletionType, labelMap, null);
+	}
+
+	@Override
+	public ObjectRelationship updateObjectRelationship(
+			long objectRelationshipId, String deletionType,
+			Map<Locale, String> labelMap, Long parameterObjectFieldId)
+		throws PortalException {
+
 		ObjectRelationship objectRelationship =
 			objectRelationshipPersistence.findByPrimaryKey(
 				objectRelationshipId);
@@ -159,7 +181,8 @@ public class ObjectRelationshipServiceImpl
 			ActionKeys.UPDATE);
 
 		return objectRelationshipLocalService.updateObjectRelationship(
-			objectRelationshipId, deletionType, labelMap);
+			objectRelationshipId, deletionType, labelMap,
+			parameterObjectFieldId);
 	}
 
 	@Reference(
