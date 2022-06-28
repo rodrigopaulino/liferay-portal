@@ -50,6 +50,19 @@ public class ObjectRelationshipLocalServiceWrapper
 			labelMap, name, type);
 	}
 
+	@Override
+	public com.liferay.object.model.ObjectRelationship addObjectRelationship(
+			long userId, long objectDefinitionId1, long objectDefinitionId2,
+			String deletionType,
+			java.util.Map<java.util.Locale, String> labelMap, String name,
+			String type, Long parameterObjectFieldId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _objectRelationshipLocalService.addObjectRelationship(
+			userId, objectDefinitionId1, objectDefinitionId2, deletionType,
+			labelMap, name, type, parameterObjectFieldId);
+	}
+
 	/**
 	 * Adds the object relationship to the database. Also notifies the appropriate model listeners.
 	 *
@@ -472,6 +485,18 @@ public class ObjectRelationshipLocalServiceWrapper
 
 		return _objectRelationshipLocalService.updateObjectRelationship(
 			objectRelationshipId, deletionType, labelMap);
+	}
+
+	@Override
+	public com.liferay.object.model.ObjectRelationship updateObjectRelationship(
+			long objectRelationshipId, String deletionType,
+			java.util.Map<java.util.Locale, String> labelMap,
+			Long parameterObjectFieldId)
+		throws com.liferay.portal.kernel.exception.PortalException {
+
+		return _objectRelationshipLocalService.updateObjectRelationship(
+			objectRelationshipId, deletionType, labelMap,
+			parameterObjectFieldId);
 	}
 
 	/**

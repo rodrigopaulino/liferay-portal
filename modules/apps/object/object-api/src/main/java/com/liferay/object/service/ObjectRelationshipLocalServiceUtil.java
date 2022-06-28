@@ -56,6 +56,17 @@ public class ObjectRelationshipLocalServiceUtil {
 			labelMap, name, type);
 	}
 
+	public static ObjectRelationship addObjectRelationship(
+			long userId, long objectDefinitionId1, long objectDefinitionId2,
+			String deletionType, Map<java.util.Locale, String> labelMap,
+			String name, String type, Long parameterObjectFieldId)
+		throws PortalException {
+
+		return getService().addObjectRelationship(
+			userId, objectDefinitionId1, objectDefinitionId2, deletionType,
+			labelMap, name, type, parameterObjectFieldId);
+	}
+
 	/**
 	 * Adds the object relationship to the database. Also notifies the appropriate model listeners.
 	 *
@@ -415,6 +426,16 @@ public class ObjectRelationshipLocalServiceUtil {
 
 		return getService().updateObjectRelationship(
 			objectRelationshipId, deletionType, labelMap);
+	}
+
+	public static ObjectRelationship updateObjectRelationship(
+			long objectRelationshipId, String deletionType,
+			Map<java.util.Locale, String> labelMap, Long parameterObjectFieldId)
+		throws PortalException {
+
+		return getService().updateObjectRelationship(
+			objectRelationshipId, deletionType, labelMap,
+			parameterObjectFieldId);
 	}
 
 	/**
