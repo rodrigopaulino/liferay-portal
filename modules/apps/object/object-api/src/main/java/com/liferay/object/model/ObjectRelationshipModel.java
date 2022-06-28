@@ -430,6 +430,20 @@ public interface ObjectRelationshipModel
 	 */
 	public void setType(String type);
 
+	/**
+	 * Returns the parameter object field ID of this object relationship.
+	 *
+	 * @return the parameter object field ID of this object relationship
+	 */
+	public long getParameterObjectFieldId();
+
+	/**
+	 * Sets the parameter object field ID of this object relationship.
+	 *
+	 * @param parameterObjectFieldId the parameter object field ID of this object relationship
+	 */
+	public void setParameterObjectFieldId(long parameterObjectFieldId);
+
 	@Override
 	public String[] getAvailableLanguageIds();
 

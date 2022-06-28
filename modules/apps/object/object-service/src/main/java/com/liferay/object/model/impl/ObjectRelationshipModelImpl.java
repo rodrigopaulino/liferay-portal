@@ -89,7 +89,8 @@ public class ObjectRelationshipModelImpl
 		{"objectDefinitionId2", Types.BIGINT}, {"objectFieldId2", Types.BIGINT},
 		{"deletionType", Types.VARCHAR}, {"dbTableName", Types.VARCHAR},
 		{"label", Types.VARCHAR}, {"name", Types.VARCHAR},
-		{"reverse", Types.BOOLEAN}, {"type_", Types.VARCHAR}
+		{"reverse", Types.BOOLEAN}, {"type_", Types.VARCHAR},
+		{"parameterObjectFieldId", Types.BIGINT}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -113,10 +114,11 @@ public class ObjectRelationshipModelImpl
 		TABLE_COLUMNS_MAP.put("name", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("reverse", Types.BOOLEAN);
 		TABLE_COLUMNS_MAP.put("type_", Types.VARCHAR);
+		TABLE_COLUMNS_MAP.put("parameterObjectFieldId", Types.BIGINT);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table ObjectRelationship (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,objectRelationshipId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,objectDefinitionId1 LONG,objectDefinitionId2 LONG,objectFieldId2 LONG,deletionType VARCHAR(75) null,dbTableName VARCHAR(75) null,label STRING null,name VARCHAR(75) null,reverse BOOLEAN,type_ VARCHAR(75) null)";
+		"create table ObjectRelationship (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,objectRelationshipId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,objectDefinitionId1 LONG,objectDefinitionId2 LONG,objectFieldId2 LONG,deletionType VARCHAR(75) null,dbTableName VARCHAR(75) null,label STRING null,name VARCHAR(75) null,reverse BOOLEAN,type_ VARCHAR(75) null,parameterObjectFieldId LONG)";
 
 	public static final String TABLE_SQL_DROP = "drop table ObjectRelationship";
 
@@ -397,6 +399,13 @@ public class ObjectRelationshipModelImpl
 			"type",
 			(BiConsumer<ObjectRelationship, String>)
 				ObjectRelationship::setType);
+		attributeGetterFunctions.put(
+			"parameterObjectFieldId",
+			ObjectRelationship::getParameterObjectFieldId);
+		attributeSetterBiConsumers.put(
+			"parameterObjectFieldId",
+			(BiConsumer<ObjectRelationship, Long>)
+				ObjectRelationship::setParameterObjectFieldId);
 
 		_attributeGetterFunctions = Collections.unmodifiableMap(
 			attributeGetterFunctions);
@@ -888,6 +897,21 @@ public class ObjectRelationshipModelImpl
 		return getColumnOriginalValue("type_");
 	}
 
+	@JSON
+	@Override
+	public long getParameterObjectFieldId() {
+		return _parameterObjectFieldId;
+	}
+
+	@Override
+	public void setParameterObjectFieldId(long parameterObjectFieldId) {
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_parameterObjectFieldId = parameterObjectFieldId;
+	}
+
 	@Override
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(
@@ -1036,6 +1060,8 @@ public class ObjectRelationshipModelImpl
 		objectRelationshipImpl.setName(getName());
 		objectRelationshipImpl.setReverse(isReverse());
 		objectRelationshipImpl.setType(getType());
+		objectRelationshipImpl.setParameterObjectFieldId(
+			getParameterObjectFieldId());
 
 		objectRelationshipImpl.resetOriginalValues();
 
@@ -1081,6 +1107,8 @@ public class ObjectRelationshipModelImpl
 			this.<Boolean>getColumnOriginalValue("reverse"));
 		objectRelationshipImpl.setType(
 			this.<String>getColumnOriginalValue("type_"));
+		objectRelationshipImpl.setParameterObjectFieldId(
+			this.<Long>getColumnOriginalValue("parameterObjectFieldId"));
 
 		return objectRelationshipImpl;
 	}
@@ -1252,6 +1280,9 @@ public class ObjectRelationshipModelImpl
 			objectRelationshipCacheModel.type = null;
 		}
 
+		objectRelationshipCacheModel.parameterObjectFieldId =
+			getParameterObjectFieldId();
+
 		return objectRelationshipCacheModel;
 	}
 
@@ -1364,6 +1395,7 @@ public class ObjectRelationshipModelImpl
 	private String _name;
 	private boolean _reverse;
 	private String _type;
+	private long _parameterObjectFieldId;
 
 	public <T> T getColumnValue(String columnName) {
 		columnName = _attributeNames.getOrDefault(columnName, columnName);
@@ -1412,6 +1444,8 @@ public class ObjectRelationshipModelImpl
 		_columnOriginalValues.put("name", _name);
 		_columnOriginalValues.put("reverse", _reverse);
 		_columnOriginalValues.put("type_", _type);
+		_columnOriginalValues.put(
+			"parameterObjectFieldId", _parameterObjectFieldId);
 	}
 
 	private static final Map<String, String> _attributeNames;
@@ -1469,6 +1503,8 @@ public class ObjectRelationshipModelImpl
 		columnBitmasks.put("reverse", 32768L);
 
 		columnBitmasks.put("type_", 65536L);
+
+		columnBitmasks.put("parameterObjectFieldId", 131072L);
 
 		_columnBitmasks = Collections.unmodifiableMap(columnBitmasks);
 	}

@@ -82,6 +82,10 @@ public class ObjectRelationshipTable
 			"reverse", Boolean.class, Types.BOOLEAN, Column.FLAG_DEFAULT);
 	public final Column<ObjectRelationshipTable, String> type = createColumn(
 		"type_", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
+	public final Column<ObjectRelationshipTable, Long> parameterObjectFieldId =
+		createColumn(
+			"parameterObjectFieldId", Long.class, Types.BIGINT,
+			Column.FLAG_DEFAULT);
 
 	private ObjectRelationshipTable() {
 		super("ObjectRelationship", ObjectRelationshipTable::new);
