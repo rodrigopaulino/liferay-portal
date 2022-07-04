@@ -333,12 +333,10 @@ public class ObjectRelationshipLocalServiceImpl
 				"Reverse object relationships cannot be updated");
 		}
 
-		ObjectDefinition objectDefinition =
-			_objectDefinitionPersistence.fetchByPrimaryKey(
-				objectRelationship.getObjectDefinitionId1());
-
 		_validateParameterObjectFieldId(
-			parameterObjectFieldId, objectDefinition);
+			objectRelationship.getObjectDefinitionId1(),
+			objectRelationship.getObjectDefinitionId2(), parameterObjectFieldId,
+			objectRelationship.getType());
 
 		objectRelationship.setParameterObjectFieldId(parameterObjectFieldId);
 		objectRelationship.setDeletionType(deletionType);
@@ -581,11 +579,13 @@ public class ObjectRelationshipLocalServiceImpl
 		}
 
 		_validateParameterObjectFieldId(
-			parameterObjectFieldId, objectDefinition1);
+			objectDefinitionId1, objectDefinitionId2, parameterObjectFieldId,
+			type);
 	}
 
 	private void _validateParameterObjectFieldId(
-			long parameterObjectFieldId, ObjectDefinition objectDefinition)
+			long objectDefinitionId1, long objectDefinitionId2,
+			long parameterObjectFieldId, String type)
 		throws PortalException {
 
 		if (!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-155537")) &&
@@ -594,16 +594,19 @@ public class ObjectRelationshipLocalServiceImpl
 			throw new UnsupportedOperationException();
 		}
 
+		ObjectDefinition objectDefinition1 =
+			_objectDefinitionPersistence.fetchByPrimaryKey(objectDefinitionId1);
+
 		String restContextPath = StringPool.BLANK;
 
-		if (!objectDefinition.isSystem()) {
-			restContextPath = objectDefinition.getRESTContextPath();
+		if (!objectDefinition1.isSystem()) {
+			restContextPath = objectDefinition1.getRESTContextPath();
 		}
 		else {
 			SystemObjectDefinitionMetadata systemObjectDefinitionMetadata =
 				_systemObjectDefinitionMetadataTracker.
 					getSystemObjectDefinitionMetadata(
-						objectDefinition.getName());
+						objectDefinition1.getName());
 
 			if (systemObjectDefinitionMetadata != null) {
 				restContextPath =
@@ -615,14 +618,22 @@ public class ObjectRelationshipLocalServiceImpl
 
 		if ((parameterObjectFieldId == 0) && parameterRequired) {
 			throw new ObjectRelationshipParameterObjectFieldIdException(
-				"Object definition " + objectDefinition.getName() +
+				"Object definition " + objectDefinition1.getName() +
 					" requires a parameter object field ID");
 		}
 
 		if (parameterObjectFieldId > 0) {
+			if (!Objects.equals(
+					type, ObjectRelationshipConstants.TYPE_ONE_TO_MANY)) {
+
+				throw new ObjectRelationshipParameterObjectFieldIdException(
+					"Object relationship type " + type +
+						" does not allow a parameter object field ID");
+			}
+
 			if (!parameterRequired) {
 				throw new ObjectRelationshipParameterObjectFieldIdException(
-					"Object definition " + objectDefinition.getName() +
+					"Object definition " + objectDefinition1.getName() +
 						" does not allow a parameter object field ID");
 			}
 
@@ -631,18 +642,22 @@ public class ObjectRelationshipLocalServiceImpl
 
 			if (objectField == null) {
 				throw new ObjectRelationshipParameterObjectFieldIdException(
-					"Parameter object field " + parameterObjectFieldId +
+					"Parameter object field ID " + parameterObjectFieldId +
 						" does not exist");
 			}
 
-			if (objectDefinition.getObjectDefinitionId() !=
+			ObjectDefinition objectDefinition2 =
+				_objectDefinitionPersistence.fetchByPrimaryKey(
+					objectDefinitionId2);
+
+			if (objectDefinition2.getObjectDefinitionId() !=
 					objectField.getObjectDefinitionId()) {
 
 				throw new ObjectRelationshipParameterObjectFieldIdException(
 					StringBundler.concat(
-						"Parameter object field ", parameterObjectFieldId,
+						"Parameter object field ID ", parameterObjectFieldId,
 						" does not belong to object definition ",
-						objectDefinition.getName()));
+						objectDefinition2.getName()));
 			}
 
 			if (!Objects.equals(
@@ -651,8 +666,8 @@ public class ObjectRelationshipLocalServiceImpl
 
 				throw new ObjectRelationshipParameterObjectFieldIdException(
 					StringBundler.concat(
-						"Parameter object field ", parameterObjectFieldId,
-						" is not a relationship"));
+						"Parameter object field ID ", parameterObjectFieldId,
+						" does not belong to a relationship field"));
 			}
 		}
 	}
