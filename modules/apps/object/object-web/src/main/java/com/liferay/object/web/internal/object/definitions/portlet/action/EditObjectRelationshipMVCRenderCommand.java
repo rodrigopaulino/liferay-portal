@@ -65,7 +65,7 @@ public class EditObjectRelationshipMVCRenderCommand
 			renderRequest.setAttribute(
 				ObjectWebKeys.OBJECT_DEFINITION,
 				_objectDefinitionLocalService.getObjectDefinition(
-					objectRelationship.getObjectDefinitionId2()));
+					objectRelationship.getObjectDefinitionId1()));
 			renderRequest.setAttribute(
 				ObjectWebKeys.OBJECT_RELATIONSHIP, objectRelationship);
 
