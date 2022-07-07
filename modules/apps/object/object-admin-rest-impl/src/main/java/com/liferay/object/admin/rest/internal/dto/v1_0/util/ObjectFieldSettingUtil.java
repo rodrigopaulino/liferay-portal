@@ -15,7 +15,20 @@
 package com.liferay.object.admin.rest.internal.dto.v1_0.util;
 
 import com.liferay.object.admin.rest.dto.v1_0.ObjectFieldSetting;
+import com.liferay.object.constants.ObjectFieldConstants;
+import com.liferay.object.constants.ObjectFilterConstants;
+import com.liferay.object.model.ObjectFilter;
 import com.liferay.object.service.ObjectFieldSettingLocalService;
+import com.liferay.object.service.ObjectFilterLocalService;
+import com.liferay.portal.kernel.json.JSONArray;
+import com.liferay.portal.kernel.json.JSONFactoryUtil;
+import com.liferay.portal.kernel.json.JSONUtil;
+import com.liferay.portal.kernel.util.StringUtil;
+
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * @author Carolina Barbosa
@@ -24,8 +37,9 @@ public class ObjectFieldSettingUtil {
 
 	public static com.liferay.object.model.ObjectFieldSetting
 		toObjectFieldSetting(
-			ObjectFieldSetting objectFieldSetting,
-			ObjectFieldSettingLocalService objectFieldSettingLocalService) {
+			String businessType, ObjectFieldSetting objectFieldSetting,
+			ObjectFieldSettingLocalService objectFieldSettingLocalService,
+			ObjectFilterLocalService objectFilterLocalService) {
 
 		com.liferay.object.model.ObjectFieldSetting
 			serviceBuilderObjectFieldSetting =
@@ -33,12 +47,41 @@ public class ObjectFieldSettingUtil {
 
 		serviceBuilderObjectFieldSetting.setName(objectFieldSetting.getName());
 		serviceBuilderObjectFieldSetting.setValue(
-			objectFieldSetting.getValue());
+			String.valueOf(objectFieldSetting.getValue()));
+
+		if (Objects.equals(
+				businessType, ObjectFieldConstants.BUSINESS_TYPE_AGGREGATION) &&
+			StringUtil.startsWith(
+				objectFieldSetting.getName(), ObjectFilterConstants.FILTERS)) {
+
+			List<ObjectFilter> objectFilters = new ArrayList<>();
+
+			for (LinkedHashMap<String, Object> value :
+					(List<LinkedHashMap<String, Object>>)
+						objectFieldSetting.getValue()) {
+
+				ObjectFilter objectFilter =
+					objectFilterLocalService.createObjectFilter(0L);
+
+				objectFilter.setFilterBy(
+					String.valueOf(value.get(ObjectFilterConstants.FILTER_BY)));
+				objectFilter.setFilterType(
+					String.valueOf(
+						value.get(ObjectFilterConstants.FILTER_TYPE)));
+				objectFilter.setJson(
+					String.valueOf(value.get(ObjectFilterConstants.JSON)));
+
+				objectFilters.add(objectFilter);
+			}
+
+			serviceBuilderObjectFieldSetting.setObjectFilters(objectFilters);
+		}
 
 		return serviceBuilderObjectFieldSetting;
 	}
 
 	public static ObjectFieldSetting toObjectFieldSetting(
+		String businessType,
 		com.liferay.object.model.ObjectFieldSetting
 			serviceBuilderObjectFieldSetting) {
 
@@ -48,13 +91,44 @@ public class ObjectFieldSettingUtil {
 
 		return new ObjectFieldSetting() {
 			{
-				id = serviceBuilderObjectFieldSetting.getObjectFieldId();
 				name = serviceBuilderObjectFieldSetting.getName();
-				objectFieldId =
-					serviceBuilderObjectFieldSetting.getObjectFieldId();
-				value = serviceBuilderObjectFieldSetting.getValue();
+
+				if (Objects.equals(
+						businessType,
+						ObjectFieldConstants.BUSINESS_TYPE_AGGREGATION) &&
+					Objects.equals(name, ObjectFilterConstants.FILTERS)) {
+
+					value = _getFiltersJSONArray(
+						serviceBuilderObjectFieldSetting);
+				}
+				else {
+					value = serviceBuilderObjectFieldSetting.getValue();
+				}
 			}
 		};
+	}
+
+	private static JSONArray _getFiltersJSONArray(
+		com.liferay.object.model.ObjectFieldSetting
+			serviceBuilderObjectFieldSetting) {
+
+		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
+
+		for (ObjectFilter objectFilter :
+				serviceBuilderObjectFieldSetting.getObjectFilters()) {
+
+			jsonArray.put(
+				JSONUtil.put(
+					ObjectFilterConstants.FILTER_BY, objectFilter.getFilterBy()
+				).put(
+					ObjectFilterConstants.FILTER_TYPE,
+					objectFilter.getFilterType()
+				).put(
+					ObjectFilterConstants.JSON, objectFilter.getJson()
+				));
+		}
+
+		return jsonArray;
 	}
 
 }
