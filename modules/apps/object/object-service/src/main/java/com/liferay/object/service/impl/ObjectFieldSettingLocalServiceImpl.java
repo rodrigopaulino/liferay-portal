@@ -108,8 +108,43 @@ public class ObjectFieldSettingLocalServiceImpl
 	}
 
 	@Override
-	public List<ObjectFieldSetting> getObjectFieldSettings(long objectFieldId) {
-		return objectFieldSettingPersistence.findByObjectFieldId(objectFieldId);
+	public List<ObjectFieldSetting> getObjectFieldSettingsByObjectFieldId(
+		long objectFieldId) {
+
+		if (!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-156704"))) {
+			return objectFieldSettingPersistence.findByObjectFieldId(
+				objectFieldId);
+		}
+
+		ObjectField objectField = _objectFieldPersistence.fetchByPrimaryKey(
+			objectFieldId);
+
+		if (objectField == null) {
+			return Collections.emptyList();
+		}
+
+		List<ObjectFieldSetting> objectFieldSettings =
+			objectFieldSettingPersistence.findByObjectFieldId(objectFieldId);
+
+		if (!Objects.equals(
+				objectField.getBusinessType(),
+				ObjectFieldConstants.BUSINESS_TYPE_AGGREGATION)) {
+
+			return objectFieldSettings;
+		}
+
+		ObjectFieldSetting objectFieldSetting = new ObjectFieldSettingImpl();
+
+		objectFieldSetting.setName(ObjectFilterConstants.FILTERS);
+		objectFieldSetting.setObjectFilters(
+			_objectFilterPersistence.findByObjectFieldId(objectFieldId));
+
+		List<ObjectFieldSetting> newObjectFieldSettings = new ArrayList<>(
+			objectFieldSettings);
+
+		newObjectFieldSettings.add(objectFieldSetting);
+
+		return newObjectFieldSettings;
 	}
 
 	@Override
