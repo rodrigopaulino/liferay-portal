@@ -130,12 +130,12 @@ public class AttachmentObjectFieldBusinessType
 
 	@Override
 	public void validateObjectFieldSettings(
-			String objectFieldName,
+			long companyId, String objectFieldName,
 			List<ObjectFieldSetting> objectFieldSettings)
 		throws PortalException {
 
 		ObjectFieldBusinessType.super.validateObjectFieldSettings(
-			objectFieldName, objectFieldSettings);
+			companyId, objectFieldName, objectFieldSettings);
 
 		Stream<ObjectFieldSetting> stream = objectFieldSettings.stream();
 
