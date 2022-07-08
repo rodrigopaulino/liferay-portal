@@ -28,6 +28,7 @@ import com.liferay.object.scope.ObjectScopeProviderRegistry;
 import com.liferay.object.service.ObjectDefinitionLocalService;
 import com.liferay.object.service.ObjectEntryLocalService;
 import com.liferay.object.service.ObjectRelationshipLocalService;
+import com.liferay.object.system.SystemObjectDefinitionMetadataTracker;
 import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.json.JSONObject;
@@ -190,7 +191,8 @@ public class AddObjectEntryObjectActionExecutorImpl
 		Map<String, Serializable> values = new HashMap<>();
 
 		Map<String, Object> variables = ObjectActionVariablesUtil.toVariables(
-			_dtoConverterRegistry, objectDefinition, payloadJSONObject);
+			_dtoConverterRegistry, objectDefinition, payloadJSONObject,
+			_systemObjectDefinitionMetadataTracker);
 
 		JSONArray jsonArray = _jsonFactory.createJSONArray(
 			parametersUnicodeProperties.get("predefinedValues"));
@@ -237,6 +239,10 @@ public class AddObjectEntryObjectActionExecutorImpl
 
 	@Reference
 	private ObjectScopeProviderRegistry _objectScopeProviderRegistry;
+
+	@Reference
+	private SystemObjectDefinitionMetadataTracker
+		_systemObjectDefinitionMetadataTracker;
 
 	@Reference
 	private UserLocalService _userLocalService;
