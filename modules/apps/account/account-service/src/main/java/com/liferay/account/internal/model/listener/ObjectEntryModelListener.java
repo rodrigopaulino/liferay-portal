@@ -16,7 +16,6 @@ package com.liferay.account.internal.model.listener;
 
 import com.liferay.account.constants.AccountConstants;
 import com.liferay.account.exception.NoSuchEntryException;
-import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.object.exception.ObjectDefinitionAccountEntryRestrictedException;
 import com.liferay.object.model.ObjectDefinition;
@@ -31,12 +30,13 @@ import com.liferay.portal.kernel.exception.PortalException;
 import com.liferay.portal.kernel.model.BaseModelListener;
 import com.liferay.portal.kernel.model.ModelListener;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.io.Serializable;
 
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -107,26 +107,24 @@ public class ObjectEntryModelListener extends BaseModelListener<ObjectEntry> {
 					"The account entry ", accountEntryId, " does not exist"));
 		}
 
-		List<AccountEntry> accountEntries =
-			_accountEntryLocalService.getUserAccountEntries(
-				userId, AccountConstants.PARENT_ACCOUNT_ENTRY_ID_DEFAULT, null,
-				new String[] {
-					AccountConstants.ACCOUNT_ENTRY_TYPE_BUSINESS,
-					AccountConstants.ACCOUNT_ENTRY_TYPE_PERSON
-				},
-				WorkflowConstants.STATUS_APPROVED, QueryUtil.ALL_POS,
-				QueryUtil.ALL_POS);
+		if (!ListUtil.exists(
+				_accountEntryLocalService.getUserAccountEntries(
+					userId, AccountConstants.PARENT_ACCOUNT_ENTRY_ID_DEFAULT,
+					null,
+					new String[] {
+						AccountConstants.ACCOUNT_ENTRY_TYPE_BUSINESS,
+						AccountConstants.ACCOUNT_ENTRY_TYPE_PERSON
+					},
+					WorkflowConstants.STATUS_APPROVED, QueryUtil.ALL_POS,
+					QueryUtil.ALL_POS),
+				accountEntry -> Objects.equals(
+					accountEntryId, accountEntry.getAccountEntryId()))) {
 
-		for (AccountEntry accountEntry : accountEntries) {
-			if (accountEntryId == accountEntry.getAccountEntryId()) {
-				return;
-			}
+			throw new ObjectDefinitionAccountEntryRestrictedException(
+				StringBundler.concat(
+					"The user ", userId, " does not belong to the account ",
+					accountEntryId));
 		}
-
-		throw new ObjectDefinitionAccountEntryRestrictedException(
-			StringBundler.concat(
-				"The user ", userId, " does not belong to the account ",
-				accountEntryId));
 	}
 
 	@Reference
