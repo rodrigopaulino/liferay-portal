@@ -15,6 +15,7 @@
 package com.liferay.account.internal.model.listener;
 
 import com.liferay.account.constants.AccountConstants;
+import com.liferay.account.exception.NoSuchEntryException;
 import com.liferay.account.model.AccountEntry;
 import com.liferay.account.service.AccountEntryLocalService;
 import com.liferay.object.exception.ObjectDefinitionAccountEntryRestrictedException;
@@ -95,6 +96,17 @@ public class ObjectEntryModelListener extends BaseModelListener<ObjectEntry> {
 			return;
 		}
 
+		long accountEntryId = GetterUtil.getLong(
+			values.get(objectField.getName()));
+
+		if (_accountEntryLocalService.fetchAccountEntry(accountEntryId) ==
+				null) {
+
+			throw new NoSuchEntryException(
+				StringBundler.concat(
+					"The account entry ", accountEntryId, " does not exist"));
+		}
+
 		List<AccountEntry> accountEntries =
 			_accountEntryLocalService.getUserAccountEntries(
 				userId, AccountConstants.PARENT_ACCOUNT_ENTRY_ID_DEFAULT, null,
@@ -105,9 +117,6 @@ public class ObjectEntryModelListener extends BaseModelListener<ObjectEntry> {
 				WorkflowConstants.STATUS_APPROVED, QueryUtil.ALL_POS,
 				QueryUtil.ALL_POS);
 
-		long accountEntryId = GetterUtil.getLong(
-			values.get(objectField.getName()));
-
 		for (AccountEntry accountEntry : accountEntries) {
 			if (accountEntryId == accountEntry.getAccountEntryId()) {
 				return;
@@ -116,9 +125,8 @@ public class ObjectEntryModelListener extends BaseModelListener<ObjectEntry> {
 
 		throw new ObjectDefinitionAccountEntryRestrictedException(
 			StringBundler.concat(
-				"The account entry ", accountEntryId,
-				" does not exist or the user ", userId,
-				" does not belong to it"));
+				"The user ", userId, " does not belong to the account ",
+				accountEntryId));
 	}
 
 	@Reference
