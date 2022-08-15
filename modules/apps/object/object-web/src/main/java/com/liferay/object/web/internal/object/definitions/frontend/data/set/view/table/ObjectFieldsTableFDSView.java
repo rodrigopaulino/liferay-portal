@@ -51,6 +51,10 @@ public class ObjectFieldsTableFDSView extends BaseTableFDSView {
 			"required", "mandatory",
 			fdsTableSchemaField -> fdsTableSchemaField.setContentRenderer(
 				"boolean")
+		).add(
+			"system", "source",
+			fdsTableSchemaField -> fdsTableSchemaField.setContentRenderer(
+				"objectFieldSourceDataRenderer")
 		).build();
 	}
 
