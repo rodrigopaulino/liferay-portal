@@ -500,8 +500,8 @@ public class ObjectEntryLocalServiceImpl
 			_getExtensionDynamicObjectDefinitionTable(
 				objectDefinition.getObjectDefinitionId());
 
-		Expression<?>[] selectExpressions =
-			extensionDynamicObjectDefinitionTable.getSelectExpressions();
+		Expression<?>[] selectExpressions = _getSelectExpressions(
+			extensionDynamicObjectDefinitionTable);
 
 		List<Object[]> rows = _list(
 			DSLQueryFactoryUtil.selectDistinct(
