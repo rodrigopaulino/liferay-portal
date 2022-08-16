@@ -38,7 +38,7 @@ import org.osgi.service.component.annotations.Deactivate;
 public class DTOMapperImpl implements DTOMapper {
 
 	@Override
-	public String getInternalDTOClassNameFrom(String externalDTOClassName) {
+	public String toInternalDTOClassName(String externalDTOClassName) {
 		return _externalInternalDTOClassNameMap.get(externalDTOClassName);
 	}
 

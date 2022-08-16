@@ -152,7 +152,7 @@ public class ObjectEntryExtensionProvider implements ExtensionProvider {
 	private ObjectDefinition _getObjectDefinition(
 		long companyId, String className) {
 
-		String internalDTOClassName = _dtoMapper.getInternalDTOClassNameFrom(
+		String internalDTOClassName = _dtoMapper.toInternalDTOClassName(
 			className);
 
 		if (internalDTOClassName == null) {

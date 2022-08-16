@@ -19,6 +19,6 @@ package com.liferay.portal.vulcan.dto.converter;
  */
 public interface DTOMapper {
 
-	public String getInternalDTOClassNameFrom(String externalDTOClassName);
+	public String toInternalDTOClassName(String externalDTOClassName);
 
 }
