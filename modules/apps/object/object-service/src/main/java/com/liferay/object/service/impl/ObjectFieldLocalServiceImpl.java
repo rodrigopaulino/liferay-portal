@@ -485,44 +485,23 @@ public class ObjectFieldLocalServiceImpl
 			List<ObjectFieldSetting> objectFieldSettings)
 		throws PortalException {
 
-		_validateLabel(labelMap);
-
 		ObjectField oldObjectField = objectFieldPersistence.findByPrimaryKey(
 			objectFieldId);
 
 		ObjectField newObjectField = (ObjectField)oldObjectField.clone();
 
-		ObjectDefinition objectDefinition =
-			_objectDefinitionPersistence.findByPrimaryKey(
-				newObjectField.getObjectDefinitionId());
-
-		if (objectDefinition.isSystem() &&
-			!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-135404"))) {
-
-			throw new UnsupportedOperationException();
-		}
-
+		_validateDefaultValue(
+			businessType, defaultValue, listTypeDefinitionId, state);
 		_validateExternalReferenceCode(
 			newObjectField.getObjectFieldId(), newObjectField.getCompanyId(),
 			externalReferenceCode, newObjectField.getObjectDefinitionId());
-
-		newObjectField.setExternalReferenceCode(externalReferenceCode);
-		newObjectField.setLabelMap(labelMap, LocaleUtil.getSiteDefault());
-
-		if (objectDefinition.isApproved()) {
-			newObjectField = objectFieldPersistence.update(newObjectField);
-
-			_addOrUpdateObjectFieldSettings(
-				newObjectField, oldObjectField, objectFieldSettings);
-
-			return newObjectField;
-		}
-
-		_validateDefaultValue(
-			businessType, defaultValue, listTypeDefinitionId, state);
 		_validateIndexed(
 			businessType, dbType, indexed, indexedAsKeyword, indexedLanguageId);
-		_validateState(required, state);
+		_validateLabel(labelMap);
+
+		ObjectDefinition objectDefinition =
+			_objectDefinitionPersistence.findByPrimaryKey(
+				newObjectField.getObjectDefinitionId());
 
 		if (Validator.isNotNull(newObjectField.getRelationshipType())) {
 			if (!Objects.equals(newObjectField.getDBType(), dbType) ||
@@ -535,6 +514,26 @@ public class ObjectFieldLocalServiceImpl
 		}
 		else {
 			_validateName(objectFieldId, objectDefinition, name, false);
+		}
+
+		_validateState(required, state);
+
+		if (objectDefinition.isSystem() &&
+			!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-135404"))) {
+
+			throw new UnsupportedOperationException();
+		}
+
+		newObjectField.setExternalReferenceCode(externalReferenceCode);
+		newObjectField.setLabelMap(labelMap, LocaleUtil.getSiteDefault());
+
+		if (objectDefinition.isApproved()) {
+			newObjectField = objectFieldPersistence.update(newObjectField);
+
+			_addOrUpdateObjectFieldSettings(
+				newObjectField, oldObjectField, objectFieldSettings);
+
+			return newObjectField;
 		}
 
 		_setBusinessTypeAndDBType(businessType, dbType, newObjectField);
