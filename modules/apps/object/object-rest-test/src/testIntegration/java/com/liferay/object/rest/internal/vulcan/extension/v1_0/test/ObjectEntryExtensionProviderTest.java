@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.object.rest.internal.extension.v1_0.test;
+package com.liferay.object.rest.internal.vulcan.extension.v1_0.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
 import com.liferay.headless.admin.user.dto.v1_0.UserAccount;

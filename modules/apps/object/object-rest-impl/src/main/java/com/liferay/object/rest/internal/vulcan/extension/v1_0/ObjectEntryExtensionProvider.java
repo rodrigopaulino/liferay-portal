@@ -12,7 +12,7 @@
  * details.
  */
 
-package com.liferay.object.rest.internal.extension.v1_0;
+package com.liferay.object.rest.internal.vulcan.extension.v1_0;
 
 import com.liferay.object.field.business.type.ObjectFieldBusinessType;
 import com.liferay.object.field.business.type.ObjectFieldBusinessTypeTracker;
