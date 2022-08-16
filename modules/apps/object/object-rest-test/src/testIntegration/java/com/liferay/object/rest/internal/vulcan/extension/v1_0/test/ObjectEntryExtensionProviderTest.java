@@ -81,16 +81,16 @@ public class ObjectEntryExtensionProviderTest {
 
 		_addCustomObjectField(
 			objectDefinition.getObjectDefinitionId(), "Boolean", "Boolean",
-			"booleanField", false);
+			"boolean", false);
 		_addCustomObjectField(
-			objectDefinition.getObjectDefinitionId(), "Date", "Date",
-			"dateField", true);
+			objectDefinition.getObjectDefinitionId(), "Date", "Date", "date",
+			true);
 		_addCustomObjectField(
 			objectDefinition.getObjectDefinitionId(), "Decimal", "Double",
-			"decimalField", false);
+			"decimal", false);
 		_addCustomObjectField(
 			objectDefinition.getObjectDefinitionId(), "PrecisionDecimal",
-			"BigDecimal", "precisionDecimalField", true);
+			"BigDecimal", "precisionDecimal", true);
 
 		_user = UserTestUtil.addUser();
 	}
@@ -110,18 +110,17 @@ public class ObjectEntryExtensionProviderTest {
 				TestPropsValues.getCompanyId(), UserAccount.class.getName());
 
 		_assertPropertyDefinition(
-			"booleanField", PropertyDefinition.PropertyType.BOOLEAN, false,
-			extendedPropertyDefinitions.get("booleanField"));
+			"boolean", PropertyDefinition.PropertyType.BOOLEAN, false,
+			extendedPropertyDefinitions.get("boolean"));
 		_assertPropertyDefinition(
-			"dateField", PropertyDefinition.PropertyType.DATE_TIME, true,
-			extendedPropertyDefinitions.get("dateField"));
+			"date", PropertyDefinition.PropertyType.DATE_TIME, true,
+			extendedPropertyDefinitions.get("date"));
 		_assertPropertyDefinition(
-			"decimalField", PropertyDefinition.PropertyType.DOUBLE, false,
-			extendedPropertyDefinitions.get("decimalField"));
+			"decimal", PropertyDefinition.PropertyType.DOUBLE, false,
+			extendedPropertyDefinitions.get("decimal"));
 		_assertPropertyDefinition(
-			"precisionDecimalField",
-			PropertyDefinition.PropertyType.BIG_DECIMAL, true,
-			extendedPropertyDefinitions.get("precisionDecimalField"));
+			"precisionDecimal", PropertyDefinition.PropertyType.BIG_DECIMAL,
+			true, extendedPropertyDefinitions.get("precisionDecimal"));
 	}
 
 	@Test
@@ -173,24 +172,24 @@ public class ObjectEntryExtensionProviderTest {
 		_testSetAndGetExtendedProperties(
 			userAccount,
 			HashMapBuilder.<String, Serializable>put(
-				"booleanField", true
+				"boolean", true
 			).put(
-				"dateField", "2010-12-25"
+				"date", "2010-12-25"
 			).put(
-				"decimalField", 1.2
+				"decimal", 1.2
 			).put(
-				"precisionDecimalField", 100.5
+				"precisionDecimal", 100.5
 			).build());
 		_testSetAndGetExtendedProperties(
 			userAccount,
 			HashMapBuilder.<String, Serializable>put(
-				"booleanField", false
+				"boolean", false
 			).put(
-				"dateField", "2020-07-30"
+				"date", "2020-07-30"
 			).put(
-				"decimalField", 10.8
+				"decimal", 10.8
 			).put(
-				"precisionDecimalField", 20.55
+				"precisionDecimal", 20.55
 			).build());
 	}
 
@@ -233,24 +232,24 @@ public class ObjectEntryExtensionProviderTest {
 				userAccount);
 
 		Assert.assertEquals(
-			values.get("booleanField"), extendedProperties.get("booleanField"));
+			values.get("boolean"), extendedProperties.get("boolean"));
 
 		Date date = DateUtil.parseDate(
-			"yyyy-MM-dd", String.valueOf(values.get("dateField")),
+			"yyyy-MM-dd", String.valueOf(values.get("date")),
 			LocaleUtil.getSiteDefault());
 
 		Assert.assertEquals(
-			new Timestamp(date.getTime()), extendedProperties.get("dateField"));
+			new Timestamp(date.getTime()), extendedProperties.get("date"));
 
 		Assert.assertEquals(
-			values.get("decimalField"), extendedProperties.get("decimalField"));
+			values.get("decimal"), extendedProperties.get("decimal"));
 
 		BigDecimal bigDecimal = new BigDecimal(
-			String.valueOf(values.get("precisionDecimalField")));
+			String.valueOf(values.get("precisionDecimal")));
 
 		Assert.assertEquals(
 			bigDecimal.setScale(16),
-			extendedProperties.get("precisionDecimalField"));
+			extendedProperties.get("precisionDecimal"));
 	}
 
 	@Inject
