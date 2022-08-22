@@ -15,6 +15,7 @@
 package com.liferay.notification.service.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
+import com.liferay.notification.constants.NotificationQueueEntryConstants;
 import com.liferay.notification.model.NotificationQueueEntry;
 import com.liferay.notification.model.NotificationTemplate;
 import com.liferay.notification.service.NotificationQueueEntryLocalService;
@@ -47,7 +48,43 @@ public class NotificationQueueEntryLocalServiceTest {
 		new LiferayIntegrationTestRule();
 
 	@Test
-	public void testNotificationQueueEntry() throws Exception {
+	public void testDeleteNotificationQueueEntry() throws Exception {
+		NotificationQueueEntry notificationQueueEntry =
+			_addNotificationQueueEntry();
+
+		_notificationQueueEntryLocalService.deleteNotificationQueueEntry(
+			notificationQueueEntry.getNotificationQueueEntryId());
+
+		Assert.assertEquals(
+			0,
+			_notificationQueueEntryLocalService.
+				getNotificationQueueEntriesCount());
+	}
+
+	@Test
+	public void testResendNotificationQueueEntry() throws Exception {
+		NotificationQueueEntry notificationQueueEntry =
+			_addNotificationQueueEntry();
+
+		notificationQueueEntry = _notificationQueueEntryLocalService.updateSent(
+			notificationQueueEntry.getNotificationQueueEntryId(), true);
+
+		Assert.assertEquals(
+			NotificationQueueEntryConstants.STATUS_SENT,
+			notificationQueueEntry.getStatus());
+
+		notificationQueueEntry =
+			_notificationQueueEntryLocalService.resendNotificationQueueEntry(
+				notificationQueueEntry.getNotificationQueueEntryId());
+
+		Assert.assertEquals(
+			NotificationQueueEntryConstants.STATUS_UNSENT,
+			notificationQueueEntry.getStatus());
+	}
+
+	private NotificationQueueEntry _addNotificationQueueEntry()
+		throws Exception {
+
 		NotificationTemplate notificationTemplate =
 			_notificationTemplateLocalService.addNotificationTemplate(
 				TestPropsValues.getUserId(), 0, RandomTestUtil.randomString(),
@@ -64,23 +101,17 @@ public class NotificationQueueEntryLocalServiceTest {
 					LocaleUtil.US, RandomTestUtil.randomString()),
 				Collections.emptyList());
 
-		NotificationQueueEntry notificationQueueEntry =
-			_notificationQueueEntryLocalService.addNotificationQueueEntry(
-				TestPropsValues.getUserId(),
-				notificationTemplate.getNotificationTemplateId(),
-				notificationTemplate.getBcc(),
-				notificationTemplate.getBody(LocaleUtil.US),
-				notificationTemplate.getCc(), RandomTestUtil.randomString(), 0,
-				notificationTemplate.getFrom(),
-				notificationTemplate.getFromName(LocaleUtil.US), 0,
-				notificationTemplate.getSubject(LocaleUtil.US),
-				notificationTemplate.getTo(LocaleUtil.US),
-				RandomTestUtil.randomString(), Collections.emptyList());
-
-		Assert.assertNotNull(notificationQueueEntry);
-		Assert.assertNotNull(
-			_notificationQueueEntryLocalService.fetchNotificationQueueEntry(
-				notificationQueueEntry.getNotificationQueueEntryId()));
+		return _notificationQueueEntryLocalService.addNotificationQueueEntry(
+			TestPropsValues.getUserId(),
+			notificationTemplate.getNotificationTemplateId(),
+			notificationTemplate.getBcc(),
+			notificationTemplate.getBody(LocaleUtil.US),
+			notificationTemplate.getCc(), RandomTestUtil.randomString(), 0,
+			notificationTemplate.getFrom(),
+			notificationTemplate.getFromName(LocaleUtil.US), 0,
+			notificationTemplate.getSubject(LocaleUtil.US),
+			notificationTemplate.getTo(LocaleUtil.US),
+			RandomTestUtil.randomString(), Collections.emptyList());
 	}
 
 	@Inject

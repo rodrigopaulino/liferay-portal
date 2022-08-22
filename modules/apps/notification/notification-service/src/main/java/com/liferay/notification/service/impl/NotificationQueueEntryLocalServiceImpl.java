@@ -93,7 +93,7 @@ public class NotificationQueueEntryLocalServiceImpl
 		notificationQueueEntry.setTo(to);
 		notificationQueueEntry.setToName(toName);
 		notificationQueueEntry.setStatus(
-			NotificationQueueEntryConstants.STATUS_SENT);
+			NotificationQueueEntryConstants.STATUS_UNSENT);
 
 		notificationQueueEntry = notificationQueueEntryPersistence.update(
 			notificationQueueEntry);
