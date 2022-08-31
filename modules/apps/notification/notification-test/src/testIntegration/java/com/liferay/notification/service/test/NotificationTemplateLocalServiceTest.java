@@ -191,6 +191,11 @@ public class NotificationTemplateLocalServiceTest {
 
 	@Test
 	public void testSendNotificationTemplate() throws Exception {
+		PropsUtil.addProperties(
+			UnicodePropertiesBuilder.setProperty(
+				"feature.flag.LPS-159052", "true"
+			).build());
+
 		String emailTerm = "[%emailTerm%]";
 		String term = "[%term%]";
 
@@ -233,6 +238,11 @@ public class NotificationTemplateLocalServiceTest {
 			notificationQueueEntry.getStatus());
 		Assert.assertEquals(termValue, notificationQueueEntry.getSubject());
 		Assert.assertEquals(emailTermValue, notificationQueueEntry.getTo());
+
+		PropsUtil.addProperties(
+			UnicodePropertiesBuilder.setProperty(
+				"feature.flag.LPS-159052", "false"
+			).build());
 	}
 
 	private NotificationTemplate _addNotificationTemplate(
