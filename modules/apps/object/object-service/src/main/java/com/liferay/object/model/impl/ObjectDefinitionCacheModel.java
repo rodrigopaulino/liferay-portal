@@ -78,7 +78,7 @@ public class ObjectDefinitionCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(61);
+		StringBundler sb = new StringBundler(63);
 
 		sb.append("{mvccVersion=");
 		sb.append(mvccVersion);
@@ -116,6 +116,8 @@ public class ObjectDefinitionCacheModel
 		sb.append(enableCategorization);
 		sb.append(", enableComments=");
 		sb.append(enableComments);
+		sb.append(", enableEntryHistory=");
+		sb.append(enableEntryHistory);
 		sb.append(", name=");
 		sb.append(name);
 		sb.append(", panelAppOrder=");
@@ -214,6 +216,7 @@ public class ObjectDefinitionCacheModel
 
 		objectDefinitionImpl.setEnableCategorization(enableCategorization);
 		objectDefinitionImpl.setEnableComments(enableComments);
+		objectDefinitionImpl.setEnableEntryHistory(enableEntryHistory);
 
 		if (name == null) {
 			objectDefinitionImpl.setName("");
@@ -313,6 +316,8 @@ public class ObjectDefinitionCacheModel
 		enableCategorization = objectInput.readBoolean();
 
 		enableComments = objectInput.readBoolean();
+
+		enableEntryHistory = objectInput.readBoolean();
 		name = objectInput.readUTF();
 		panelAppOrder = objectInput.readUTF();
 		panelCategoryKey = objectInput.readUTF();
@@ -392,6 +397,8 @@ public class ObjectDefinitionCacheModel
 		objectOutput.writeBoolean(enableCategorization);
 
 		objectOutput.writeBoolean(enableComments);
+
+		objectOutput.writeBoolean(enableEntryHistory);
 
 		if (name == null) {
 			objectOutput.writeUTF("");
@@ -476,6 +483,7 @@ public class ObjectDefinitionCacheModel
 	public String className;
 	public boolean enableCategorization;
 	public boolean enableComments;
+	public boolean enableEntryHistory;
 	public String name;
 	public String panelAppOrder;
 	public String panelCategoryKey;
