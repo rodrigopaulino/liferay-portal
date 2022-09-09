@@ -997,6 +997,16 @@ public abstract class BaseObjectDefinitionResourceTestCase {
 			}
 
 			if (Objects.equals(
+					"enableEntryHistory", additionalAssertFieldName)) {
+
+				if (objectDefinition.getEnableEntryHistory() == null) {
+					valid = false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
 					"externalReferenceCode", additionalAssertFieldName)) {
 
 				if (objectDefinition.getExternalReferenceCode() == null) {
@@ -1333,6 +1343,19 @@ public abstract class BaseObjectDefinitionResourceTestCase {
 				if (!Objects.deepEquals(
 						objectDefinition1.getEnableComments(),
 						objectDefinition2.getEnableComments())) {
+
+					return false;
+				}
+
+				continue;
+			}
+
+			if (Objects.equals(
+					"enableEntryHistory", additionalAssertFieldName)) {
+
+				if (!Objects.deepEquals(
+						objectDefinition1.getEnableEntryHistory(),
+						objectDefinition2.getEnableEntryHistory())) {
 
 					return false;
 				}
@@ -1752,6 +1775,11 @@ public abstract class BaseObjectDefinitionResourceTestCase {
 				"Invalid entity field " + entityFieldName);
 		}
 
+		if (entityFieldName.equals("enableEntryHistory")) {
+			throw new IllegalArgumentException(
+				"Invalid entity field " + entityFieldName);
+		}
+
 		if (entityFieldName.equals("externalReferenceCode")) {
 			sb.append("'");
 			sb.append(
@@ -1918,6 +1946,7 @@ public abstract class BaseObjectDefinitionResourceTestCase {
 				dateModified = RandomTestUtil.nextDate();
 				enableCategorization = RandomTestUtil.randomBoolean();
 				enableComments = RandomTestUtil.randomBoolean();
+				enableEntryHistory = RandomTestUtil.randomBoolean();
 				externalReferenceCode = StringUtil.toLowerCase(
 					RandomTestUtil.randomString());
 				id = RandomTestUtil.randomLong();
