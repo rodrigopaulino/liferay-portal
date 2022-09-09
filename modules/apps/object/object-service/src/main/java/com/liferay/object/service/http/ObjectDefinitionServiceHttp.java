@@ -374,6 +374,7 @@ public class ObjectDefinitionServiceHttp {
 				long descriptionObjectFieldId, long titleObjectFieldId,
 				boolean accountEntryRestricted, boolean active,
 				boolean enableCategorization, boolean enableComments,
+				boolean enableEntryHistory,
 				java.util.Map<java.util.Locale, String> labelMap, String name,
 				String panelAppOrder, String panelCategoryKey, boolean portlet,
 				java.util.Map<java.util.Locale, String> pluralLabelMap,
@@ -390,9 +391,9 @@ public class ObjectDefinitionServiceHttp {
 				methodKey, externalReferenceCode, objectDefinitionId,
 				accountEntryRestrictedObjectFieldId, descriptionObjectFieldId,
 				titleObjectFieldId, accountEntryRestricted, active,
-				enableCategorization, enableComments, labelMap, name,
-				panelAppOrder, panelCategoryKey, portlet, pluralLabelMap,
-				scope);
+				enableCategorization, enableComments, enableEntryHistory,
+				labelMap, name, panelAppOrder, panelCategoryKey, portlet,
+				pluralLabelMap, scope);
 
 			Object returnObj = null;
 
@@ -493,8 +494,8 @@ public class ObjectDefinitionServiceHttp {
 		_updateCustomObjectDefinitionParameterTypes8 = new Class[] {
 			String.class, long.class, long.class, long.class, long.class,
 			boolean.class, boolean.class, boolean.class, boolean.class,
-			java.util.Map.class, String.class, String.class, String.class,
-			boolean.class, java.util.Map.class, String.class
+			boolean.class, java.util.Map.class, String.class, String.class,
+			String.class, boolean.class, java.util.Map.class, String.class
 		};
 	private static final Class<?>[] _updateTitleObjectFieldIdParameterTypes9 =
 		new Class[] {long.class, long.class};

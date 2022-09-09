@@ -559,6 +559,7 @@ public class ObjectDefinitionLocalServiceWrapper
 				long descriptionObjectFieldId, long titleObjectFieldId,
 				boolean accountEntryRestricted, boolean active,
 				boolean enableCategorization, boolean enableComments,
+				boolean enableEntryHistory,
 				java.util.Map<java.util.Locale, String> labelMap, String name,
 				String panelAppOrder, String panelCategoryKey, boolean portlet,
 				java.util.Map<java.util.Locale, String> pluralLabelMap,
@@ -569,8 +570,9 @@ public class ObjectDefinitionLocalServiceWrapper
 			externalReferenceCode, objectDefinitionId,
 			accountEntryRestrictedObjectFieldId, descriptionObjectFieldId,
 			titleObjectFieldId, accountEntryRestricted, active,
-			enableCategorization, enableComments, labelMap, name, panelAppOrder,
-			panelCategoryKey, portlet, pluralLabelMap, scope);
+			enableCategorization, enableComments, enableEntryHistory, labelMap,
+			name, panelAppOrder, panelCategoryKey, portlet, pluralLabelMap,
+			scope);
 	}
 
 	/**
