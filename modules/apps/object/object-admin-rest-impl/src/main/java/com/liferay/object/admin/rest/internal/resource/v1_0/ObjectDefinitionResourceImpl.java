@@ -188,28 +188,17 @@ public class ObjectDefinitionResourceImpl
 					objectDefinition.getTitleObjectFieldId()));
 		}
 
-		if (!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-158672"))) {
-			return _toObjectDefinition(
-				_objectDefinitionService.updateCustomObjectDefinition(
-					objectDefinitionId,
-					GetterUtil.getLong(
-						objectDefinition.
-							getAccountEntryRestrictedObjectFieldId()),
-					0,
-					GetterUtil.get(objectDefinition.getTitleObjectFieldId(), 0),
-					GetterUtil.getBoolean(
-						objectDefinition.getAccountEntryRestricted()),
-					GetterUtil.getBoolean(objectDefinition.getActive(), true),
-					true, false, objectDefinition.getEnableEntryHistory(),
-					LocalizedMapUtil.getLocalizedMap(
-						objectDefinition.getLabel()),
-					objectDefinition.getName(),
-					objectDefinition.getPanelAppOrder(),
-					objectDefinition.getPanelCategoryKey(),
-					objectDefinition.getPortlet(),
-					LocalizedMapUtil.getLocalizedMap(
-						objectDefinition.getPluralLabel()),
-					objectDefinition.getScope()));
+		boolean enableCategorization = true;
+		boolean enableComments = false;
+		boolean enableEntryHistory = false;
+
+		if (GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-158672"))) {
+			enableCategorization = objectDefinition.getEnableCategorization();
+			enableComments = objectDefinition.getEnableComments();
+		}
+
+		if (GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-158473"))) {
+			enableEntryHistory = objectDefinition.getEnableEntryHistory();
 		}
 
 		return _toObjectDefinition(
@@ -221,9 +210,7 @@ public class ObjectDefinitionResourceImpl
 				GetterUtil.getBoolean(
 					objectDefinition.getAccountEntryRestricted()),
 				GetterUtil.getBoolean(objectDefinition.getActive(), true),
-				objectDefinition.getEnableCategorization(),
-				objectDefinition.getEnableComments(),
-				objectDefinition.getEnableEntryHistory(),
+				enableCategorization, enableComments, enableEntryHistory,
 				LocalizedMapUtil.getLocalizedMap(objectDefinition.getLabel()),
 				objectDefinition.getName(), objectDefinition.getPanelAppOrder(),
 				objectDefinition.getPanelCategoryKey(),
@@ -305,7 +292,13 @@ public class ObjectDefinitionResourceImpl
 					enableComments = objectDefinition.getEnableComments();
 				}
 
-				enableEntryHistory = objectDefinition.getEnableEntryHistory();
+				if (GetterUtil.getBoolean(
+						PropsUtil.get("feature.flag.LPS-158473"))) {
+
+					enableEntryHistory =
+						objectDefinition.getEnableEntryHistory();
+				}
+
 				id = objectDefinition.getObjectDefinitionId();
 				label = LocalizedMapUtil.getLanguageIdMap(
 					objectDefinition.getLabelMap());
