@@ -1102,6 +1102,7 @@ public class ObjectDefinitionLocalServiceImpl
 			objectDefinition.setEnableComments(false);
 		}
 
+		objectDefinition.setEnableEntryHistory(enableEntryHistory);
 		objectDefinition.setLabelMap(labelMap, LocaleUtil.getSiteDefault());
 		objectDefinition.setPanelAppOrder(panelAppOrder);
 		objectDefinition.setPanelCategoryKey(panelCategoryKey);
