@@ -25,6 +25,7 @@ import com.liferay.object.internal.upgrade.v3_17_0.util.ObjectStateTable;
 import com.liferay.object.internal.upgrade.v3_17_0.util.ObjectStateTransitionTable;
 import com.liferay.object.internal.upgrade.v3_19_0.util.ObjectFilterTable;
 import com.liferay.object.internal.upgrade.v3_22_0.ObjectFieldUpgradeProcess;
+import com.liferay.object.internal.upgrade.v3_23_0.ObjectLayoutTabUpgradeProcess;
 import com.liferay.object.internal.upgrade.v3_3_0.util.ObjectViewFilterColumnTable;
 import com.liferay.object.internal.upgrade.v3_9_0.ObjectLayoutBoxUpgradeProcess;
 import com.liferay.portal.kernel.upgrade.BaseExternalReferenceCodeUpgradeProcess;
@@ -205,7 +206,8 @@ public class ObjectServiceUpgradeStepRegistrator
 		registry.register(
 			"3.22.0", "3.23.0",
 			UpgradeProcessFactory.addColumns(
-				"ObjectDefinition", "enableEntryHistory BOOLEAN"));
+				"ObjectDefinition", "enableEntryHistory BOOLEAN"),
+			new ObjectLayoutTabUpgradeProcess());
 	}
 
 	@Reference
