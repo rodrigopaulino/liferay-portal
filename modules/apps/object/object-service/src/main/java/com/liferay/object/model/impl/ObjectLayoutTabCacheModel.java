@@ -78,7 +78,7 @@ public class ObjectLayoutTabCacheModel
 
 	@Override
 	public String toString() {
-		StringBundler sb = new StringBundler(25);
+		StringBundler sb = new StringBundler(27);
 
 		sb.append("{mvccVersion=");
 		sb.append(mvccVersion);
@@ -104,6 +104,8 @@ public class ObjectLayoutTabCacheModel
 		sb.append(name);
 		sb.append(", priority=");
 		sb.append(priority);
+		sb.append(", type=");
+		sb.append(type);
 		sb.append("}");
 
 		return sb.toString();
@@ -159,6 +161,13 @@ public class ObjectLayoutTabCacheModel
 
 		objectLayoutTabImpl.setPriority(priority);
 
+		if (type == null) {
+			objectLayoutTabImpl.setType("");
+		}
+		else {
+			objectLayoutTabImpl.setType(type);
+		}
+
 		objectLayoutTabImpl.resetOriginalValues();
 
 		return objectLayoutTabImpl;
@@ -184,6 +193,7 @@ public class ObjectLayoutTabCacheModel
 		name = objectInput.readUTF();
 
 		priority = objectInput.readInt();
+		type = objectInput.readUTF();
 	}
 
 	@Override
@@ -225,6 +235,13 @@ public class ObjectLayoutTabCacheModel
 		}
 
 		objectOutput.writeInt(priority);
+
+		if (type == null) {
+			objectOutput.writeUTF("");
+		}
+		else {
+			objectOutput.writeUTF(type);
+		}
 	}
 
 	public long mvccVersion;
@@ -239,5 +256,6 @@ public class ObjectLayoutTabCacheModel
 	public long objectRelationshipId;
 	public String name;
 	public int priority;
+	public String type;
 
 }

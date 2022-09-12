@@ -141,6 +141,8 @@ public class ObjectLayoutTabPersistenceTest {
 
 		newObjectLayoutTab.setPriority(RandomTestUtil.nextInt());
 
+		newObjectLayoutTab.setType(RandomTestUtil.randomString());
+
 		_objectLayoutTabs.add(_persistence.update(newObjectLayoutTab));
 
 		ObjectLayoutTab existingObjectLayoutTab = _persistence.findByPrimaryKey(
@@ -180,6 +182,8 @@ public class ObjectLayoutTabPersistenceTest {
 		Assert.assertEquals(
 			existingObjectLayoutTab.getPriority(),
 			newObjectLayoutTab.getPriority());
+		Assert.assertEquals(
+			existingObjectLayoutTab.getType(), newObjectLayoutTab.getType());
 	}
 
 	@Test
@@ -243,7 +247,7 @@ public class ObjectLayoutTabPersistenceTest {
 			"objectLayoutTabId", true, "companyId", true, "userId", true,
 			"userName", true, "createDate", true, "modifiedDate", true,
 			"objectLayoutId", true, "objectRelationshipId", true, "name", true,
-			"priority", true);
+			"priority", true, "type", true);
 	}
 
 	@Test
@@ -463,6 +467,8 @@ public class ObjectLayoutTabPersistenceTest {
 		objectLayoutTab.setName(RandomTestUtil.randomString());
 
 		objectLayoutTab.setPriority(RandomTestUtil.nextInt());
+
+		objectLayoutTab.setType(RandomTestUtil.randomString());
 
 		_objectLayoutTabs.add(_persistence.update(objectLayoutTab));
 

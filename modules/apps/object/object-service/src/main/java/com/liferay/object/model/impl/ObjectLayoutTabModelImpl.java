@@ -86,7 +86,7 @@ public class ObjectLayoutTabModelImpl
 		{"createDate", Types.TIMESTAMP}, {"modifiedDate", Types.TIMESTAMP},
 		{"objectLayoutId", Types.BIGINT},
 		{"objectRelationshipId", Types.BIGINT}, {"name", Types.VARCHAR},
-		{"priority", Types.INTEGER}
+		{"priority", Types.INTEGER}, {"type_", Types.VARCHAR}
 	};
 
 	public static final Map<String, Integer> TABLE_COLUMNS_MAP =
@@ -105,10 +105,11 @@ public class ObjectLayoutTabModelImpl
 		TABLE_COLUMNS_MAP.put("objectRelationshipId", Types.BIGINT);
 		TABLE_COLUMNS_MAP.put("name", Types.VARCHAR);
 		TABLE_COLUMNS_MAP.put("priority", Types.INTEGER);
+		TABLE_COLUMNS_MAP.put("type_", Types.VARCHAR);
 	}
 
 	public static final String TABLE_SQL_CREATE =
-		"create table ObjectLayoutTab (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,objectLayoutTabId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,objectLayoutId LONG,objectRelationshipId LONG,name STRING null,priority INTEGER)";
+		"create table ObjectLayoutTab (mvccVersion LONG default 0 not null,uuid_ VARCHAR(75) null,objectLayoutTabId LONG not null primary key,companyId LONG,userId LONG,userName VARCHAR(75) null,createDate DATE null,modifiedDate DATE null,objectLayoutId LONG,objectRelationshipId LONG,name STRING null,priority INTEGER,type_ VARCHAR(75) null)";
 
 	public static final String TABLE_SQL_DROP = "drop table ObjectLayoutTab";
 
@@ -325,6 +326,10 @@ public class ObjectLayoutTabModelImpl
 		attributeSetterBiConsumers.put(
 			"priority",
 			(BiConsumer<ObjectLayoutTab, Integer>)ObjectLayoutTab::setPriority);
+		attributeGetterFunctions.put("type", ObjectLayoutTab::getType);
+		attributeSetterBiConsumers.put(
+			"type",
+			(BiConsumer<ObjectLayoutTab, String>)ObjectLayoutTab::setType);
 
 		_attributeGetterFunctions = Collections.unmodifiableMap(
 			attributeGetterFunctions);
@@ -675,6 +680,26 @@ public class ObjectLayoutTabModelImpl
 		_priority = priority;
 	}
 
+	@JSON
+	@Override
+	public String getType() {
+		if (_type == null) {
+			return "";
+		}
+		else {
+			return _type;
+		}
+	}
+
+	@Override
+	public void setType(String type) {
+		if (_columnOriginalValues == Collections.EMPTY_MAP) {
+			_setColumnOriginalValues();
+		}
+
+		_type = type;
+	}
+
 	@Override
 	public StagedModelType getStagedModelType() {
 		return new StagedModelType(
@@ -815,6 +840,7 @@ public class ObjectLayoutTabModelImpl
 		objectLayoutTabImpl.setObjectRelationshipId(getObjectRelationshipId());
 		objectLayoutTabImpl.setName(getName());
 		objectLayoutTabImpl.setPriority(getPriority());
+		objectLayoutTabImpl.setType(getType());
 
 		objectLayoutTabImpl.resetOriginalValues();
 
@@ -849,6 +875,8 @@ public class ObjectLayoutTabModelImpl
 			this.<String>getColumnOriginalValue("name"));
 		objectLayoutTabImpl.setPriority(
 			this.<Integer>getColumnOriginalValue("priority"));
+		objectLayoutTabImpl.setType(
+			this.<String>getColumnOriginalValue("type_"));
 
 		return objectLayoutTabImpl;
 	}
@@ -984,6 +1012,14 @@ public class ObjectLayoutTabModelImpl
 
 		objectLayoutTabCacheModel.priority = getPriority();
 
+		objectLayoutTabCacheModel.type = getType();
+
+		String type = objectLayoutTabCacheModel.type;
+
+		if ((type != null) && (type.length() == 0)) {
+			objectLayoutTabCacheModel.type = null;
+		}
+
 		return objectLayoutTabCacheModel;
 	}
 
@@ -1090,6 +1126,7 @@ public class ObjectLayoutTabModelImpl
 	private String _name;
 	private String _nameCurrentLanguageId;
 	private int _priority;
+	private String _type;
 
 	public <T> T getColumnValue(String columnName) {
 		columnName = _attributeNames.getOrDefault(columnName, columnName);
@@ -1133,6 +1170,7 @@ public class ObjectLayoutTabModelImpl
 			"objectRelationshipId", _objectRelationshipId);
 		_columnOriginalValues.put("name", _name);
 		_columnOriginalValues.put("priority", _priority);
+		_columnOriginalValues.put("type_", _type);
 	}
 
 	private static final Map<String, String> _attributeNames;
@@ -1141,6 +1179,7 @@ public class ObjectLayoutTabModelImpl
 		Map<String, String> attributeNames = new HashMap<>();
 
 		attributeNames.put("uuid_", "uuid");
+		attributeNames.put("type_", "type");
 
 		_attributeNames = Collections.unmodifiableMap(attributeNames);
 	}
@@ -1179,6 +1218,8 @@ public class ObjectLayoutTabModelImpl
 		columnBitmasks.put("name", 1024L);
 
 		columnBitmasks.put("priority", 2048L);
+
+		columnBitmasks.put("type_", 4096L);
 
 		_columnBitmasks = Collections.unmodifiableMap(columnBitmasks);
 	}

@@ -349,6 +349,21 @@ public interface ObjectLayoutTabModel
 	 */
 	public void setPriority(int priority);
 
+	/**
+	 * Returns the type of this object layout tab.
+	 *
+	 * @return the type of this object layout tab
+	 */
+	@AutoEscape
+	public String getType();
+
+	/**
+	 * Sets the type of this object layout tab.
+	 *
+	 * @param type the type of this object layout tab
+	 */
+	public void setType(String type);
+
 	@Override
 	public String[] getAvailableLanguageIds();
 

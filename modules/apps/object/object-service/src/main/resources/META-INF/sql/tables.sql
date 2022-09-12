@@ -198,7 +198,8 @@ create table ObjectLayoutTab (
 	objectLayoutId LONG,
 	objectRelationshipId LONG,
 	name STRING null,
-	priority INTEGER
+	priority INTEGER,
+	type_ VARCHAR(75) null
 );
 
 create table ObjectRelationship (

@@ -300,6 +300,9 @@ components:
                 priority:
                     format: int32
                     type: integer
+                type:
+                    enum: [ fields, history, relationship ]
+                    type: string
         ObjectRelationship:
             properties:
                 actions:

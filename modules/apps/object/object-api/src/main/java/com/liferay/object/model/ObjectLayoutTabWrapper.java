@@ -55,6 +55,7 @@ public class ObjectLayoutTabWrapper
 		attributes.put("objectRelationshipId", getObjectRelationshipId());
 		attributes.put("name", getName());
 		attributes.put("priority", getPriority());
+		attributes.put("type", getType());
 
 		return attributes;
 	}
@@ -132,6 +133,12 @@ public class ObjectLayoutTabWrapper
 
 		if (priority != null) {
 			setPriority(priority);
+		}
+
+		String type = (String)attributes.get("type");
+
+		if (type != null) {
+			setType(type);
 		}
 	}
 
@@ -319,6 +326,16 @@ public class ObjectLayoutTabWrapper
 	@Override
 	public int getPriority() {
 		return model.getPriority();
+	}
+
+	/**
+	 * Returns the type of this object layout tab.
+	 *
+	 * @return the type of this object layout tab
+	 */
+	@Override
+	public String getType() {
+		return model.getType();
 	}
 
 	/**
@@ -534,6 +551,16 @@ public class ObjectLayoutTabWrapper
 	@Override
 	public void setPriority(int priority) {
 		model.setPriority(priority);
+	}
+
+	/**
+	 * Sets the type of this object layout tab.
+	 *
+	 * @param type the type of this object layout tab
+	 */
+	@Override
+	public void setType(String type) {
+		model.setType(type);
 	}
 
 	/**

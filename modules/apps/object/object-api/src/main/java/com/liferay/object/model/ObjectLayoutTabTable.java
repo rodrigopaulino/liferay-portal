@@ -61,6 +61,8 @@ public class ObjectLayoutTabTable extends BaseTable<ObjectLayoutTabTable> {
 		"name", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
 	public final Column<ObjectLayoutTabTable, Integer> priority = createColumn(
 		"priority", Integer.class, Types.INTEGER, Column.FLAG_DEFAULT);
+	public final Column<ObjectLayoutTabTable, String> type = createColumn(
+		"type_", String.class, Types.VARCHAR, Column.FLAG_DEFAULT);
 
 	private ObjectLayoutTabTable() {
 		super("ObjectLayoutTab", ObjectLayoutTabTable::new);
