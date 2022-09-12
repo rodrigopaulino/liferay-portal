@@ -120,6 +120,20 @@ public class ObjectLayoutTabSerDes {
 			sb.append(objectLayoutTab.getPriority());
 		}
 
+		if (objectLayoutTab.getType() != null) {
+			if (sb.length() > 1) {
+				sb.append(", ");
+			}
+
+			sb.append("\"type\": ");
+
+			sb.append("\"");
+
+			sb.append(objectLayoutTab.getType());
+
+			sb.append("\"");
+		}
+
 		sb.append("}");
 
 		return sb.toString();
@@ -176,6 +190,13 @@ public class ObjectLayoutTabSerDes {
 		}
 		else {
 			map.put("priority", String.valueOf(objectLayoutTab.getPriority()));
+		}
+
+		if (objectLayoutTab.getType() == null) {
+			map.put("type", null);
+		}
+		else {
+			map.put("type", String.valueOf(objectLayoutTab.getType()));
 		}
 
 		return map;
@@ -237,6 +258,13 @@ public class ObjectLayoutTabSerDes {
 				if (jsonParserFieldValue != null) {
 					objectLayoutTab.setPriority(
 						Integer.valueOf((String)jsonParserFieldValue));
+				}
+			}
+			else if (Objects.equals(jsonParserFieldName, "type")) {
+				if (jsonParserFieldValue != null) {
+					objectLayoutTab.setType(
+						ObjectLayoutTab.Type.create(
+							(String)jsonParserFieldValue));
 				}
 			}
 		}
