@@ -369,7 +369,7 @@ public class ObjectLayoutLocalServiceImpl
 	private ObjectLayoutTab _addObjectLayoutTab(
 			User user, long objectDefinitionId, long objectLayoutId,
 			long objectRelationshipId, Map<Locale, String> nameMap,
-			int priority, List<ObjectLayoutBox> objectLayoutBoxes)
+			int priority, String type, List<ObjectLayoutBox> objectLayoutBoxes)
 		throws PortalException {
 
 		ObjectLayoutTab objectLayoutTab = _objectLayoutTabPersistence.create(
@@ -382,6 +382,7 @@ public class ObjectLayoutLocalServiceImpl
 		objectLayoutTab.setObjectRelationshipId(objectRelationshipId);
 		objectLayoutTab.setNameMap(nameMap);
 		objectLayoutTab.setPriority(priority);
+		objectLayoutTab.setType(type);
 
 		objectLayoutTab = _objectLayoutTabPersistence.update(objectLayoutTab);
 
@@ -404,6 +405,7 @@ public class ObjectLayoutLocalServiceImpl
 				user, objectDefinitionId, objectLayoutId,
 				objectLayoutTab.getObjectRelationshipId(),
 				objectLayoutTab.getNameMap(), objectLayoutTab.getPriority(),
+				objectLayoutTab.getType(),
 				objectLayoutTab.getObjectLayoutBoxes()));
 	}
 
