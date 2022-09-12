@@ -451,6 +451,7 @@
 		<column name="objectRelationshipId" type="long" />
 		<column localized="true" name="name" type="String" />
 		<column name="priority" type="int" />
+		<column name="type" type="String" />
 
 		<!-- Finder methods -->
 
@@ -807,6 +808,7 @@
 		<exception>ObjectFilter</exception>
 		<exception>ObjectLayoutBoxCategorizationType</exception>
 		<exception>ObjectLayoutColumnSize</exception>
+		<exception>ObjectLayoutTabType</exception>
 		<exception>ObjectRelationshipName</exception>
 		<exception>ObjectRelationshipParameterObjectFieldId</exception>
 		<exception>ObjectRelationshipReverse</exception>
