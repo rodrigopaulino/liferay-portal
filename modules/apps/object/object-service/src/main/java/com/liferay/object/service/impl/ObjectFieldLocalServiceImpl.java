@@ -66,7 +66,6 @@ import com.liferay.portal.kernel.systemevent.SystemEvent;
 import com.liferay.portal.kernel.util.GetterUtil;
 import com.liferay.portal.kernel.util.HashMapBuilder;
 import com.liferay.portal.kernel.util.LocaleUtil;
-import com.liferay.portal.kernel.util.PropsUtil;
 import com.liferay.portal.kernel.util.SetUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
@@ -494,15 +493,24 @@ public class ObjectFieldLocalServiceImpl
 			newObjectField.getObjectFieldId(), newObjectField.getCompanyId(),
 			externalReferenceCode, newObjectField.getObjectDefinitionId());
 
+		ObjectDefinition objectDefinition =
+			_objectDefinitionPersistence.findByPrimaryKey(
+				newObjectField.getObjectDefinitionId());
+
+		if (objectDefinition.isApproved()) {
+			newObjectField = objectFieldPersistence.update(newObjectField);
+
+			_addOrUpdateObjectFieldSettings(
+				newObjectField, oldObjectField, objectFieldSettings);
+
+			return newObjectField;
+		}
+
 		_validateDefaultValue(
 			businessType, defaultValue, listTypeDefinitionId, state);
 		_validateIndexed(
 			businessType, dbType, indexed, indexedAsKeyword, indexedLanguageId);
 		_validateLabel(labelMap);
-
-		ObjectDefinition objectDefinition =
-			_objectDefinitionPersistence.findByPrimaryKey(
-				newObjectField.getObjectDefinitionId());
 
 		if (Validator.isNotNull(newObjectField.getRelationshipType())) {
 			if (!Objects.equals(newObjectField.getDBType(), dbType) ||
@@ -518,12 +526,6 @@ public class ObjectFieldLocalServiceImpl
 		}
 
 		_validateState(required, state);
-
-		if (objectDefinition.isSystem() &&
-			!GetterUtil.getBoolean(PropsUtil.get("feature.flag.LPS-135404"))) {
-
-			throw new UnsupportedOperationException();
-		}
 
 		newObjectField.setExternalReferenceCode(externalReferenceCode);
 		newObjectField.setDefaultValue(defaultValue);
