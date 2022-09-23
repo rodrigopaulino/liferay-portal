@@ -24,6 +24,7 @@ import com.liferay.content.dashboard.web.internal.constants.ContentDashboardPort
 import com.liferay.content.dashboard.web.internal.item.ContentDashboardItem;
 import com.liferay.content.dashboard.web.internal.item.ContentDashboardItemFactory;
 import com.liferay.content.dashboard.web.internal.item.ContentDashboardItemFactoryTracker;
+import com.liferay.content.dashboard.web.internal.item.VersionableContentDashboardItem;
 import com.liferay.content.dashboard.web.internal.util.ContentDashboardGroupUtil;
 import com.liferay.info.item.InfoItemReference;
 import com.liferay.petra.string.StringPool;
@@ -38,6 +39,7 @@ import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.portlet.JSONPortletResponseUtil;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseMVCResourceCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCResourceCommand;
+import com.liferay.portal.kernel.portlet.url.builder.ResourceURLBuilder;
 import com.liferay.portal.kernel.service.GroupLocalService;
 import com.liferay.portal.kernel.service.UserLocalService;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
@@ -127,9 +129,6 @@ public class GetContentDashboardItemInfoMVCResourceCommand
 			JSONPortletResponseUtil.writeJSON(
 				resourceRequest, resourceResponse,
 				JSONUtil.put(
-					"allVersions",
-					_getAllVersionsJSONArray(contentDashboardItem, themeDisplay)
-				).put(
 					"className", _getClassName(contentDashboardItem)
 				).put(
 					"classPK", _getClassPK(contentDashboardItem)
@@ -149,6 +148,26 @@ public class GetContentDashboardItemInfoMVCResourceCommand
 					"fetchSharingCollaboratorsURL",
 					_getFetchSharingCollaboratorsURL(
 						contentDashboardItem, httpServletRequest)
+				).put(
+					"getItemVersionsURL",
+					() -> {
+						if (!(contentDashboardItem instanceof
+								VersionableContentDashboardItem)) {
+
+							return null;
+						}
+
+						return ResourceURLBuilder.createResourceURL(
+							resourceResponse
+						).setParameter(
+							"className", className
+						).setParameter(
+							"classPK", classPK
+						).setResourceID(
+							"/content_dashboard" +
+								"/get_content_dashboard_item_versions"
+						).buildString();
+					}
 				).put(
 					"languageTag", locale.toLanguageTag()
 				).put(
@@ -210,21 +229,6 @@ public class GetContentDashboardItemInfoMVCResourceCommand
 						ResourceBundleUtil.getBundle(locale, getClass()),
 						"an-unexpected-error-occurred")));
 		}
-	}
-
-	private JSONArray _getAllVersionsJSONArray(
-		ContentDashboardItem contentDashboardItem, ThemeDisplay themeDisplay) {
-
-		JSONArray jsonArray = JSONFactoryUtil.createJSONArray();
-
-		List<ContentDashboardItem.Version> allVersions =
-			contentDashboardItem.getAllVersions(themeDisplay);
-
-		for (ContentDashboardItem.Version version : allVersions) {
-			jsonArray.put(version.toJSONObject());
-		}
-
-		return jsonArray;
 	}
 
 	private JSONArray _getAssetTagsJSONArray(

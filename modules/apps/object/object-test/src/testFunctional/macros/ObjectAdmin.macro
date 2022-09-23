@@ -55,26 +55,11 @@ definition {
 		}
 	}
 
-	macro addObjectActionEntryViaUI {
-		ObjectAdmin.gotoAddObjectAction();
-
-		ObjectAdmin.fillObjectAction(
-			actionActive = "${actionActive}",
-			actionName = "${actionName}",
-			active = "${active}",
-			click = "save",
-			inputValue = "${inputValue}",
-			onAction = "${chooseOption}",
-			secretAction = "${secretAction}",
-			thenAction = "${thenAction}",
-			urlAction = "${urlAction}",
-			whenAction = "${whenAction}");
-	}
-
 	macro addObjectActionViaUI {
 		ObjectAdmin.gotoAddObjectAction();
 
 		ObjectAdmin.fillObjectAction(
+			actionDescription = "${actionDescription}",
 			actionName = "${actionName}",
 			active = "${active}",
 			click = "save",
@@ -82,6 +67,7 @@ definition {
 			inputMethod = "${inputMethod}",
 			inputValue = "${inputValue}",
 			objectLabel = "${objectLabel}",
+			scriptValidation = "${scriptValidation}",
 			secretAction = "${secretAction}",
 			thenAction = "${thenAction}",
 			urlAction = "${urlAction}",
@@ -540,14 +526,20 @@ definition {
 		AssertElementPresent(
 			key_actionActive = "${actionActive}",
 			key_actionName = "${actionName}",
-			locator1 = "ObjectAdmin#VIEW_ACTIONS_TAB");
+			locator1 = "ObjectAdmin#VIEW_ACTIONS_LABEL");
+
+		if (isSet(status)) {
+			AssertElementPresent(
+				key_statusInfo = "${status}",
+				locator1 = "ObjectAction#ACTIONS_STATUS_INFO");
+		}
 	}
 
 	macro assertObjectActionsNotPresent {
 		AssertElementNotPresent(
 			key_actionActive = "${actionActive}",
 			key_actionName = "${actionName}",
-			locator1 = "ObjectAdmin#VIEW_ACTIONS_TAB");
+			locator1 = "ObjectAdmin#VIEW_ACTIONS_LABEL");
 	}
 
 	macro assertObjectColumnsAreDisplayed {
@@ -927,6 +919,7 @@ definition {
 			active = "${active}",
 			click = "save",
 			inputExpression = "${inputExpression}",
+			inputExpressionValue = "${inputExpressionValue}",
 			inputMethod = "${inputMethod}",
 			inputValue = "${inputValue}",
 			objectLabel = "${objectLabel}",
@@ -945,6 +938,12 @@ definition {
 			Type(
 				locator1 = "ObjectAdmin#ACTION_NAME_FIELD",
 				value1 = "${actionName}");
+		}
+
+		if (isSet(actionDescription)) {
+			Type(
+				locator1 = "ObjectAdmin#ACTION_DESCRIPTION_FIELD",
+				value1 = "${actionDescription}");
 		}
 
 		if (isSet(active)) {
@@ -992,7 +991,7 @@ definition {
 				else if ("${inputMethod}" == "false") {
 					Type(
 						locator1 = "ObjectAction#INPUT_NEW_VALUE",
-						value1 = "${inputExpression}");
+						value1 = "${inputExpressionValue}");
 				}
 			}
 		}
@@ -1003,6 +1002,10 @@ definition {
 			Type(
 				locator1 = "ObjectAction#INPUT_EXPRESSION",
 				value1 = "${inputExpression}");
+		}
+
+		if ("${thenAction}" == "Groovy Script") {
+			ObjectCustomValidation.insertScriptOnValidation(scriptValidation = "${scriptValidation}");
 		}
 
 		if (isSet(urlAction)) {

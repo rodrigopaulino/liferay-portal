@@ -70,7 +70,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Alejandro Tardín
  */
 public class FileEntryContentDashboardItem
-	implements ContentDashboardItem<FileEntry> {
+	implements VersionableContentDashboardItem<FileEntry> {
 
 	public FileEntryContentDashboardItem(
 		List<AssetCategory> assetCategories, List<AssetTag> assetTags,
@@ -393,6 +393,11 @@ public class FileEntryContentDashboardItem
 	@Override
 	public String getUserName() {
 		return _fileEntry.getUserName();
+	}
+
+	@Override
+	public String getViewVersionsURL(HttpServletRequest httpServletRequest) {
+		return null;
 	}
 
 	@Override
