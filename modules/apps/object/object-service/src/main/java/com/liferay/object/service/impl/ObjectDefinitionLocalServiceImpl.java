@@ -1142,7 +1142,7 @@ public class ObjectDefinitionLocalServiceImpl
 		}
 
 		_validateEnableObjectEntryHistory(
-			objectDefinition.isActive(),
+			objectDefinition.isApproved(),
 			objectDefinition.isEnableObjectEntryHistory() !=
 				enableObjectEntryHistory,
 			objectDefinition.getStorageType(), objectDefinition.isSystem());
@@ -1352,7 +1352,7 @@ public class ObjectDefinitionLocalServiceImpl
 	}
 
 	private void _validateEnableObjectEntryHistory(
-			boolean active, boolean enableObjectEntryHistoryChanged,
+			boolean approved, boolean enableObjectEntryHistoryChanged,
 			String storageType, boolean system)
 		throws PortalException {
 
@@ -1378,7 +1378,7 @@ public class ObjectDefinitionLocalServiceImpl
 					"definitions with the default storage type");
 		}
 
-		if (active) {
+		if (approved) {
 			throw new ObjectDefinitionEnableObjectEntryHistoryException(
 				"Enable object entry histroy cannot be updated when the " +
 					"object definition is published");
